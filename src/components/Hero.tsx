@@ -35,14 +35,14 @@ const Hero = () => {
             </div>
             <div className="flex items-center gap-3 pt-4">
               <div className="flex -space-x-2">
-                <div className="w-10 h-10 rounded-full bg-blue-500 border-2 border-background"></div>
-                <div className="w-10 h-10 rounded-full bg-green-500 border-2 border-background"></div>
-                <div className="w-10 h-10 rounded-full bg-pink-500 border-2 border-background"></div>
-                <div className="w-10 h-10 rounded-full bg-orange-500 border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-black border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-gray-700 border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-gray-500 border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-gray-400 border-2 border-background"></div>
               </div>
               <div className="text-sm">
                 <div className="flex items-center gap-1">
-                  <span className="text-yellow-500">⭐⭐⭐⭐⭐</span>
+                  <span className="text-foreground">⭐⭐⭐⭐⭐</span>
                 </div>
                 <p className="text-muted-foreground">
                   <strong className="text-foreground">50,000+</strong> students learning smarter

@@ -6,43 +6,43 @@ const features = [
     icon: Mic,
     title: "Voice-First AI Tutor",
     description: "Simply speak your questions. AI listens, understands, and responds with both voice and visual explanations.",
-    color: "bg-background",
+    color: "bg-black",
   },
   {
     icon: Network,
     title: "Visual Learning Canvas",
     description: "Auto-generated mind maps and concept connections. See relationships between topics with interactive interface.",
-    color: "bg-green-500",
+    color: "bg-black",
   },
   {
     icon: FileCheck,
     title: "Smart Test Generator",
     description: "AI creates personalized quizzes based on your study materials. Identifies weak areas and generates targeted practice.",
-    color: "bg-background",
+    color: "bg-black",
   },
   {
     icon: FileUp,
     title: "Multi-Modal Input",
     description: "Upload PDFs, images, handwritten notes, or YouTube links. AI extracts and explains everything.",
-    color: "bg-purple-500",
+    color: "bg-black",
   },
   {
     icon: Globe,
     title: "50+ Languages",
     description: "Learn in your native language with real-time translation and voice support.",
-    color: "bg-background",
+    color: "bg-black",
   },
   {
     icon: BarChart,
     title: "Progress Tracking",
     description: "Monitor your learning journey with detailed analytics and insights.",
-    color: "bg-background",
+    color: "bg-black",
   },
   {
     icon: Download,
     title: "Export Anywhere",
     description: "Download mind maps, quizzes, and notes as PDF, PNG, or share instantly.",
-    color: "bg-green-500",
+    color: "bg-black",
   },
 ];
 
@@ -64,7 +64,7 @@ const Features = () => {
             <Card key={index} className="border-border hover:shadow-lg transition-shadow">
               <CardContent className="p-6 space-y-4">
                 <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center`}>
-                  <feature.icon className="w-7 h-7 text-foreground" />
+                  <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground">
                   {feature.title}
