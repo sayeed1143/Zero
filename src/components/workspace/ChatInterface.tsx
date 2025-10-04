@@ -1,19 +1,49 @@
-import { useState, useEffect, useRef } from "react";
-import { Send, Paperclip, Mic, Sparkles, FileText, Image, BarChart3 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Send,
+  Paperclip,
+  Mic,
+  Sparkles,
+  FileText,
+  Image,
+  BarChart3,
+  Volume2,
+  VolumeX,
+  Loader2,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { AIMessage } from "@/types/ai";
+import { AIService } from "@/services/ai";
+import { toast } from "sonner";
 
 interface ChatInterfaceProps {
   onSendMessage: (message: string, command?: string) => void;
   chatHistory: AIMessage[];
   isProcessing: boolean;
+  isTranscribing: boolean;
+  isSpeaking: boolean;
+  voicePlaybackEnabled: boolean;
+  onToggleVoicePlayback: () => void;
+  onTranscriptionStateChange: (active: boolean) => void;
 }
 
-const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfaceProps) => {
+const ChatInterface = ({
+  onSendMessage,
+  chatHistory,
+  isProcessing,
+  isTranscribing,
+  isSpeaking,
+  voicePlaybackEnabled,
+  onToggleVoicePlayback,
+  onTranscriptionStateChange,
+}: ChatInterfaceProps) => {
   const [message, setMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [voiceInputSupported, setVoiceInputSupported] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const quickCommands = [
     { icon: <Sparkles className="w-3 h-3" />, label: "Summarize", command: "explain", prompt: "Summarize this content in simple terms" },
@@ -26,9 +56,17 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hasMediaRecorder = "MediaRecorder" in window;
+      const hasNavigator = typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia;
+      setVoiceInputSupported(hasMediaRecorder && hasNavigator);
+    }
+  }, []);
+
   const handleSend = (command?: string) => {
     if (message.trim() && !isProcessing) {
-      onSendMessage(message, command);
+      onSendMessage(message.trim(), command);
       setMessage("");
     }
   };
@@ -50,8 +88,110 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
     }
   };
 
+  const stopStreamTracks = () => {
+    const stream = mediaRecorderRef.current?.stream;
+    stream?.getTracks().forEach((track) => track.stop());
+  };
+
+  const blobToBase64 = (blob: Blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        const cleaned = result.includes(",") ? result.split(",")[1] ?? "" : result;
+        resolve(cleaned);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+  const startRecording = async () => {
+    if (!voiceInputSupported) {
+      toast.info("Voice input is not supported in this browser yet.");
+      return;
+    }
+
+    try {
+      audioChunksRef.current = [];
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onstop = async () => {
+        setIsRecording(false);
+        stopStreamTracks();
+
+        const blob = new Blob(audioChunksRef.current, { type: recorder.mimeType });
+        audioChunksRef.current = [];
+
+        if (blob.size === 0) {
+          onTranscriptionStateChange(false);
+          toast.info("No audio captured. Please try again.");
+          return;
+        }
+
+        try {
+          onTranscriptionStateChange(true);
+          const base64 = await blobToBase64(blob);
+          const transcript = await AIService.transcribeAudio(base64, blob.type);
+
+          if (transcript.text?.trim()) {
+            const cleanText = transcript.text.trim();
+            setMessage(cleanText);
+            setTimeout(() => {
+              onSendMessage(cleanText);
+              setMessage("");
+            }, 100);
+          } else {
+            toast.info("I couldn't detect speech. Please try again.");
+          }
+        } catch (error: any) {
+          console.error("Transcription error:", error);
+          toast.error(error.message || "Unable to transcribe audio");
+        } finally {
+          onTranscriptionStateChange(false);
+        }
+      };
+
+      recorder.onerror = (event) => {
+        console.error("Recorder error:", event);
+        toast.error("There was a problem capturing audio");
+        stopStreamTracks();
+        setIsRecording(false);
+      };
+
+      recorder.start();
+      setIsRecording(true);
+      toast.info("Listening... speak your question");
+    } catch (error: any) {
+      console.error("Voice recording error:", error);
+      toast.error("Microphone access was blocked. Please enable it and try again.");
+      stopStreamTracks();
+      setIsRecording(false);
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    mediaRecorderRef.current = null;
+  };
+
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
+    if (isProcessing && !isRecording) {
+      return;
+    }
+
+    if (isRecording) {
+      stopRecording();
+    } else {
+      void startRecording();
+    }
   };
 
   return (
@@ -62,14 +202,14 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
             {chatHistory.map((msg, index) => (
               <div
                 key={`msg-${index}`}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div
                   className={`max-w-[70%] rounded-2xl px-5 py-3 ${
-                    msg.role === 'user'
-                      ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg'
-                      : 'glass-card'
+                    msg.role === "user"
+                      ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg"
+                      : "glass-card"
                   }`}
                 >
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -81,9 +221,9 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
                 <div className="glass-card rounded-2xl px-5 py-3">
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1">
-                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0s' }}></div>
-                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0s" }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                     </div>
                     <span className="text-sm text-muted-foreground">AI is thinking...</span>
                   </div>
@@ -122,7 +262,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
           >
             <Paperclip className="w-5 h-5 text-muted-foreground" />
           </Button>
-          
+
           <div className="flex-1 relative">
             <Input
               value={message}
@@ -138,19 +278,37 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
           </div>
 
           <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleVoicePlayback}
+            className={`shrink-0 touch-target rounded-full focus-ring hover:bg-primary/10 ${
+              voicePlaybackEnabled ? "text-primary" : "text-muted-foreground"
+            }`}
+            title={voicePlaybackEnabled ? "Mute AI voice" : "Enable AI voice responses"}
+          >
+            {voicePlaybackEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+          </Button>
+
+          <Button
             onClick={toggleRecording}
             size="icon"
-            disabled={isProcessing}
+            disabled={isProcessing && !isRecording}
             className={`shrink-0 touch-target rounded-full transition-all focus-ring ${
-              isRecording 
-                ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground mic-pulse' 
-                : 'bg-accent/10 hover:bg-accent/20 text-accent'
-            }`}
-            title={isRecording ? "Stop Recording" : "Start Voice Input"}
+              isRecording
+                ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground mic-pulse"
+                : "bg-accent/10 hover:bg-accent/20 text-accent"
+            } ${!voiceInputSupported ? "opacity-50 cursor-not-allowed" : ""}`}
+            title={
+              voiceInputSupported
+                ? isRecording
+                  ? "Stop Recording"
+                  : "Start Voice Input"
+                : "Voice input not supported in this browser"
+            }
           >
-            <Mic className={`w-5 h-5 ${isRecording ? 'pulse-animation' : ''}`} />
+            <Mic className={`w-5 h-5 ${isRecording ? "pulse-animation" : ""}`} />
           </Button>
-          
+
           <Button
             onClick={() => handleSend()}
             disabled={!message.trim() || isProcessing}
@@ -163,23 +321,33 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
         </div>
 
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground px-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 flex-wrap">
             {isRecording && (
               <span className="flex items-center gap-2 text-destructive font-medium">
                 <span className="w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
                 Recording...
               </span>
             )}
-            {isProcessing && (
+            {isTranscribing && (
+              <span className="flex items-center gap-2 text-primary font-medium">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Transcribing voice...
+              </span>
+            )}
+            {isSpeaking && voicePlaybackEnabled && (
+              <span className="flex items-center gap-2 text-accent font-medium">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Speaking response...
+              </span>
+            )}
+            {isProcessing && !isTranscribing && (
               <span className="flex items-center gap-2 text-primary font-medium">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                 Processing...
               </span>
             )}
           </div>
-          <span className="opacity-60">
-            Press Enter to send, Shift + Enter for new line
-          </span>
+          <span className="opacity-60">Press Enter to send, Shift + Enter for new line</span>
         </div>
       </div>
     </div>
