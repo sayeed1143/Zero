@@ -1,0 +1,84 @@
+import { useState, useEffect, useRef } from 'react';
+import { toast } from '@/components/ui/sonner';
+
+interface SpeechToTextOptions {
+  onResult: (transcript: string) => void;
+  onEnd?: () => void;
+}
+
+export const useSpeechToText = ({ onResult, onEnd }: SpeechToTextOptions) => {
+  const [isListening, setIsListening] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setIsAvailable(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        if (finalTranscript) {
+          onResult(finalTranscript);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        onEnd?.();
+      };
+      
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        if (event.error === 'not-allowed') {
+          console.warn('Speech recognition permission denied by user.');
+          toast.error('Microphone Permission Denied', {
+            description: 'Please allow microphone access in your browser settings to use the voice feature.',
+            duration: 5000,
+          });
+        } else {
+          console.error('Speech recognition error', event.error);
+          toast.error('Speech Recognition Error', {
+            description: `An unexpected error occurred: ${event.error}. Please try again.`,
+          });
+        }
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    } else {
+      setIsAvailable(false);
+    }
+  }, [onResult, onEnd]);
+
+  const startListening = () => {
+    if (recognitionRef.current && !isListening) {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (err: any) {
+        console.error("Error starting speech recognition:", err);
+        // This can happen if permissions are not granted, and the onerror will also fire.
+        // We'll rely on onerror to show the toast.
+        setIsListening(false);
+      }
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  };
+
+  return { isListening, startListening, stopListening, isAvailable };
+};

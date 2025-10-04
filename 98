@@ -1,0 +1,42 @@
+import { FileText, Image, Youtube, FileType } from 'lucide-react';
+import { faker } from '@faker-js/faker';
+
+export type MaterialType = 'pdf' | 'image' | 'video' | 'note';
+
+export interface Material {
+  id: string;
+  name: string;
+  type: MaterialType;
+  icon: React.ElementType;
+  size: string;
+  createdAt: string;
+}
+
+const getMaterialDetails = (type: MaterialType): { icon: React.ElementType; name: string; } => {
+    switch (type) {
+        case 'pdf':
+            return { icon: FileText, name: `${faker.lorem.words(3)}.pdf` };
+        case 'image':
+            return { icon: Image, name: `${faker.lorem.word()}.png` };
+        case 'video':
+            return { icon: Youtube, name: `${faker.lorem.sentence(4)}.mp4` };
+        case 'note':
+        default:
+            return { icon: FileType, name: `${faker.lorem.words(2)} Note` };
+    }
+}
+
+const createMaterial = (): Material => {
+    const type = faker.helpers.arrayElement<MaterialType>(['pdf', 'image', 'video', 'note']);
+    const details = getMaterialDetails(type);
+    return {
+        id: faker.string.uuid(),
+        name: details.name,
+        type,
+        icon: details.icon,
+        size: `${faker.number.int({ min: 1, max: 20 })}MB`,
+        createdAt: faker.date.recent().toLocaleDateString(),
+    };
+};
+
+export const materials: Material[] = Array.from({ length: 5 }, createMaterial);

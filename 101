@@ -1,0 +1,62 @@
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { faker } from "@faker-js/faker";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { toast } from "../ui/sonner";
+
+interface QuizModalProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}
+
+const generateQuiz = () => {
+  return Array.from({ length: 3 }, () => ({
+    question: faker.lorem.sentence({min: 8, max: 15}).replace(/\.$/, '?'),
+    options: Array.from({ length: 4 }, () => faker.lorem.words(faker.number.int({min: 1, max: 3}))),
+    answer: 0,
+  }));
+};
+
+const quiz = generateQuiz();
+
+const QuizModal = ({ isOpen, onOpenChange }: QuizModalProps) => {
+
+  const handleExport = () => {
+    toast.info("Export functionality is a work in progress.");
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Personalized Quiz</DialogTitle>
+          <DialogDescription>
+            Here's a short quiz based on your recent activity.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto pr-4">
+          {quiz.map((item, index) => (
+            <div key={index} className="space-y-4">
+              <p className="font-semibold">{index + 1}. {item.question}</p>
+              <RadioGroup>
+                {item.options.map((option, optionIndex) => (
+                  <div key={optionIndex} className="flex items-center space-x-2">
+                    <RadioGroupItem value={option} id={`q${index}-o${optionIndex}`} />
+                    <Label htmlFor={`q${index}-o${optionIndex}`}>{option}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          ))}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
+          <Button onClick={handleExport}>Export as PDF</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default QuizModal;

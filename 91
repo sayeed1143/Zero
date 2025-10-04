@@ -1,0 +1,42 @@
+import { faker } from '@faker-js/faker';
+
+export interface Post {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  excerpt: string;
+  content: string;
+  imageUrl: string;
+  author: {
+    name: string;
+    avatarUrl: string;
+  };
+  publishedAt: string;
+  readingTime: number;
+}
+
+const createPost = (): Post => {
+  const title = faker.lorem.sentence({ min: 5, max: 8 });
+  return {
+    id: faker.string.uuid(),
+    slug: faker.helpers.slugify(title).toLowerCase(),
+    title,
+    category: faker.commerce.department(),
+    excerpt: faker.lorem.paragraph(2),
+    content: faker.lorem.paragraphs(10, '<br/><br/>'),
+    imageUrl: `https://img-wrapper.vercel.app/image?url=https://placehold.co/1200x600/111827/FFFFFF?text=${faker.lorem.word()}`,
+    author: {
+      name: faker.person.fullName(),
+      avatarUrl: faker.image.avatar(),
+    },
+    publishedAt: faker.date.past({ years: 1 }).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+    readingTime: faker.number.int({ min: 3, max: 15 }),
+  };
+};
+
+export const posts: Post[] = Array.from({ length: 7 }, createPost);

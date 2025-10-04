@@ -1,0 +1,77 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { Mic, Zap, Bot, UploadCloud, TestTube, Users, FileType } from "lucide-react";
+
+const features = [
+  {
+    icon: Mic,
+    title: "Voice-First AI Tutor",
+    description: "Speak your questions and get instant, natural-sounding audio and visual answers. It's like talking to a real teacher.",
+  },
+  {
+    icon: Zap,
+    title: "Visual Learning Canvas",
+    description: "Our interactive canvas automatically turns your study materials into mind maps, flowcharts, and connected ideas.",
+  },
+  {
+    icon: TestTube,
+    title: "Smart Test Generator",
+    description: "AI identifies your weak spots and creates personalized quizzes to help you master any subject. Export tests as PDFs.",
+  },
+  {
+    icon: UploadCloud,
+    title: "Multi-Modal Input",
+    description: "Upload anything—PDFs, handwritten notes, images, or YouTube links. Our AI understands and explains it all.",
+  },
+  {
+    icon: Bot,
+    title: "Personalized AI Teacher",
+    description: "Your AI companion adapts to your learning style, whether you're a visual learner, a reader, or need things simplified.",
+  },
+  {
+    icon: Users,
+    title: "Tools for Teachers",
+    description: "Generate lesson plans, create engaging visual materials, and track student progress with a dedicated dashboard.",
+  },
+  {
+    icon: FileType,
+    title: "Export Anywhere",
+    description: "Easily export your mind maps as PNGs, notes as PDFs, and quizzes for offline study or sharing.",
+  },
+];
+
+const Features = () => {
+  return (
+    <section className="py-20 px-6" id="solutions">
+      <div className="container mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            A Smarter Way to Learn
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Edu Voice AI combines the best of voice technology, visual learning, and powerful AI to create a learning experience that's faster, easier, and more effective.
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <Card key={index} className="border-border hover:shadow-lg transition-shadow bg-card/50">
+              <CardContent className="p-6 space-y-4">
+                <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Features;
