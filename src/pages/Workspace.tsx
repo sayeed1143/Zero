@@ -17,6 +17,24 @@ const Workspace = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lastSpokenIndexRef = useRef<number>(-1);
 
+  const normalizeConnections = useCallback((connections: any): string[] => {
+    if (!Array.isArray(connections)) {
+      return [];
+    }
+
+    return connections
+      .map((conn: any) => {
+        if (typeof conn === "string") {
+          return conn;
+        }
+        if (conn && typeof conn === "object" && "id" in conn) {
+          return (conn as { id?: string }).id ?? null;
+        }
+        return null;
+      })
+      .filter((value): value is string => Boolean(value));
+  }, []);
+
   const stopVoicePlayback = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
