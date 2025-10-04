@@ -1,14 +1,22 @@
-import type { AIMessage, ChatRequest, ChatResponse, VisionRequest, QuizRequest, QuizResponse } from '@/types/ai';
-
-const API_BASE = import.meta.env.PROD ? '' : '';
+import type {
+  AIMessage,
+  ChatRequest,
+  ChatResponse,
+  QuizRequest,
+  QuizResponse,
+  SpeechToTextResponse,
+  TextToSpeechResponse,
+  VisionRequest,
+} from "@/types/ai";
+import { AI_MODEL_DEFAULTS } from "@/types/ai";
 
 export class AIService {
-  static async chat(messages: AIMessage[], model?: string): Promise<ChatResponse> {
+  static async chat(messages: AIMessage[], model: string = AI_MODEL_DEFAULTS.chat): Promise<ChatResponse> {
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           messages,
@@ -20,22 +28,22 @@ export class AIService {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to get AI response');
+        throw new Error(error.message || "Failed to get AI response");
       }
 
       return await response.json();
     } catch (error: any) {
-      console.error('AI chat error:', error);
-      throw new Error(error.message || 'Failed to communicate with AI');
+      console.error("AI chat error:", error);
+      throw new Error(error.message || "Failed to communicate with AI");
     }
   }
 
-  static async processVision(image: string, prompt: string, model?: string): Promise<string> {
+  static async processVision(image: string, prompt: string, model: string = AI_MODEL_DEFAULTS.vision): Promise<string> {
     try {
-      const response = await fetch('/api/vision', {
-        method: 'POST',
+      const response = await fetch("/api/vision", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           image,
@@ -46,49 +54,55 @@ export class AIService {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to process image');
+        throw new Error(error.message || "Failed to process image");
       }
 
       const data = await response.json();
       return data.content;
     } catch (error: any) {
-      console.error('Vision processing error:', error);
-      throw new Error(error.message || 'Failed to process image');
+      console.error("Vision processing error:", error);
+      throw new Error(error.message || "Failed to process image");
     }
   }
 
-  static async generateQuiz(content: string, numQuestions = 5, difficulty: 'easy' | 'medium' | 'hard' = 'medium'): Promise<QuizResponse> {
+  static async generateQuiz(
+    content: string,
+    numQuestions = 5,
+    difficulty: "easy" | "medium" | "hard" = "medium",
+    model: string = AI_MODEL_DEFAULTS.quiz,
+  ): Promise<QuizResponse> {
     try {
-      const response = await fetch('/api/quiz', {
-        method: 'POST',
+      const response = await fetch("/api/quiz", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           content,
           numQuestions,
           difficulty,
+          model,
         } as QuizRequest),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to generate quiz');
+        throw new Error(error.message || "Failed to generate quiz");
       }
 
       return await response.json();
     } catch (error: any) {
-      console.error('Quiz generation error:', error);
-      throw new Error(error.message || 'Failed to generate quiz');
+      console.error("Quiz generation error:", error);
+      throw new Error(error.message || "Failed to generate quiz");
     }
   }
 
-  static async generateMindMap(content: string, model?: string): Promise<any[]> {
+  static async generateMindMap(content: string, model: string = AI_MODEL_DEFAULTS.mindmap): Promise<any[]> {
     try {
-      const response = await fetch('/api/mindmap', {
-        method: 'POST',
+      const response = await fetch("/api/mindmap", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           content,
@@ -98,14 +112,67 @@ export class AIService {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to generate mind map');
+        throw new Error(error.message || "Failed to generate mind map");
       }
 
       const data = await response.json();
       return data.nodes;
     } catch (error: any) {
-      console.error('Mind map generation error:', error);
-      throw new Error(error.message || 'Failed to generate mind map');
+      console.error("Mind map generation error:", error);
+      throw new Error(error.message || "Failed to generate mind map");
+    }
+  }
+
+  static async transcribeAudio(
+    audio: string,
+    mimeType: string,
+    model: string = AI_MODEL_DEFAULTS.stt,
+  ): Promise<SpeechToTextResponse> {
+    try {
+      const response = await fetch("/api/stt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ audio, mimeType, model }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to transcribe audio");
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error("Speech-to-text error:", error);
+      throw new Error(error.message || "Failed to transcribe audio");
+    }
+  }
+
+  static async textToSpeech(
+    text: string,
+    voice = "alloy",
+    model: string = AI_MODEL_DEFAULTS.tts,
+    format: "mp3" | "wav" | "ogg" = "mp3",
+  ): Promise<TextToSpeechResponse> {
+    try {
+      const response = await fetch("/api/tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text, voice, model, format }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to generate speech");
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error("Text-to-speech error:", error);
+      throw new Error(error.message || "Failed to generate speech");
     }
   }
 
