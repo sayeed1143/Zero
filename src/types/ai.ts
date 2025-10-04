@@ -30,6 +30,7 @@ export interface QuizRequest {
   content: string;
   numQuestions?: number;
   difficulty?: 'easy' | 'medium' | 'hard';
+  model?: string;
 }
 
 export interface QuizQuestion {
