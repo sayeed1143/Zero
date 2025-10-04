@@ -1,7 +1,8 @@
 import { Home, FileText, Settings, Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { FileText, Home, Moon, Settings, Sun } from "lucide-react";
 
 const WorkspaceNav = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -20,10 +21,11 @@ const WorkspaceNav = () => {
   return (
     <nav className="glass-panel border-b border-border/50 px-6 py-4 flex items-center justify-between sticky top-0 z-30 animate-slide-up">
       <Link to="/" className="flex items-center gap-3 group">
-        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shadow-lg glow-hover group-hover:scale-105 transition-transform">
-          <span className="text-primary-foreground font-bold text-lg">E</span>
+        <img src="/logo.svg" alt="EduVoice AI" className="h-10 w-auto drop-shadow-md group-hover:scale-105 transition-transform" />
+        <div className="flex flex-col">
+          <span className="font-bold text-xl gradient-text leading-none">EduVoice AI</span>
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Voice-first learning workspace</span>
         </div>
-        <span className="font-bold text-xl gradient-text">EduVoice AI</span>
       </Link>
       
       <div className="flex items-center gap-2">
