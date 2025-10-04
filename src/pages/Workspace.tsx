@@ -5,11 +5,13 @@ import WorkspaceNav from "@/components/workspace/WorkspaceNav";
 import { AIService } from "@/services/ai";
 import { toast } from "sonner";
 import type { AIMessage } from "@/types/ai";
+import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
 
 const Workspace = () => {
   const [canvasItems, setCanvasItems] = useState<any[]>([]);
   const [chatHistory, setChatHistory] = useState<AIMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [modelPreferences] = useState(DEFAULT_FEATURE_MODELS);
 
   const handleSendMessage = async (message: string, command?: string) => {
     if (isProcessing) return;
@@ -22,7 +24,7 @@ const Workspace = () => {
     try {
       if (command === 'mindmap') {
         toast.info("Generating mind map...");
-        const nodes = await AIService.generateMindMap(message);
+        const nodes = await AIService.generateMindMap(message, modelPreferences.mindmap);
         
         const formattedNodes = nodes.map((node, index) => ({
           id: node.id || `node-${Date.now()}-${index}`,
@@ -44,7 +46,7 @@ const Workspace = () => {
         
       } else if (command === 'quiz') {
         toast.info("Generating quiz...");
-        const quizResponse = await AIService.generateQuiz(message);
+        const quizResponse = await AIService.generateQuiz(message, 5, 'medium', modelPreferences.quiz);
         
         const aiMessage: AIMessage = {
           role: 'assistant',
@@ -56,7 +58,8 @@ const Workspace = () => {
         toast.success("Quiz generated!");
         
       } else {
-        const response = await AIService.chat(newHistory);
+        const selectedChatModel = command === 'explain' ? modelPreferences.explanations : modelPreferences.chat;
+        const response = await AIService.chat(newHistory, selectedChatModel);
         const aiMessage: AIMessage = {
           role: 'assistant',
           content: response.content
@@ -90,7 +93,7 @@ const Workspace = () => {
       const analysis = await AIService.processVision(
         base64,
         "Analyze this image in detail. Describe what you see, identify key concepts, and suggest how this could be used for learning.",
-        'anthropic/claude-3-opus'
+        modelPreferences.vision
       );
 
       const newNode = {
