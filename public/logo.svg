@@ -1,45 +1,47 @@
-<svg width="240" height="80" viewBox="0 0 240 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="96" viewBox="0 0 320 96" role="img" aria-labelledby="logoTitle logoDesc">
   <title id="logoTitle">EduVoice AI Logo</title>
-  <desc id="logoDesc">Gradient speech orb with microphone and connected nodes beside EduVoice AI wordmark.</desc>
+  <desc id="logoDesc">Glowing gradient speech orb with microphone and neural wave next to EduVoice AI wordmark.</desc>
   <defs>
-    <linearGradient id="orbGradient" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#6366F1" />
-      <stop offset="0.5" stop-color="#7C3AED" />
-      <stop offset="1" stop-color="#0EA5E9" />
+    <linearGradient id="orbGradient" x1="12" y1="12" x2="84" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4C1D95" />
+      <stop offset="0.35" stop-color="#7C3AED" />
+      <stop offset="0.7" stop-color="#2563EB" />
+      <stop offset="1" stop-color="#06B6D4" />
     </linearGradient>
-    <linearGradient id="textGradient" x1="100" y1="20" x2="220" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#111827" />
-      <stop offset="1" stop-color="#0F172A" />
+    <radialGradient id="orbGlow" cx="46" cy="46" r="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.28" />
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="wordGradient" x1="120" y1="30" x2="280" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F172A" />
+      <stop offset="1" stop-color="#020617" />
     </linearGradient>
-    <filter id="glow" x="-10" y="-10" width="120" height="120" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feBlend in="SourceGraphic" in2="blur" mode="screen" />
-    </filter>
   </defs>
 
-  <g filter="url(#glow)">
-    <rect x="0" y="0" width="80" height="80" rx="26" fill="url(#orbGradient)" />
+  <g transform="translate(12 12)">
+    <circle cx="46" cy="46" r="46" fill="url(#orbGradient)" />
+    <circle cx="46" cy="46" r="46" fill="url(#orbGlow)" />
+    <path d="M46 20c-8.284 0-15 6.716-15 15v12c0 8.284 6.716 15 15 15s15-6.716 15-15V35c0-8.284-6.716-15-15-15Zm9 27c0 4.971-4.029 9-9 9s-9-4.029-9-9V35c0-4.971 4.029-9 9-9s9 4.029 9 9v12Zm-11.5 22h5c4.694 0 8.5 3.806 8.5 8.5v1.5H34v-1.5c0-4.694 3.806-8.5 8.5-8.5Z" fill="#F8FAFC" opacity="0.96" />
+    <rect x="40" y="58" width="12" height="10" rx="4" fill="#E2E8F0" opacity="0.9" />
+    <path d="M16 40c0-11.598 9.402-21 21-21" stroke="#C084FC" stroke-width="3" stroke-linecap="round" />
+    <path d="M76 40c0-11.598-9.402-21-21-21" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" />
+    <circle cx="15" cy="40" r="5" fill="#C084FC" />
+    <circle cx="77" cy="40" r="5" fill="#38BDF8" />
+    <path d="M22 66c8.2 6.1 17.8 9.2 28.2 9.2s20-3.1 28.2-9.2" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" opacity="0.5" />
   </g>
 
-  <g transform="translate(16 14)">
-    <rect x="18" y="10" width="28" height="36" rx="12" fill="#F8FAFC" opacity="0.9" />
-    <rect x="25" y="44" width="14" height="10" rx="4" fill="#F8FAFC" opacity="0.85" />
-    <path d="M18 28C18 36.8366 24.8203 44 33.5 44C42.1797 44 49 36.8366 49 28V22H43V28C43 33.5228 38.7467 38 33.5 38C28.2533 38 24 33.5228 24 28V22H18V28Z" fill="#E2E8F0" />
-    <path d="M32 56C32 59.3137 29.3137 62 26 62H41C37.6863 62 35 59.3137 35 56V54H32V56Z" fill="#F8FAFC" opacity="0.7" />
-    <path d="M11 26C11 18.268 17.268 12 25 12" stroke="#A855F7" stroke-width="2" stroke-linecap="round" />
-    <path d="M52 12C59.732 12 66 18.268 66 26" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" />
-    <circle cx="10" cy="26" r="4" fill="#A855F7" opacity="0.8" />
-    <circle cx="66" cy="26" r="4" fill="#22D3EE" opacity="0.8" />
-    <circle cx="25" cy="8" r="3.5" fill="#C4B5FD" />
-    <circle cx="52" cy="8" r="3.5" fill="#67E8F9" />
-  </g>
-
-  <g transform="translate(95 20)">
-    <text x="0" y="22" fill="url(#textGradient)" font-family="'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="28">
+  <g transform="translate(124 26)">
+    <text x="0" y="30" fill="url(#wordGradient)" font-family="'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" letter-spacing="-0.5">
       EduVoice
     </text>
-    <text x="0" y="46" fill="#4B5563" font-family="'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="16" letter-spacing="0.12em">
+    <text x="0" y="58" fill="#475569" font-family="'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0.24em">
       AI LEARNING COPILOT
     </text>
+  </g>
+
+  <g transform="translate(244 26)">
+    <path d="M0 18c0-8.837 7.163-16 16-16h48c8.837 0 16 7.163 16 16v12c0 8.837-7.163 16-16 16h-48C7.163 46 0 38.837 0 30V18Z" fill="#EEF2FF" opacity="0.6" />
+    <path d="M10 30c0-11 8.5-20 19-20h22c10.5 0 19 9 19 20 0 11-8.5 20-19 20H29c-10.5 0-19-9-19-20Z" fill="#312E81" opacity="0.2" />
+    <path d="M18 24h8v12h-8zM30 20h8v16h-8zM42 28h8v8h-8zM54 18h8v18h-8z" fill="#4338CA" opacity="0.55" />
   </g>
 </svg>
