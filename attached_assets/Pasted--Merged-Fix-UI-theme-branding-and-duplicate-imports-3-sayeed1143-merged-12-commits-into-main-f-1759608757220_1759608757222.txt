@@ -1,0 +1,133 @@
+ Merged
+Fix UI theme, branding, and duplicate imports
+#3
+sayeed1143 merged 12 commits into main from ai_main_203f89e9c80f  21 minutes ago
++82 −81 
+ Conversation 2
+ Commits 12
+ Checks 0
+ Files changed 9
+Conversation
+sayeed1143
+Owner
+sayeed1143 commented 22 minutes ago • 
+Purpose
+The user requested several key improvements to the EduVoice AI website:
+
+Change the color theme to white background with black text (removing colorful themes)
+Fix branding issues where "EduVoice AI" text was duplicated in the header
+Ensure all API models work properly
+General error fixes and UI improvements
+Code changes
+Updated favicon and logo SVGs: Enhanced gradient designs with improved accessibility and visual appeal
+Refined content copy: Updated feature descriptions, hero text, and pricing plans to be more concise and focused on voice-first learning
+Fixed duplicate imports: Removed duplicate import statements in Navigation.tsx, WorkspaceNav.tsx, and Workspace.tsx components
+Improved branding consistency: Streamlined logo design and text to prevent duplication issues
+Enhanced visual hierarchy: Updated typography, spacing, and color schemes throughout the application
+The changes maintain the core functionality while addressing the user's specific requests for a cleaner, more professional appearance with proper branding and error-free code.
+
+To clone this PR locally use the Github CLI with command gh pr checkout 3
+
+🔗 Edit in Builder.io
+
+👀 Preview Link
+
+builderio-bot added 12 commits 35 minutes ago
+@builderio-bot
+Remove duplicate useState import 
+dc24500
+@builderio-bot
+Remove duplicate Button import 
+48ec3c7
+@builderio-bot
+Remove duplicate icon import 
+a6c0159
+@builderio-bot
+Update logo with refined design 
+55fa6a9
+@builderio-bot
+Refresh favicon with new design 
+c009d7d
+@builderio-bot
+Refresh hero messaging 
+ef76ded
+@builderio-bot
+Align feature copy with requested messaging 
+920f81a
+@builderio-bot
+Update footer tagline 
+c756ca6
+@builderio-bot
+Align pricing heading 
+5bad4c6
+@builderio-bot
+Align pricing plan features 
+9944992
+@builderio-bot
+Update pro features 
+77a2b80
+@builderio-bot
+Update team plan features 
+462064a
+@vercelVercel
+vercel bot commented 22 minutes ago
+Deployment failed with the following error:
+
+Environment Variable "OPENROUTER_API_KEY" references Secret "openrouter-api-key", which does not exist.
+Learn More: https://vercel.com/docs/environment-variables
+
+@builder-io-integration builder-io-integration bot changed the title Builder.io: Update from Visual Editor Fix UI theme, branding, and duplicate imports 22 minutes ago
+@builder-io-integrationBuilder.io Integration
+builder-io-integration bot commented 22 minutes ago
+You can tag me at @builderio-bot for anything you want me to fix or change
+
+@sayeed1143 sayeed1143 marked this pull request as ready for review 21 minutes ago
+@sayeed1143 sayeed1143 merged commit e0b4586 into main 21 minutes ago
+1 check failed
+Merge info
+Pull request successfully merged and closed
+You're all set — the ai_main_203f89e9c80f branch can be safely deleted.
+
+@sayeed1143
+
+
+Add a comment
+Comment
+ 
+Add your comment here...
+ 
+Remember, contributions to this repository should follow our GitHub Community Guidelines.
+ ProTip! Add comments to specific lines under Files changed.
+Reviewers
+No reviews
+Assignees
+No one—
+Labels
+None yet
+Projects
+None yet
+Milestone
+No milestone
+Development
+Successfully merging this pull request may close these issues.
+
+None yet
+
+
+Notifications
+Customize
+You’re receiving notifications because you modified the open/close state.
+2 participants
+@sayeed1143
+@builderio-bot
+Footer
+© 2025 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
