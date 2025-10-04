@@ -25,14 +25,14 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="py-20 px-6">
+    <section className="py-20 px-6 bg-muted/30">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            How It Works
+          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            How <span className="ml-12">Works</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Get started in three simple steps
+            Transform your learning experience in three simple steps
           </p>
         </div>
         

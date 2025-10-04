@@ -52,14 +52,14 @@ const plans = [
 
 const Pricing = () => {
   return (
-    <section className="py-20 px-6 bg-secondary/30" id="pricing">
+    <section className="py-20 px-6" id="pricing">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            Simple, Transparent Pricing
+          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            Choose Your
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose the plan that's right for you
+            Start free, upgrade when you need more. All plans include multilingual support.
           </p>
         </div>
         

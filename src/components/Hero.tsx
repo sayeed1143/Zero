@@ -8,25 +8,46 @@ const Hero = () => {
     <section className="pt-32 pb-20 px-6" id="home">
       <div className="container mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-              Your AI-Powered Workspace for Serious Productivity
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background">
+              <span className="text-sm font-medium">✨ AI-Powered Learning Revolution</span>
+            </div>
+            <h1 className="text-5xl lg:text-7xl font-bold text-foreground leading-tight">
+              Meet Kuse AI
             </h1>
-            <p className="text-xl text-muted-foreground leading-relaxed">
-              Collaborate, organize, analyze, and visualize—powered by state-of-the-art AI.
+            <p className="text-2xl font-semibold text-foreground">
+              The Talking Visual Learning Platform
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Your AI teacher that listens, sees, and teaches you visually. Upload PDFs, images, videos - get instant mind maps, explanations, and personalized quizzes.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/workspace">
                 <Button size="lg" className="rounded-full">
-                  Get Started
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  Try Voice Demo
                 </Button>
               </Link>
               <Link to="/workspace">
                 <Button size="lg" variant="outline" className="rounded-full">
-                  See Demo
+                  Watch Demo
                 </Button>
               </Link>
+            </div>
+            <div className="flex items-center gap-3 pt-4">
+              <div className="flex -space-x-2">
+                <div className="w-10 h-10 rounded-full bg-blue-500 border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-green-500 border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-pink-500 border-2 border-background"></div>
+                <div className="w-10 h-10 rounded-full bg-orange-500 border-2 border-background"></div>
+              </div>
+              <div className="text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500">⭐⭐⭐⭐⭐</span>
+                </div>
+                <p className="text-muted-foreground">
+                  <strong className="text-foreground">50,000+</strong> students learning smarter
+                </p>
+              </div>
             </div>
           </div>
           
