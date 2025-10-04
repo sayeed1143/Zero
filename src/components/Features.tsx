@@ -6,49 +6,49 @@ const features = [
     icon: Mic,
     title: "Voice-First AI Tutor",
     description:
-      "Speak naturally and EduVoice transcribes with Whisper and answers using expressive ElevenLabs or GPT-4o mini voices.",
+      "Simply speak your questions. AI listens, understands, and responds with both voice playback and visual explanations.",
     color: "bg-gradient-to-br from-primary via-primary/80 to-accent",
   },
   {
     icon: Network,
     title: "Visual Learning Canvas",
     description:
-      "Auto-generated mind maps reveal concept connections, letting you drag, reorganize, and explore complex ideas interactively.",
+      "Auto-generated mind maps and concept connections reveal relationships between topics in an interactive canvas.",
     color: "bg-gradient-to-br from-secondary via-primary/40 to-primary",
   },
   {
     icon: FileCheck,
     title: "Smart Test Generator",
     description:
-      "GPT-4 Turbo and Mixtral craft adaptive quizzes that pinpoint knowledge gaps and supply instant explanations for every answer.",
+      "AI creates personalized quizzes from your study materials, identifies weak areas, and generates targeted practice.",
     color: "bg-gradient-to-br from-primary via-accent to-primary",
   },
   {
     icon: FileUp,
     title: "Multi-Modal Input",
     description:
-      "Upload PDFs, images, handwritten notes, audio clips, or YouTube links—EduVoice extracts, explains, and visualizes it all.",
+      "Upload PDFs, images, handwritten notes, or YouTube links—EduVoice extracts, explains, and visualizes everything.",
     color: "bg-gradient-to-br from-accent via-primary/30 to-secondary",
   },
   {
     icon: Globe,
     title: "50+ Languages",
     description:
-      "Learn in your native language with real-time translation and bilingual voice playback, powered by Gemini and Claude models.",
+      "Learn in your native language with real-time translation and voice support across 50+ languages.",
     color: "bg-gradient-to-br from-primary/80 via-primary to-accent",
   },
   {
     icon: BarChart3,
     title: "Progress Tracking",
     description:
-      "Rich analytics trace mastery over time, highlighting wins, struggles, and the exact resources to revisit next.",
+      "Monitor your learning journey with detailed analytics, insights, and mastery streaks.",
     color: "bg-gradient-to-br from-secondary via-primary/50 to-primary",
   },
   {
     icon: Download,
     title: "Export Anywhere",
     description:
-      "Send mind maps, quizzes, notes, and narrated lessons to PDF, PNG, or LMS-ready formats with one click.",
+      "Download mind maps, quizzes, and notes as PDF, PNG, or LMS-ready files—export anywhere in seconds.",
     color: "bg-gradient-to-br from-primary via-accent to-secondary",
   },
 ];

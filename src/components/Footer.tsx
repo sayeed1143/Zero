@@ -13,7 +13,7 @@ const Footer = () => {
               <span className="text-xl font-semibold text-foreground">EduVoice AI</span>
             </div>
             <p className="text-muted-foreground text-sm">
-              Your AI-powered workspace for serious productivity
+              Voice-first, visual-first AI tutor that listens, explains, quizzes, and exports everything you learn.
             </p>
           </div>
           

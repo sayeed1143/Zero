@@ -9,10 +9,10 @@ const plans = [
     period: "forever",
     description: "Perfect for getting started",
     features: [
-      "Core workspace features",
-      "Limited AI queries per month",
-      "Up to 3 collaborators",
-      "Basic exports",
+      "Voice-first chat responses powered by GPT-4 Turbo",
+      "Daily visual mind maps and concept canvas (3 per day)",
+      "Smart quiz generator with targeted practice",
+      "Multilingual answers in 50+ languages",
     ],
     cta: "Get Started",
     highlighted: false,
@@ -23,11 +23,11 @@ const plans = [
     period: "/month",
     description: "For serious professionals",
     features: [
-      "Unlimited workspace",
-      "Unlimited AI queries",
-      "Advanced exports",
-      "Priority support",
-      "Custom branding",
+      "Unlimited voice + visual tutoring sessions",
+      "Unlimited adaptive quizzes and targeted drills",
+      "Advanced exports (PDF, PNG, LMS packages)",
+      "Progress analytics and learning streaks",
+      "Priority support with dedicated researcher",
     ],
     cta: "Start Free Trial",
     highlighted: true,
@@ -39,11 +39,11 @@ const plans = [
     description: "For growing teams",
     features: [
       "Everything in Pro",
-      "Team management",
-      "Admin console",
-      "Analytics dashboard",
-      "SSO authentication",
-      "Dedicated support",
+      "Shared canvas spaces with roles",
+      "Centralized progress analytics dashboards",
+      "Custom model routing per subject",
+      "SSO authentication and admin console",
+      "Dedicated customer success engineer",
     ],
     cta: "Contact Sales",
     highlighted: false,
@@ -56,10 +56,10 @@ const Pricing = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Choose Your
+            Choose Your Voice-First AI Tutor Plan
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Start free, upgrade when you need more. All plans include multilingual support.
+            All plans include voice answers, visual mind maps, adaptive quizzes, exports, and OpenRouter-backed translation in 50+ languages.
           </p>
         </div>
         

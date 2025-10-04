@@ -1,25 +1,28 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="faviconTitle faviconDesc">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="faviconTitle faviconDesc">
   <title id="faviconTitle">EduVoice AI Favicon</title>
-  <desc id="faviconDesc">Gradient orb with microphone and connected nodes representing voice-first learning.</desc>
+  <desc id="faviconDesc">Gradient speech orb with microphone silhouette and neural wave.</desc>
   <defs>
     <linearGradient id="faviconGradient" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#6366F1" />
-      <stop offset="0.5" stop-color="#7C3AED" />
-      <stop offset="1" stop-color="#0EA5E9" />
+      <stop offset="0" stop-color="#4C1D95" />
+      <stop offset="0.4" stop-color="#7C3AED" />
+      <stop offset="0.75" stop-color="#2563EB" />
+      <stop offset="1" stop-color="#06B6D4" />
     </linearGradient>
+    <radialGradient id="faviconGlow" cx="32" cy="32" r="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.24" />
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0" />
+    </radialGradient>
   </defs>
 
   <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#faviconGradient)" />
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#faviconGlow)" />
 
-  <g transform="translate(16 16)">
-    <rect x="10" y="6" width="20" height="26" rx="9" fill="#F8FAFC" opacity="0.92" />
-    <rect x="15" y="30" width="10" height="8" rx="3.5" fill="#F8FAFC" opacity="0.85" />
-    <path d="M10 20C10 25.5228 14.4772 30 20 30C25.5228 30 30 25.5228 30 20V16H26V20C26 23.3137 23.3137 26 20 26C16.6863 26 14 23.3137 14 20V16H10V20Z" fill="#E2E8F0" />
-    <path d="M6 18C6 12.4772 10.4772 8 16 8" stroke="#C4B5FD" stroke-width="2" stroke-linecap="round" />
-    <path d="M34 8C39.5228 8 44 12.4772 44 18" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" />
-    <circle cx="6" cy="18" r="3" fill="#A855F7" opacity="0.85" />
-    <circle cx="44" cy="18" r="3" fill="#22D3EE" opacity="0.85" />
-    <circle cx="16" cy="4" r="2.8" fill="#DDD6FE" />
-    <circle cx="34" cy="4" r="2.8" fill="#67E8F9" />
-  </g>
+  <path d="M32 16c-6.627 0-12 5.373-12 12v8c0 6.627 5.373 12 12 12s12-5.373 12-12v-8c0-6.627-5.373-12-12-12Zm7 20c0 3.866-3.134 7-7 7s-7-3.134-7-7v-8c0-3.866 3.134-7 7-7s7 3.134 7 7v8Zm-9 16h4c3.866 0 7 3.134 7 7v1H24v-1c0-3.866 3.134-7 7-7Z" fill="#F8FAFC" opacity="0.95" />
+  <rect x="28" y="42" width="8" height="6" rx="2.5" fill="#E2E8F0" opacity="0.88" />
+
+  <path d="M14 30c0-8.284 6.716-15 15-15" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M50 30c0-8.284-6.716-15-15-15" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" />
+  <circle cx="13" cy="30" r="3.5" fill="#C084FC" />
+  <circle cx="51" cy="30" r="3.5" fill="#38BDF8" />
+  <path d="M17 44c7 5 14.5 7.5 23 7.5S56 49 63 44" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" opacity="0.45" />
 </svg>

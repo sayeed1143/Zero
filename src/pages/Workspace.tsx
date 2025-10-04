@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useState } from "react";
 import Canvas from "@/components/workspace/Canvas";
 import ChatInterface from "@/components/workspace/ChatInterface";
 import WorkspaceNav from "@/components/workspace/WorkspaceNav";
