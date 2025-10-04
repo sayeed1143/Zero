@@ -25,7 +25,7 @@ const createPost = (): Post => {
     category: faker.commerce.department(),
     excerpt: faker.lorem.paragraph(2),
     content: faker.lorem.paragraphs(10, '<br/><br/>'),
-    imageUrl: `https://img-wrapper.vercel.app/image?url=https://placehold.co/1200x600/111827/FFFFFF?text=${faker.lorem.word()}`,
+    imageUrl: `https://img-wrapper.vercel.app/image?url=https://img-wrapper.vercel.app/image?url=https://placehold.co/1200x600/FFFFFF/000000?text=${faker.lorem.word()}`,
     author: {
       name: faker.person.fullName(),
       avatarUrl: faker.image.avatar(),

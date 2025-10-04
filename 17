@@ -1,36 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, Zap, Bot, UploadCloud, TestTube, Users, FileType } from "lucide-react";
+import { UploadCloud, Zap, Users, Bot, FileType, BrainCircuit } from "lucide-react";
 
 const features = [
   {
-    icon: Mic,
-    title: "Voice-First AI Tutor",
-    description: "Speak your questions and get instant, natural-sounding audio and visual answers. It's like talking to a real teacher.",
-  },
-  {
-    icon: Zap,
-    title: "Visual Learning Canvas",
-    description: "Our interactive canvas automatically turns your study materials into mind maps, flowcharts, and connected ideas.",
-  },
-  {
-    icon: TestTube,
-    title: "Smart Test Generator",
-    description: "AI identifies your weak spots and creates personalized quizzes to help you master any subject. Export tests as PDFs.",
-  },
-  {
     icon: UploadCloud,
-    title: "Multi-Modal Input",
-    description: "Upload anything—PDFs, handwritten notes, images, or YouTube links. Our AI understands and explains it all.",
+    title: "Unified Content Hub",
+    description: "Bring all your documents, notes, and media into one intelligent space. Upload PDFs, images, or start from scratch.",
   },
   {
-    icon: Bot,
-    title: "Personalized AI Teacher",
-    description: "Your AI companion adapts to your learning style, whether you're a visual learner, a reader, or need things simplified.",
+    icon: BrainCircuit,
+    title: "Intelligent Visual Canvas",
+    description: "Our AI automatically generates charts, mind maps, and connections from your content, turning information into insight.",
   },
   {
     icon: Users,
-    title: "Tools for Teachers",
-    description: "Generate lesson plans, create engaging visual materials, and track student progress with a dedicated dashboard.",
+    title: "Built for Collaboration",
+    description: "Share your workspace, edit documents together, and discuss ideas in real-time with your team or study group.",
+  },
+  {
+    icon: Bot,
+    title: "Voice & Text Commands",
+    description: "Interact with your workspace naturally. Ask questions, generate content, and organize your thoughts with simple commands.",
+  },
+  {
+    icon: Zap,
+    title: "AI-Powered Insights",
+    description: "Go beyond summarization. Let the AI generate quizzes, find weak spots in your knowledge, and suggest new connections.",
   },
   {
     icon: FileType,
@@ -45,10 +40,10 @@ const Features = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            A Smarter Way to Learn
+            A Smarter Workspace
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Edu Voice AI combines the best of voice technology, visual learning, and powerful AI to create a learning experience that's faster, easier, and more effective.
+            Edu Voice AI combines powerful organizational tools with cutting-edge AI to create a workflow that's faster, easier, and more effective.
           </p>
         </div>
         
