@@ -1,15 +1,20 @@
 import { Button } from "@/components/ui/button";
 
+import { Button } from "@/components/ui/button";
+
 const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <img src="/logo.svg" alt="EduVoice AI" className="w-10 h-10" />
-            <span className="text-xl font-semibold text-foreground">EduVoice AI</span>
+          <div className="flex items-center space-x-3">
+            <img src="/logo.svg" alt="EduVoice AI" className="w-10 h-10 drop-shadow-sm" />
+            <div className="flex flex-col">
+              <span className="text-xl font-semibold text-foreground leading-none">EduVoice AI</span>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Voice-first AI tutor</span>
+            </div>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             <a href="#home" className="text-foreground hover:text-primary transition-colors">
               Home
