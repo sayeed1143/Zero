@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { messages, model = 'openai/gpt-4-turbo', temperature = 0.7, maxTokens = 2000 } = req.body;
+    const { messages, model = 'openrouter/gpt-4-turbo', temperature = 0.7, maxTokens = 2000 } = req.body;
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'Invalid request: messages array required' });
