@@ -66,21 +66,79 @@ The vite.config.ts is properly configured for Replit:
 - Configured deployment settings for autoscale with build and preview commands
 - Verified application loads correctly with EduVoice AI landing page displaying
 
-## User Preferences
-**To be updated as preferences are expressed**
+### October 4, 2025 - OpenRouter AI Integration ✅
+- **Created Vercel Serverless API Functions**:
+  - `/api/chat` - Chat and explanations (GPT-4 Turbo, Claude 3 Opus, Gemini 1.5 Pro)
+  - `/api/vision` - Image/video processing with Claude 3 Vision & Gemini Vision
+  - `/api/quiz` - Quiz generation with GPT-4 Turbo and Mixtral
+  - `/api/mindmap` - Mind map creation from AI responses
 
-## Future Development Plans
-User has requested:
-- GitHub workflow setup for CI/CD automation
-- Vercel deployment configuration
-- Futuristic UI/UX with glassmorphism design
-- PWA features
-- OpenRouter API integration for AI features
-- Dark/light mode toggle
-- Responsive mobile-first design with touch gestures
+- **Integrated AI Service Layer**:
+  - Client-side API service (`src/services/ai.ts`)
+  - Type definitions for AI requests/responses (`src/types/ai.ts`)
+  - Secure environment variable handling (OPENROUTER_API_KEY server-side only)
+
+- **Enhanced Workspace Features**:
+  - Real-time AI chat with conversation history
+  - Image upload and AI vision analysis
+  - Mind map generation that creates visual node graphs on canvas
+  - Quiz generation with formatted questions and answers
+  - Quick command buttons (Summarize, Explain, Mind Map, Quiz)
+  - Processing states and error handling with toast notifications
+
+- **Canvas Improvements**:
+  - Proper node lifecycle management (manual vs AI-generated nodes)
+  - Connection normalization for rendering links between nodes
+  - File upload integration with vision processing
+  - Preserves user-created nodes while updating AI nodes
+
+- **Branding & Assets**:
+  - Created professional EduVoice AI logo (SVG with brain/network design)
+  - Updated favicon with new logo
+  - Updated navigation with logo image
+  - Updated page metadata and Open Graph tags
+
+- **Deployment Configuration**:
+  - `vercel.json` with API routing and CORS headers
+  - `.env.example` with environment variable template
+  - `DEPLOYMENT.md` with complete deployment guide
+  - Configured for Vercel autoscale deployment
+
+## AI Models Integrated
+
+### Chat & Explanations
+- GPT-4 Turbo (`openai/gpt-4-turbo`)
+- Claude 3 Opus (`anthropic/claude-3-opus`)
+- Gemini 1.5 Pro (`google/gemini-1.5-pro-latest`)
+
+### Vision Processing
+- Claude 3 Opus (`anthropic/claude-3-opus`) - Image analysis
+- Gemini 1.5 Pro (`google/gemini-1.5-pro-latest`) - Alternative vision model
+
+### Quiz Generation
+- GPT-4 Turbo (`openai/gpt-4-turbo`) - Default quiz generator
+- Mixtral 8x22B (`mistralai/mixtral-8x22b`) - Alternative for logic-heavy quizzes
+
+## Deployment Instructions
+
+### Vercel Deployment
+1. Push code to GitHub repository
+2. Import repository to Vercel
+3. Add environment variable: `OPENROUTER_API_KEY` (get from https://openrouter.ai/keys)
+4. Deploy
+
+The app will work without the API key in Replit (shows error messages), but requires the key in Vercel for AI features to function.
+
+## Future Enhancements
+- Voice input (STT) and output (TTS) integration
+- Enhanced quiz UI with interactive answer validation
+- PDF text extraction for mind maps
+- Video analysis capabilities
+- Real-time collaboration features
+- PWA with offline support
 
 ## Notes
-- The app currently shows "EduVoice AI" branding
-- Uses Lovable tagger in development mode
-- Some React Router v7 future flag warnings (non-critical)
-- Dependencies are managed through npm (not bun)
+- API key is kept secure on server-side (Vercel functions)
+- Development mode works without API key (shows graceful errors)
+- Dependencies managed through npm (not bun)
+- React Router v7 future flag warnings (non-critical)
