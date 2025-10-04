@@ -1,27 +1,45 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<svg width="240" height="80" viewBox="0 0 240 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">EduVoice AI Logo</title>
+  <desc id="logoDesc">Gradient speech orb with microphone and connected nodes beside EduVoice AI wordmark.</desc>
   <defs>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#9333ea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    <linearGradient id="orbGradient" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366F1" />
+      <stop offset="0.5" stop-color="#7C3AED" />
+      <stop offset="1" stop-color="#0EA5E9" />
     </linearGradient>
+    <linearGradient id="textGradient" x1="100" y1="20" x2="220" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111827" />
+      <stop offset="1" stop-color="#0F172A" />
+    </linearGradient>
+    <filter id="glow" x="-10" y="-10" width="120" height="120" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feBlend in="SourceGraphic" in2="blur" mode="screen" />
+    </filter>
   </defs>
-  
-  <!-- Brain/Network Icon -->
-  <circle cx="100" cy="80" r="35" fill="url(#grad1)" opacity="0.2"/>
-  <circle cx="70" cy="100" r="15" fill="url(#grad1)"/>
-  <circle cx="130" cy="100" r="15" fill="url(#grad1)"/>
-  <circle cx="100" cy="120" r="15" fill="url(#grad1)"/>
-  <circle cx="85" cy="70" r="12" fill="url(#grad1)"/>
-  <circle cx="115" cy="70" r="12" fill="url(#grad1)"/>
-  
-  <!-- Connections -->
-  <line x1="70" y1="100" x2="85" y2="70" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
-  <line x1="130" y1="100" x2="115" y2="70" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
-  <line x1="70" y1="100" x2="100" y2="120" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
-  <line x1="130" y1="100" x2="100" y2="120" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
-  <line x1="85" y1="70" x2="115" y2="70" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
-  
-  <!-- Voice Wave -->
-  <path d="M 40 150 Q 60 140, 80 150 T 120 150 T 160 150" stroke="url(#grad1)" stroke-width="4" fill="none" opacity="0.8"/>
-  <path d="M 45 160 Q 65 155, 85 160 T 125 160 T 165 160" stroke="url(#grad1)" stroke-width="3" fill="none" opacity="0.5"/>
+
+  <g filter="url(#glow)">
+    <rect x="0" y="0" width="80" height="80" rx="26" fill="url(#orbGradient)" />
+  </g>
+
+  <g transform="translate(16 14)">
+    <rect x="18" y="10" width="28" height="36" rx="12" fill="#F8FAFC" opacity="0.9" />
+    <rect x="25" y="44" width="14" height="10" rx="4" fill="#F8FAFC" opacity="0.85" />
+    <path d="M18 28C18 36.8366 24.8203 44 33.5 44C42.1797 44 49 36.8366 49 28V22H43V28C43 33.5228 38.7467 38 33.5 38C28.2533 38 24 33.5228 24 28V22H18V28Z" fill="#E2E8F0" />
+    <path d="M32 56C32 59.3137 29.3137 62 26 62H41C37.6863 62 35 59.3137 35 56V54H32V56Z" fill="#F8FAFC" opacity="0.7" />
+    <path d="M11 26C11 18.268 17.268 12 25 12" stroke="#A855F7" stroke-width="2" stroke-linecap="round" />
+    <path d="M52 12C59.732 12 66 18.268 66 26" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" />
+    <circle cx="10" cy="26" r="4" fill="#A855F7" opacity="0.8" />
+    <circle cx="66" cy="26" r="4" fill="#22D3EE" opacity="0.8" />
+    <circle cx="25" cy="8" r="3.5" fill="#C4B5FD" />
+    <circle cx="52" cy="8" r="3.5" fill="#67E8F9" />
+  </g>
+
+  <g transform="translate(95 20)">
+    <text x="0" y="22" fill="url(#textGradient)" font-family="'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="28">
+      EduVoice
+    </text>
+    <text x="0" y="46" fill="#4B5563" font-family="'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="16" letter-spacing="0.12em">
+      AI LEARNING COPILOT
+    </text>
+  </g>
 </svg>
