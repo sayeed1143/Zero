@@ -14,9 +14,10 @@ interface CanvasNode {
 
 interface CanvasProps {
   items: any[];
+  onFileUpload?: (file: File) => void;
 }
 
-const Canvas = ({ items }: CanvasProps) => {
+const Canvas = ({ items, onFileUpload }: CanvasProps) => {
   const [nodes, setNodes] = useState<CanvasNode[]>([]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -31,30 +32,50 @@ const Canvas = ({ items }: CanvasProps) => {
   useEffect(() => {
     if (items && items.length > 0) {
       setNodes(prev => {
-        const existingManualNodes = prev.filter(node => !node.id.startsWith('item-'));
+        const userNodes = prev.filter(node => 
+          node.id.startsWith('manual-') || node.id.startsWith('file-')
+        );
         
         const itemNodes: CanvasNode[] = items.map((item, index) => {
-          const existingNode = prev.find(n => n.id === `item-${item.id || index}`);
+          const existingNode = prev.find(n => n.id === item.id);
           if (existingNode) {
-            return existingNode;
+            return {
+              ...existingNode,
+              title: item.title || existingNode.title,
+              type: item.type || existingNode.type,
+              connections: normalizeConnections(item.connections || item.children || existingNode.connections)
+            };
           }
           
           return {
-            id: `item-${item.id || index}`,
-            type: 'file',
-            title: item.name || `Item ${index + 1}`,
-            x: 100 + (index % 3) * 200,
-            y: 100 + Math.floor(index / 3) * 200,
-            connections: []
+            id: item.id || `ai-${Date.now()}-${index}`,
+            type: item.type || 'text',
+            title: item.title || item.name || `Node ${index + 1}`,
+            x: item.x !== undefined ? item.x : 100 + (index % 4) * 200,
+            y: item.y !== undefined ? item.y : 100 + Math.floor(index / 4) * 200,
+            connections: normalizeConnections(item.connections || item.children || [])
           };
         });
         
-        return [...existingManualNodes, ...itemNodes];
+        return [...userNodes, ...itemNodes];
       });
     } else if (items && items.length === 0) {
-      setNodes(prev => prev.filter(node => !node.id.startsWith('item-')));
+      setNodes(prev => prev.filter(node => 
+        node.id.startsWith('manual-') || node.id.startsWith('file-')
+      ));
     }
   }, [items]);
+
+  const normalizeConnections = (connections: any): string[] => {
+    if (!Array.isArray(connections)) return [];
+    return connections
+      .map(conn => {
+        if (typeof conn === 'string') return conn;
+        if (conn && typeof conn === 'object' && conn.id) return conn.id;
+        return null;
+      })
+      .filter((id): id is string => id !== null);
+  };
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.1, 2));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.1, 0.5));
@@ -123,7 +144,7 @@ const Canvas = ({ items }: CanvasProps) => {
 
   const handleAddNode = () => {
     const newNode: CanvasNode = {
-      id: `node-${Date.now()}`,
+      id: `manual-${Date.now()}`,
       type: 'text',
       title: 'New Idea',
       x: Math.random() * 300 + 150,
@@ -167,28 +188,32 @@ const Canvas = ({ items }: CanvasProps) => {
     
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (rect) {
-        const x = (e.clientX - rect.left - pan.x) / zoom;
-        const y = (e.clientY - rect.top - pan.y) / zoom;
-        
-        const newNodes: CanvasNode[] = files.map((file, index) => {
-          let type: CanvasNode['type'] = 'file';
-          if (file.type.startsWith('image/')) type = 'image';
-          else if (file.type.includes('pdf') || file.type.includes('document')) type = 'text';
+      if (onFileUpload && files[0].type.startsWith('image/')) {
+        onFileUpload(files[0]);
+      } else {
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (rect) {
+          const x = (e.clientX - rect.left - pan.x) / zoom;
+          const y = (e.clientY - rect.top - pan.y) / zoom;
           
-          return {
-            id: `file-${Date.now()}-${index}`,
-            type,
-            title: file.name,
-            x: x + index * 20,
-            y: y + index * 20,
-            connections: []
-          };
-        });
-        
-        setNodes(prev => [...prev, ...newNodes]);
-        toast.success(`${files.length} file(s) added to canvas!`);
+          const newNodes: CanvasNode[] = files.map((file, index) => {
+            let type: CanvasNode['type'] = 'file';
+            if (file.type.startsWith('image/')) type = 'image';
+            else if (file.type.includes('pdf') || file.type.includes('document')) type = 'text';
+            
+            return {
+              id: `file-${Date.now()}-${index}`,
+              type,
+              title: file.name,
+              x: x + index * 20,
+              y: y + index * 20,
+              connections: []
+            };
+          });
+          
+          setNodes(prev => [...prev, ...newNodes]);
+          toast.success(`${files.length} file(s) added to canvas!`);
+        }
       }
     }
   };
