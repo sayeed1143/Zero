@@ -101,7 +101,7 @@ const Workspace = () => {
   }, [stopVoicePlayback]);
 
   const handleSendMessage = async (message: string, command?: string) => {
-    if (isProcessing) {
+    if (isProcessing || isTranscribing) {
       return;
     }
 
