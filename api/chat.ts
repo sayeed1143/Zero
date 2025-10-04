@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { DEFAULT_FEATURE_MODELS } from '../src/types/ai';
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -15,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { messages, model = 'openai/gpt-4-turbo', temperature = 0.7, maxTokens = 2000 } = req.body;
+    const { messages, model = DEFAULT_FEATURE_MODELS.chat, temperature = 0.7, maxTokens = 2000 } = req.body;
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'Invalid request: messages array required' });

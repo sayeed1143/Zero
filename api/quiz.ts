@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { DEFAULT_FEATURE_MODELS } from '../src/types/ai';
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -15,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { content, numQuestions = 5, difficulty = 'medium', model = 'openai/gpt-4-turbo' } = req.body;
+    const { content, numQuestions = 5, difficulty = 'medium', model = DEFAULT_FEATURE_MODELS.quiz } = req.body;
 
     if (!content) {
       return res.status(400).json({ error: 'Invalid request: content required' });

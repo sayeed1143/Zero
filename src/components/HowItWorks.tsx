@@ -5,20 +5,23 @@ import step3Image from "@/assets/step3-collaborate.png";
 const steps = [
   {
     number: "1",
-    title: "Upload or create content",
-    description: "Start by uploading documents, notes, or creating new content directly in your workspace.",
+    title: "Talk or drop in your study materials",
+    description:
+      "Start with your voice, PDFs, images, or YouTube links. Whisper and Gemini handle transcription, translation, and content extraction instantly.",
     image: step1Image,
   },
   {
     number: "2",
-    title: "Organize and visualize with AI",
-    description: "Let AI help you structure information with smart categorization and visual tools.",
+    title: "Watch EduVoice build visual explanations",
+    description:
+      "Claude 3 Opus and Gemini 1.5 Pro weave mind maps, diagrams, and concept links so you can grasp any topic at a glance.",
     image: step2Image,
   },
   {
     number: "3",
-    title: "Share and collaborate",
-    description: "Invite your team, share insights, and work together in real-time.",
+    title: "Listen, practice, and export",
+    description:
+      "Hear natural voice answers, generate adaptive quizzes with GPT-4 Turbo or Mixtral, and export every insight to your favourite tools.",
     image: step3Image,
   },
 ];
@@ -29,20 +32,18 @@ const HowItWorks = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            How <span className="ml-12">Works</span>
+            How EduVoice AI Works
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Transform your learning experience in three simple steps
+            Three steps from spoken question to personalized mastery plan.
           </p>
         </div>
-        
+
         <div className="space-y-20">
           {steps.map((step, index) => (
-            <div 
-              key={index} 
-              className={`grid lg:grid-cols-2 gap-12 items-center ${
-                index % 2 === 1 ? "lg:flex-row-reverse" : ""
-              }`}
+            <div
+              key={index}
+              className={`grid lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
             >
               <div className={`space-y-6 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary text-primary-foreground rounded-full text-xl font-bold">
@@ -55,10 +56,10 @@ const HowItWorks = () => {
                   {step.description}
                 </p>
               </div>
-              
+
               <div className={index % 2 === 1 ? "lg:order-1" : ""}>
-                <img 
-                  src={step.image} 
+                <img
+                  src={step.image}
                   alt={step.title}
                   className="w-full rounded-2xl shadow-xl"
                 />
