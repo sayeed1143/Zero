@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-workspace.png";
 
 const Hero = () => {
@@ -15,13 +16,17 @@ const Hero = () => {
               Collaborate, organize, analyze, and visualize—powered by state-of-the-art AI.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="rounded-full">
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-full">
-                See Demo
-              </Button>
+              <Link to="/workspace">
+                <Button size="lg" className="rounded-full">
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/workspace">
+                <Button size="lg" variant="outline" className="rounded-full">
+                  See Demo
+                </Button>
+              </Link>
             </div>
           </div>
           
