@@ -13,7 +13,7 @@ const Hero = () => {
               <span className="text-sm font-medium">✨ AI-Powered Learning Revolution</span>
             </div>
             <h1 className="text-5xl lg:text-7xl font-bold text-foreground leading-tight">
-              Meet Kuse AI
+              Meet EduVoice AI
             </h1>
             <p className="text-2xl font-semibold text-foreground">
               The Talking Visual Learning Platform

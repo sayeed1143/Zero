@@ -8,9 +8,9 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">K</span>
+                <span className="text-primary-foreground font-bold text-lg">E</span>
               </div>
-              <span className="text-xl font-semibold text-foreground">Kuse AI</span>
+              <span className="text-xl font-semibold text-foreground">EduVoice AI</span>
             </div>
             <p className="text-muted-foreground text-sm">
               Your AI-powered workspace for serious productivity
@@ -49,7 +49,7 @@ const Footer = () => {
         
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © 2025 Kuse AI. All rights reserved.
+            © 2025 EduVoice AI. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <a href="#twitter" className="text-muted-foreground hover:text-primary transition-colors">
