@@ -12,7 +12,7 @@ const Workspace = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-secondary/10">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-background via-secondary/10 to-primary/5">
       <WorkspaceNav />
       <div className="flex-1 flex flex-col relative overflow-hidden">
         <Canvas items={canvasItems} />
