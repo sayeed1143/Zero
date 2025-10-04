@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { content, numQuestions = 5, difficulty = 'medium', model = 'openai/gpt-4-turbo' } = req.body;
+    const { content, numQuestions = 5, difficulty = 'medium', model = 'mistral/mixtral-8x22b' } = req.body;
 
     if (!content) {
       return res.status(400).json({ error: 'Invalid request: content required' });
