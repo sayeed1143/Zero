@@ -6,19 +6,19 @@ import heroImage from "@/assets/hero-workspace.png";
 const heroHighlights = [
   {
     icon: Mic,
-    label: "Simply speak in 50+ languages—EduVoice understands",
+    label: "Simply speak your questions—AI listens, understands, and answers with voice plus visuals.",
   },
   {
     icon: Network,
-    label: "Live mind maps and visual concept connections",
+    label: "Auto-generated mind maps reveal concept connections in an interactive canvas.",
   },
   {
     icon: BarChart3,
-    label: "Personalized quizzes that target weak spots",
+    label: "Personalized quizzes identify weak areas and generate targeted practice.",
   },
   {
     icon: Download,
-    label: "Export audio replies, maps, and notes anywhere",
+    label: "Download mind maps, quizzes, and notes as PDF, PNG, or shareable links.",
   },
 ];
 
@@ -35,10 +35,10 @@ const Hero = () => {
               Speak. See. Master instantly.
             </h1>
             <p className="text-xl font-semibold text-foreground">
-              EduVoice AI listens to your voice, responds out loud, and turns ideas into interactive visuals.
+              Voice-first tutoring meets visual learning—powered by GPT-4 Turbo, Claude 3 Opus, and Gemini 1.5 Pro via OpenRouter.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Ask questions naturally, upload any study material, and watch the AI generate mind maps, step-by-step explanations, and adaptive quizzes in real time.
+              Simply speak, or drop in PDFs, images, handwritten notes, or YouTube links. EduVoice extracts every insight, builds interactive mind maps, and delivers adaptive practice with real-time narration in 50+ languages.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/workspace">
