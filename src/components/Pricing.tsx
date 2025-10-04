@@ -56,10 +56,10 @@ const Pricing = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Choose Your
+            Choose Your Voice-First AI Tutor Plan
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Start free, upgrade when you need more. All plans include multilingual support.
+            All plans include voice answers, visual mind maps, adaptive quizzes, exports, and OpenRouter-backed translation in 50+ languages.
           </p>
         </div>
         
