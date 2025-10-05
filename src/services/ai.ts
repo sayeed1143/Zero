@@ -25,11 +25,23 @@ export class AIService {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to get AI response");
+        const errorText = await response.text();
+        let errorMsg = "Failed to get AI response";
+        try {
+          const error = JSON.parse(errorText);
+          errorMsg = error.message || error.error || errorMsg;
+        } catch {
+          errorMsg = errorText || errorMsg;
+        }
+        throw new Error(errorMsg);
       }
 
-      return await response.json();
+      const responseText = await response.text();
+      if (!responseText) {
+        throw new Error("Empty response from server");
+      }
+      
+      return JSON.parse(responseText);
     } catch (error: any) {
       console.error("AI chat error:", error);
       throw new Error(error.message || "Failed to communicate with AI");

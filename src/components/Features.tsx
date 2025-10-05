@@ -7,49 +7,49 @@ const features = [
     title: "Voice-First AI Tutor",
     description:
       "Simply speak your questions. AI listens, understands, and responds with both voice playback and visual explanations.",
-    color: "bg-gradient-to-br from-primary via-primary/80 to-accent",
+    color: "bg-gradient-to-br from-foreground via-foreground/90 to-foreground/80",
   },
   {
     icon: Network,
     title: "Visual Learning Canvas",
     description:
       "Auto-generated mind maps and concept connections reveal relationships between topics in an interactive canvas.",
-    color: "bg-gradient-to-br from-secondary via-primary/40 to-primary",
+    color: "bg-gradient-to-br from-muted-foreground via-foreground/70 to-foreground/60",
   },
   {
     icon: FileCheck,
     title: "Smart Test Generator",
     description:
       "AI creates personalized quizzes from your study materials, identifies weak areas, and generates targeted practice.",
-    color: "bg-gradient-to-br from-primary via-accent to-primary",
+    color: "bg-gradient-to-br from-foreground/80 via-foreground/70 to-muted-foreground",
   },
   {
     icon: FileUp,
     title: "Multi-Modal Input",
     description:
       "Upload PDFs, images, handwritten notes, or YouTube links—EduVoice extracts, explains, and visualizes everything.",
-    color: "bg-gradient-to-br from-accent via-primary/30 to-secondary",
+    color: "bg-gradient-to-br from-foreground/70 via-muted-foreground to-foreground/60",
   },
   {
     icon: Globe,
     title: "50+ Languages",
     description:
       "Learn in your native language with real-time translation and voice support across 50+ languages.",
-    color: "bg-gradient-to-br from-primary/80 via-primary to-accent",
+    color: "bg-gradient-to-br from-foreground/90 via-foreground/80 to-foreground/70",
   },
   {
     icon: BarChart3,
     title: "Progress Tracking",
     description:
       "Monitor your learning journey with detailed analytics, insights, and mastery streaks.",
-    color: "bg-gradient-to-br from-secondary via-primary/50 to-primary",
+    color: "bg-gradient-to-br from-muted-foreground via-foreground/65 to-foreground/75",
   },
   {
     icon: Download,
     title: "Export Anywhere",
     description:
       "Download mind maps, quizzes, and notes as PDF, PNG, or LMS-ready files—export anywhere in seconds.",
-    color: "bg-gradient-to-br from-primary via-accent to-secondary",
+    color: "bg-gradient-to-br from-foreground/85 via-foreground/75 to-muted-foreground",
   },
 ];
 
@@ -71,12 +71,15 @@ const Features = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <Card key={index} className="border-border/60 bg-background/80 backdrop-blur hover:-translate-y-1 transition-transform duration-200">
+            <Card 
+              key={index} 
+              className="group border-2 border-border/40 bg-background hover:border-foreground/20 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+            >
               <CardContent className="p-6 space-y-4">
-                <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center shadow-lg text-primary-foreground`}> 
-                  <feature.icon className="w-7 h-7" />
+                <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center shadow-xl border border-border/20 group-hover:scale-110 transition-transform duration-300`}> 
+                  <feature.icon className="w-7 h-7 text-background" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-foreground/90 transition-colors">
                   {feature.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">

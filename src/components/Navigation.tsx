@@ -14,24 +14,24 @@ const Navigation = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#home" className="text-foreground hover:text-primary transition-colors">
+            <a href="#home" className="text-foreground hover:text-foreground/70 font-medium transition-colors">
               Home
             </a>
-            <a href="#solutions" className="text-foreground hover:text-primary transition-colors">
+            <a href="#solutions" className="text-foreground hover:text-foreground/70 font-medium transition-colors">
               Solutions
             </a>
-            <a href="#pricing" className="text-foreground hover:text-primary transition-colors">
+            <a href="#pricing" className="text-foreground hover:text-foreground/70 font-medium transition-colors">
               Pricing
             </a>
-            <a href="#docs" className="text-foreground hover:text-primary transition-colors">
+            <a href="#docs" className="text-foreground hover:text-foreground/70 font-medium transition-colors">
               Docs
             </a>
-            <a href="#blog" className="text-foreground hover:text-primary transition-colors">
+            <a href="#blog" className="text-foreground hover:text-foreground/70 font-medium transition-colors">
               Blog
             </a>
           </div>
 
-          <Button variant="outline" className="rounded-full">
+          <Button variant="outline" className="rounded-full border-2 border-foreground/20 hover:bg-foreground hover:text-background font-semibold transition-all">
             Sign In
           </Button>
         </div>
