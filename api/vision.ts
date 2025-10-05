@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { DEFAULT_FEATURE_MODELS, REFERER } from './constants.js';
+import { DEFAULT_FEATURE_MODELS, REFERER, FALLBACK_VISION_MODEL } from './constants.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -40,7 +40,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     ];
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    let selectedModel = model;
+    let response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -49,17 +50,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'X-Title': 'EduVoice AI',
       },
       body: JSON.stringify({
-        model,
+        model: selectedModel,
         messages,
         max_tokens: 2000,
       }),
     });
 
+    if (!response.ok && selectedModel !== FALLBACK_VISION_MODEL) {
+      try {
+        selectedModel = FALLBACK_VISION_MODEL;
+        response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': REFERER,
+            'X-Title': 'EduVoice AI',
+          },
+          body: JSON.stringify({
+            model: selectedModel,
+            messages,
+            max_tokens: 2000,
+          }),
+        });
+      } catch {}
+    }
+
     if (!response.ok) {
-      const error = await response.json();
-      return res.status(response.status).json({ 
+      const text = await response.text();
+      return res.status(response.status || 500).json({
         error: 'OpenRouter API error',
-        details: error 
+        details: text
       });
     }
 

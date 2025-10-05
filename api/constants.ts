@@ -8,6 +8,9 @@ export const DEFAULT_FEATURE_MODELS = {
   speechCapture: 'openai/whisper-1',
 };
 
+export const FALLBACK_TEXT_MODEL = 'openai/gpt-4o-mini';
+export const FALLBACK_VISION_MODEL = 'openai/gpt-4o-mini';
+
 export const REFERER = (() => {
   const vercelUrl = process.env.VERCEL_URL;
   const siteUrl = process.env.SITE_URL;
