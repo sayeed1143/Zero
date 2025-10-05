@@ -40,21 +40,18 @@ export default function BrandLogo({ size = 40, className = "" }: Props) {
       {/* Center spine */}
       <line x1="32" y1="12" x2="32" y2="46" stroke="hsl(var(--foreground))" strokeOpacity="0.3" strokeWidth="1.5" />
 
-      {/* Microphone group with subtle float */}
-      <g className="logo-float" transform="translate(0,-2)">
+      {/* Microphone above the book with float and waves */}
+      <g className="logo-float" transform="translate(0,0)">
+        {/* Waves behind mic */}
+        <circle cx="32" cy="12" r="7" fill="none" stroke="hsl(var(--foreground))" strokeOpacity="0.25" strokeWidth="1.5" className="logo-wave wave1" />
+        <circle cx="32" cy="12" r="10" fill="none" stroke="hsl(var(--foreground))" strokeOpacity="0.18" strokeWidth="1.5" className="logo-wave wave2" />
         {/* Mic body */}
-        <rect x="28" y="20" width="8" height="14" rx="4" fill="hsl(var(--foreground))" />
+        <rect x="28" y="4" width="8" height="12" rx="4" fill="hsl(var(--foreground))" />
         {/* Mic grill lines */}
-        <line x1="30" y1="23" x2="34" y2="23" stroke="hsl(var(--background))" strokeOpacity="0.6" strokeWidth="1" />
-        <line x1="30" y1="26" x2="34" y2="26" stroke="hsl(var(--background))" strokeOpacity="0.6" strokeWidth="1" />
-        <line x1="30" y1="29" x2="34" y2="29" stroke="hsl(var(--background))" strokeOpacity="0.6" strokeWidth="1" />
-        {/* Mic stem */}
-        <path d="M32 34v4" stroke="hsl(var(--foreground))" strokeWidth="2" strokeLinecap="round" />
-        {/* Mic base */}
-        <path d="M26 40h12" stroke="hsl(var(--foreground))" strokeWidth="2" strokeLinecap="round" />
-        {/* Small sound waves */}
-        <path d="M24 26c2-2 2-2 4-2" stroke="hsl(var(--foreground))" strokeOpacity="0.5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        <path d="M40 26c-2-2-2-2-4-2" stroke="hsl(var(--foreground))" strokeOpacity="0.5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <line x1="30" y1="7" x2="34" y2="7" stroke="hsl(var(--background))" strokeOpacity="0.6" strokeWidth="1" />
+        <line x1="30" y1="10" x2="34" y2="10" stroke="hsl(var(--background))" strokeOpacity="0.6" strokeWidth="1" />
+        {/* Short stem that ends just above the book */}
+        <path d="M32 16v4" stroke="hsl(var(--foreground))" strokeWidth="2" strokeLinecap="round" />
       </g>
     </svg>
   );
