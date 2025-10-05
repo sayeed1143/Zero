@@ -19,11 +19,11 @@ const WorkspaceNav = () => {
 
   return (
     <nav className="bg-background/95 backdrop-blur-xl border-b-2 border-border/40 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg">
-      <Link to="/" className="flex items-center gap-3 group">
-        <img src="/logo.svg" alt="EduVoice AI" className="h-10 w-auto drop-shadow-md group-hover:scale-105 transition-transform" />
-        <div className="flex flex-col">
+      <Link to="/" className="flex items-center gap-3 group flex-nowrap">
+        <img src="/logo.svg" alt="EduVoice AI logo" className="h-10 w-auto drop-shadow-md group-hover:scale-105 transition-transform" />
+        <div className="flex flex-col whitespace-nowrap">
           <span className="font-bold text-xl text-foreground leading-none">EduVoice AI</span>
-          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Voice-first learning workspace</span>
+          <span className="text-xs font-medium text-muted-foreground leading-none">Voice-first AI tutor</span>
         </div>
       </Link>
       
