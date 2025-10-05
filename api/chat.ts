@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.VERCEL_URL || 'http://localhost:5000',
+        'HTTP-Referer': REFERER,
         'X-Title': 'EduVoice AI',
       },
       body: JSON.stringify({
