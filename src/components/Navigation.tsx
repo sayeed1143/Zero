@@ -6,7 +6,10 @@ const Navigation = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <img src="/logo.svg" alt="EduVoice AI" className="w-10 h-10 drop-shadow-sm" />
+            <div className="flex items-center gap-2">
+              <img src="/logo.svg" alt="EduVoice AI logo" className="w-10 h-10 drop-shadow-sm" />
+              <img src="/favicon.svg" alt="EduVoice AI favicon" className="w-6 h-6 drop-shadow-sm" />
+            </div>
             <div className="flex flex-col">
               <span className="text-xl font-semibold text-foreground leading-none">EduVoice AI</span>
               <span className="text-xs uppercase tracking-widest text-muted-foreground">Voice-first AI tutor</span>
