@@ -102,6 +102,15 @@ export const AI_MODELS: Record<AIModelCategory, AIModelOption[]> = {
   ],
   vision: [
     {
+      id: 'openai/gpt-4o-mini',
+      label: 'GPT-4o mini (Vision)',
+      provider: 'OpenAI via OpenRouter',
+      via: 'openrouter',
+      useCases: ['image understanding', 'diagram interpretation'],
+      capabilities: ['image'],
+      documentationUrl: 'https://openrouter.ai/models/openai/gpt-4o-mini',
+    },
+    {
       id: 'anthropic/claude-3-opus:vision',
       label: 'Claude 3 Opus Vision',
       provider: 'Anthropic via OpenRouter',
@@ -194,7 +203,7 @@ export const DEFAULT_FEATURE_MODELS: Record<AIModelFeature, string> = {
   explanations: 'openrouter/gpt-4-turbo',
   mindmap: 'anthropic/claude-3-opus',
   quiz: 'openrouter/gpt-4-turbo',
-  vision: 'anthropic/claude-3-opus:vision',
+  vision: 'openai/gpt-4o-mini',
   voiceResponse: 'elevenlabs/eleven_multilingual_v2',
   speechCapture: 'openai/whisper-1',
 };
