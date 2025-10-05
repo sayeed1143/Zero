@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
+import BrandLogo from "@/components/BrandLogo";
 
 const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center flex-nowrap">
+          <div className="flex items-center gap-3 flex-nowrap">
+            <BrandLogo size={40} className="drop-shadow-sm" />
             <div className="flex flex-col whitespace-nowrap">
               <span className="text-xl font-semibold text-foreground leading-none">EduVoice AI</span>
               <span className="text-xs text-muted-foreground leading-none">Voice-first AI tutor</span>
