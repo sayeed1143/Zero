@@ -2,6 +2,7 @@ import { Home, FileText, Settings, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import BrandLogo from "@/components/BrandLogo";
 
 const WorkspaceNav = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -20,6 +21,7 @@ const WorkspaceNav = () => {
   return (
     <nav className="bg-background/95 backdrop-blur-xl border-b-2 border-border/40 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg">
       <Link to="/" className="flex items-center gap-3 group flex-nowrap">
+        <BrandLogo size={36} className="drop-shadow-sm" />
         <div className="flex flex-col whitespace-nowrap">
           <span className="font-bold text-xl text-foreground leading-none">EduVoice AI</span>
           <span className="text-xs font-medium text-muted-foreground leading-none">Voice-first AI tutor</span>
