@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { DEFAULT_FEATURE_MODELS } from './constants.js';
+import { DEFAULT_FEATURE_MODELS, REFERER } from './constants.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -46,7 +46,7 @@ The correctAnswer should be the index (0-3) of the correct option.`;
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.VERCEL_URL || 'http://localhost:5000',
+        'HTTP-Referer': REFERER,
         'X-Title': 'EduVoice AI',
       },
       body: JSON.stringify({
