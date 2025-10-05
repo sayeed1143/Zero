@@ -1,7 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { DEFAULT_FEATURE_MODELS } from '../src/types/ai';
+import { DEFAULT_FEATURE_MODELS } from './constants';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
