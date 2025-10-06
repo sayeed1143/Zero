@@ -315,10 +315,10 @@ const Workspace = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background">
-      <WorkspaceNav />
+      <WorkspaceNav onSelectPdf={handlePdfUpload} />
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="flex-1 bg-white relative">
-          <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+          <Canvas items={canvasItems} onFileUpload={handleFileUpload} onPdfUpload={handlePdfUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
 
           {/* Floating control to open Learning Path visualization */}
           <div className="absolute top-6 right-6 z-20">
