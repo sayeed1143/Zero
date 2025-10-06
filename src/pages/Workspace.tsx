@@ -111,19 +111,42 @@ const Workspace = () => {
         <p className="text-sm text-muted-foreground max-w-xl">
           Ask freely, breathe deeply, and let insight unfold at your own rhythm.
         </p>
-        <div className="mt-3 flex items-center gap-3">
-          <label htmlFor="userRole" className="text-xs text-muted-foreground">Role</label>
-          <select
-            id="userRole"
-            className="role-selector rounded-xl border border-border/50 bg-background px-3 py-2 text-sm shadow-sm"
-            value={userRole}
-            onChange={(e) => setUserRole(e.target.value as UserRole)}
-          >
-            <option value="student">School Student</option>
-            <option value="college">College Student</option>
-            <option value="teacher">Teacher</option>
-            <option value="tutor">Private Tutor</option>
-          </select>
+        <div className="mt-4 flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">Role</span>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={userRole === 'student' ? 'default' : 'outline'}
+              onClick={() => setUserRole('student')}
+              className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
+            >
+              School Student
+            </Button>
+            <Button
+              size="sm"
+              variant={userRole === 'college' ? 'default' : 'outline'}
+              onClick={() => setUserRole('college')}
+              className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
+            >
+              College Student
+            </Button>
+            <Button
+              size="sm"
+              variant={userRole === 'teacher' ? 'default' : 'outline'}
+              onClick={() => setUserRole('teacher')}
+              className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
+            >
+              Teacher
+            </Button>
+            <Button
+              size="sm"
+              variant={userRole === 'tutor' ? 'default' : 'outline'}
+              onClick={() => setUserRole('tutor')}
+              className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
+            >
+              Private Tutor
+            </Button>
+          </div>
         </div>
       </header>
       <main className="flex flex-1 justify-center px-4 pb-24">
