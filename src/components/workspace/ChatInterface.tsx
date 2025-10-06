@@ -177,6 +177,14 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     adjustTextareaHeight();
   }, [message, adjustTextareaHeight]);
 
+  const scheduleTextareaResize = useCallback(() => {
+    if (typeof window === "undefined") {
+      adjustTextareaHeight();
+      return;
+    }
+    requestAnimationFrame(adjustTextareaHeight);
+  }, [adjustTextareaHeight]);
+
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior = "smooth") => {
       if (messagesEndRef.current) {
