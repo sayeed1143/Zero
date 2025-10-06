@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import LearningPath, { type LearningNode } from "@/components/workspace/LearningPath";
 import { cleanPlainText } from "@/lib/utils";
+import { Volume2, Download, FileText as FileTextIcon, Sparkles } from "lucide-react";
+import { exportTextAsPNG, openPrintForText, downloadJSON } from "@/lib/export";
 
 type UserRole = 'student' | 'college' | 'teacher' | 'tutor';
 
@@ -150,6 +152,67 @@ const Workspace = () => {
     }
   }, [savedPathItems]);
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const speakLatest = useCallback(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      toast.info('Voice not supported in this browser');
+      return;
+    }
+    if (!latestAssistantMessage) {
+      toast.info('No assistant answer to speak');
+      return;
+    }
+    const text = latestAssistantMessage.content;
+    const synth = window.speechSynthesis;
+    if (synth.speaking) {
+      synth.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    const ensureVoices = () => {
+      const voices = synth.getVoices();
+      const candidates = voices.filter(v => /en|US|UK/i.test(v.lang));
+      const softPreferred = candidates.find(v => /female|soft|zira|samantha|google uk english female/i.test(v.name));
+      const voice = softPreferred || candidates[0] || voices[0] || null;
+      const u = new SpeechSynthesisUtterance(text);
+      if (voice) u.voice = voice;
+      u.rate = 0.95;
+      u.pitch = 1.0;
+      u.volume = 0.95;
+      u.onend = () => setIsSpeaking(false);
+      u.onerror = () => setIsSpeaking(false);
+      setIsSpeaking(true);
+      synth.speak(u);
+    };
+    ensureVoices();
+  }, [latestAssistantMessage]);
+
+  const exportLatestPNG = useCallback(() => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to export'); return; }
+    exportTextAsPNG(latestAssistantMessage.content, `chat-latest.png`);
+  }, [latestAssistantMessage]);
+
+  const printLatest = useCallback(() => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to print'); return; }
+    openPrintForText(latestAssistantMessage.content, 'Latest Chat');
+  }, [latestAssistantMessage]);
+
+  const quizLatest = useCallback(async () => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to quiz'); return; }
+    try {
+      const quiz = await AIService.generateQuiz(latestAssistantMessage.content, 5, 'medium');
+      downloadJSON(quiz, `quiz-latest.json`);
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to generate quiz');
+    }
+  }, [latestAssistantMessage]);
+
+  const saveLatest = useCallback(() => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to save'); return; }
+    addToLearningPath(latestAssistantMessage.content);
+  }, [latestAssistantMessage, addToLearningPath]);
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="px-4 py-3 border-b">
@@ -174,17 +237,42 @@ const Workspace = () => {
         </div>
       </header>
       <main className="flex-1 min-h-0">
-        <div className="mx-auto w-full max-w-5xl h-full px-4">
-          <ChatInterface
-            chatHistory={chatHistory}
-            isProcessing={isProcessing}
-            isVisualizing={isVisualizing}
-            onSendMessage={handleSendMessage}
-            onVisualize={handleVisualize}
-            canVisualize={canVisualize}
-            showVisualize={shouldShowVisualize}
-            onSaveToPath={addToLearningPath}
-          />
+        <div className="mx-auto w-full max-w-5xl h-full px-4 flex">
+          <aside className="w-44 pr-4">
+            <div className="flex flex-col gap-2 sticky top-6">
+              <Button size="sm" variant="ghost" className="justify-start" onClick={speakLatest} disabled={!latestAssistantMessage || isSpeaking || isProcessing}>
+                <Volume2 className="mr-2 h-4 w-4" /> Speak
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={saveLatest} disabled={!latestAssistantMessage}>
+                <Download className="mr-2 h-4 w-4" /> Save
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={exportLatestPNG} disabled={!latestAssistantMessage}>
+                <Download className="mr-2 h-4 w-4" /> PNG
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={printLatest} disabled={!latestAssistantMessage}>
+                <FileTextIcon className="mr-2 h-4 w-4" /> Print
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={quizLatest} disabled={!latestAssistantMessage || isProcessing}>
+                <Sparkles className="mr-2 h-4 w-4" /> Quiz
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={handleVisualize} disabled={!canVisualize || isProcessing || isVisualizing}>
+                <Sparkles className="mr-2 h-4 w-4" /> Visualize
+              </Button>
+            </div>
+          </aside>
+
+          <div className="flex-1 h-full">
+            <ChatInterface
+              chatHistory={chatHistory}
+              isProcessing={isProcessing}
+              isVisualizing={isVisualizing}
+              onSendMessage={handleSendMessage}
+              onVisualize={handleVisualize}
+              canVisualize={canVisualize}
+              showVisualize={shouldShowVisualize}
+              onSaveToPath={addToLearningPath}
+            />
+          </div>
         </div>
       </main>
 
