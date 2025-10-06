@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Send, Sparkles, Volume2, Square, Download, FileText as FileTextIcon, MoreHorizontal } from "lucide-react";
+import { Loader2, Send, Sparkles } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AIMessage } from "@/types/ai";
 import { toast } from "sonner";
-import { AIService } from "@/services/ai";
-import { exportTextAsPNG, openPrintForText, downloadJSON } from "@/lib/export";
 import VisualizationBlock from "./VisualizationBlock";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface ChatInterfaceProps {
   chatHistory: AIMessage[];
