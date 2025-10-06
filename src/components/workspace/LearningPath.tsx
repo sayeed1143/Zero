@@ -134,7 +134,7 @@ const LearningPath = ({ nodes, onSelect, onClose }: LearningPathProps) => {
                   <circle cx={0} cy={0} r={radius} fill={color} opacity={0.12} stroke={color} strokeWidth={2} />
                   <circle cx={0} cy={0} r={Math.max(8, radius - 8)} fill={color} />
                   <text x={0} y={radius + 14} textAnchor="middle" fontSize={12} fill="#0f172a" className="font-medium">
-                    {n.label.length > 20 ? n.label.slice(0, 20) + '���' : n.label}
+                    {n.label.length > 20 ? n.label.slice(0, 20) + '…' : n.label}
                   </text>
                 </g>
               );
