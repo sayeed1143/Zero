@@ -72,30 +72,50 @@ const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasPr
 
   useEffect(() => {
     if (!focusNodeId) return;
-    const node = nodes.find(n => n.id === focusNodeId);
-    if (!node || !canvasRef.current) return;
+    let timeoutHandle: any;
 
-    // center node in view
-    const rect = canvasRef.current.getBoundingClientRect();
-    const containerWidth = rect.width;
-    const containerHeight = rect.height;
-    const nodeWidth = 150;
-    const nodeHeight = 150;
+    const attemptFocus = () => {
+      const node = nodes.find(n => n.id === focusNodeId);
+      if (!node || !canvasRef.current) return false;
 
-    const targetPanX = containerWidth / 2 - (node.x + nodeWidth / 2) * zoom;
-    const targetPanY = containerHeight / 2 - (node.y + nodeHeight / 2) * zoom;
+      // center node in view
+      const rect = canvasRef.current.getBoundingClientRect();
+      const containerWidth = rect.width;
+      const containerHeight = rect.height;
+      const nodeWidth = 150;
+      const nodeHeight = 150;
 
-    setPan({ x: targetPanX, y: targetPanY });
-    setSelectedNode(node.id);
+      const targetPanX = containerWidth / 2 - (node.x + nodeWidth / 2) * zoom;
+      const targetPanY = containerHeight / 2 - (node.y + nodeHeight / 2) * zoom;
 
-    // clear selection after a short time, and notify workspace
-    const t = setTimeout(() => {
-      setSelectedNode(null);
-      if (onFocusCompleted) onFocusCompleted();
-    }, 3000);
+      setPan({ x: targetPanX, y: targetPanY });
+      setSelectedNode(node.id);
 
-    return () => clearTimeout(t);
-  }, [focusNodeId]);
+      // clear selection after a short time, and notify workspace
+      timeoutHandle = setTimeout(() => {
+        setSelectedNode(null);
+        if (onFocusCompleted) onFocusCompleted();
+      }, 3000);
+
+      return true;
+    };
+
+    const focused = attemptFocus();
+    if (!focused) {
+      const retry = setTimeout(() => {
+        attemptFocus();
+      }, 300);
+
+      return () => {
+        clearTimeout(retry);
+        if (timeoutHandle) clearTimeout(timeoutHandle);
+      };
+    }
+
+    return () => {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+    };
+  }, [focusNodeId, nodes, zoom]);
 
   const normalizeConnections = (connections: any): string[] => {
     if (!Array.isArray(connections)) return [];
