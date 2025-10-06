@@ -1,6 +1,7 @@
 import { Home, FileText, Settings, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BrandMark from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 
 const WorkspaceNav = () => {
@@ -19,9 +20,12 @@ const WorkspaceNav = () => {
 
   return (
     <nav className="bg-background/95 backdrop-blur-xl border-b-2 border-border/40 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg">
-      <Link to="/" className="flex flex-col whitespace-nowrap">
-        <span className="font-bold text-xl text-foreground leading-none">EduVoice AI</span>
-        <span className="text-xs font-medium text-muted-foreground leading-none">Voice-first AI tutor</span>
+      <Link to="/" className="whitespace-nowrap">
+        <BrandMark
+          size="sm"
+          titleClassName="text-lg tracking-[0.28em]"
+          taglineClassName="text-[0.6rem] tracking-[0.16em]"
+        />
       </Link>
 
       <div className="flex items-center gap-2">
