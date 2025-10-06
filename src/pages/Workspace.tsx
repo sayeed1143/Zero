@@ -270,10 +270,8 @@ const Workspace = () => {
     <div className="h-screen flex flex-col bg-background">
       <WorkspaceNav />
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="flex-1 bg-white">
-          <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
-        </div>
-        <aside className="w-full md:w-1/3 border-l border-[#E0E0E0] bg-[#F4F4F4] flex flex-col">
+        {/* Chat on the left - larger width */}
+        <aside className="w-full md:w-2/5 border-r border-[#E0E0E0] bg-[#F4F4F4] flex flex-col">
           <ChatInterface
             onSendMessage={handleSendMessage}
             chatHistory={chatHistory}
@@ -282,6 +280,10 @@ const Workspace = () => {
             onViewCanvas={handleViewOnCanvas}
           />
         </aside>
+
+        <div className="flex-1 bg-white">
+          <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+        </div>
       </div>
     </div>
   );
