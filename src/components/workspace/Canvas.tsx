@@ -381,7 +381,7 @@ const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasPr
                       <feMergeNode in="coloredBlur"/>
                       <feMergeNode in="SourceGraphic"/>
                     </feMerge>
-                  </feMerge>
+                  </filter>
                 </defs>
                 {nodes.map(node => 
                   node.connections.map(targetId => {
