@@ -1,5 +1,3 @@
-import { Github, Twitter, Linkedin, Youtube } from "lucide-react";
-
 import { Github, Linkedin, Twitter, Youtube } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 
