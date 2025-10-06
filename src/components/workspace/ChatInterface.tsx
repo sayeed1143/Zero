@@ -185,7 +185,7 @@ const ChatInterface = ({
                   submitMessage();
                 }
               }}
-              placeholder="Message Shunya…"
+              placeholder="How can I support your learning today?"
               className="resize-none border-none bg-transparent px-0 text-base leading-6 focus-visible:ring-0"
               rows={1}
               disabled={isProcessing}
