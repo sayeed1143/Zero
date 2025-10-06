@@ -172,9 +172,9 @@ const ChatInterface = ({
         })}
       </div>
 
-      <div className="sticky bottom-0 z-20 border-t bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <form onSubmit={handleSubmit} className="mx-auto w-full max-w-5xl px-4 py-3">
-          <div className="flex items-end gap-2 rounded-xl border px-3 py-2 bg-card">
+      <div className="sticky bottom-0 z-20 border-t bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60 pointer-events-none">
+        <form onSubmit={handleSubmit} className="w-full px-4 py-3 pointer-events-auto">
+          <div className="flex items-end gap-2 rounded-xl border px-3 py-2 bg-card w-full">
             <Textarea
               ref={textareaRef}
               value={message}
@@ -186,7 +186,7 @@ const ChatInterface = ({
                 }
               }}
               placeholder="How can I support your learning today?"
-              className="resize-none border-none bg-transparent px-0 text-base leading-6 focus-visible:ring-0"
+              className="w-full resize-none border-none bg-transparent px-0 text-base leading-6 focus-visible:ring-0"
               rows={1}
               disabled={isProcessing}
             />
