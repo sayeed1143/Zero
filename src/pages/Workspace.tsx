@@ -85,12 +85,8 @@ const Workspace = () => {
     }
   }, [latestAssistantMessage, isProcessing, isVisualizing]);
 
-  const canVisualize = Boolean(
-    latestAssistantMessage &&
-      !latestAssistantMessage.visualization &&
-      !isProcessing &&
-      !isVisualizing,
-  );
+  const shouldShowVisualize = Boolean(latestAssistantMessage && !latestAssistantMessage.visualization);
+  const canVisualize = shouldShowVisualize && !isProcessing && !isVisualizing;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f7f7f7] via-[#ffffff] to-[#ededed] text-foreground">
