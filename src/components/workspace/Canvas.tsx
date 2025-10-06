@@ -16,11 +16,12 @@ interface CanvasNode {
 interface CanvasProps {
   items: any[];
   onFileUpload?: (file: File) => void;
+  onPdfUpload?: (file: File) => void;
   focusNodeId?: string | null;
   onFocusCompleted?: () => void;
 }
 
-const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasProps) => {
+const Canvas = ({ items, onFileUpload, onPdfUpload, focusNodeId, onFocusCompleted }: CanvasProps) => {
   const [nodes, setNodes] = useState<CanvasNode[]>([]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
