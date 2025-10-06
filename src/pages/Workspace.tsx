@@ -3,6 +3,7 @@ import ChatInterface from "@/components/workspace/ChatInterface";
 import { AIService } from "@/services/ai";
 import type { AIMessage } from "@/types/ai";
 import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 type UserRole = 'student' | 'college' | 'teacher' | 'tutor';
