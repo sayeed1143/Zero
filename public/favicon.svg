@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .fg{fill:#111111}
+      .stroke{fill:none;stroke:#111111;stroke-width:2.5}
+    </style>
+  </defs>
+  <circle cx="32" cy="32" r="22" class="stroke"/>
+  <circle cx="32" cy="32" r="5" class="fg"/>
+  <title>SHUNYA AI</title>
+</svg>
