@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import ChatInterface from "@/components/workspace/ChatInterface";
 import { AIService } from "@/services/ai";
-import type { AIMessage, VisualizationResult } from "@/types/ai";
+import type { AIMessage } from "@/types/ai";
 import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
 import { toast } from "sonner";
 
@@ -74,7 +74,7 @@ const Workspace = () => {
       const visualizationMessage: AIMessage = {
         role: "assistant",
         content: visualization.explanation,
-        visualization: visualization as VisualizationResult,
+        visualization,
       };
       setChatHistory(prev => [...prev, visualizationMessage]);
     } catch (error: any) {
