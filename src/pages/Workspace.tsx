@@ -5,6 +5,7 @@ import type { AIMessage } from "@/types/ai";
 import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import LearningPath, { type LearningNode } from "@/components/workspace/LearningPath";
 
 type UserRole = 'student' | 'college' | 'teacher' | 'tutor';
 
@@ -27,6 +28,10 @@ const Workspace = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isVisualizing, setIsVisualizing] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>('student');
+  const [savedPathItems, setSavedPathItems] = useState<string[]>([]);
+  const [showLearningPath, setShowLearningPath] = useState(false);
+  const [learningNodes, setLearningNodes] = useState<LearningNode[]>([]);
+  const [learningSummary, setLearningSummary] = useState<string | null>(null);
 
   const latestAssistantMessage = useMemo(() => {
     if (!chatHistory.length) return null;
@@ -101,6 +106,49 @@ const Workspace = () => {
   const shouldShowVisualize = Boolean(latestAssistantMessage && !latestAssistantMessage.visualization);
   const canVisualize = shouldShowVisualize && !isProcessing && !isVisualizing;
 
+  const addToLearningPath = useCallback((content: string) => {
+    setSavedPathItems(prev => [...prev, content]);
+    toast.success("Saved to Learning Path");
+  }, []);
+
+  const openLearningPath = useCallback(async () => {
+    if (savedPathItems.length === 0) {
+      toast.info("Save some answers first");
+      return;
+    }
+    try {
+      const seed = savedPathItems.join("\n\n");
+      const nodesRaw = await AIService.generateMindMap(seed);
+      const nodes: LearningNode[] = (nodesRaw || []).map((n: any, i: number) => ({
+        id: String(n.id ?? i + 1),
+        label: String(n.label ?? `Concept ${i + 1}`),
+        prereqs: Array.isArray(n.prereqs) ? n.prereqs.map((p: any) => String(p)) : [],
+        mastery: typeof n.mastery === 'number' ? Math.max(0, Math.min(1, n.mastery)) : 0.5,
+      }));
+      setLearningNodes(nodes);
+      setShowLearningPath(true);
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e?.message || "Failed to build learning path");
+    }
+  }, [savedPathItems]);
+
+  const generateStudySummary = useCallback(async () => {
+    try {
+      const seed = savedPathItems.map((s, i) => `(${i + 1}) ${s}`).join("\n\n");
+      const system = "Create a concise study path with milestones, prerequisites, and practice tasks from the provided notes. Use clear numbered steps and short bullet points.";
+      const res = await AIService.chat([
+        { role: "system", content: system },
+        { role: "user", content: seed },
+      ]);
+      setLearningSummary(res.content?.trim() || "");
+      toast.success("Study path summary generated");
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e?.message || "Failed to summarize");
+    }
+  }, [savedPathItems]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f7f7f7] via-[#ffffff] to-[#ededed] text-foreground">
       <header className="px-6 pt-10 pb-6 flex flex-col items-center text-center gap-2">
@@ -148,6 +196,19 @@ const Workspace = () => {
             </Button>
           </div>
         </div>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={openLearningPath}
+            className="rounded-full"
+          >
+            Learning Path
+          </Button>
+          {savedPathItems.length > 0 && (
+            <span className="text-xs text-muted-foreground">Saved: {savedPathItems.length}</span>
+          )}
+        </div>
       </header>
       <main className="flex flex-1 justify-center px-4 pb-24">
         <ChatInterface
@@ -158,8 +219,19 @@ const Workspace = () => {
           onVisualize={handleVisualize}
           canVisualize={canVisualize}
           showVisualize={shouldShowVisualize}
+          onSaveToPath={addToLearningPath}
         />
       </main>
+
+      {showLearningPath && (
+        <LearningPath
+          nodes={learningNodes}
+          onSelect={() => {}}
+          onClose={() => setShowLearningPath(false)}
+          summary={learningSummary}
+          onGenerateSummary={generateStudySummary}
+        />
+      )}
     </div>
   );
 };
