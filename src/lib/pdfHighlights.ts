@@ -3,7 +3,7 @@ import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from "pdfjs-d
 // Using the ESM worker build shipped with pdfjs-dist
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - Vite will inline the worker URL at build time
-import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import workerSrc from "pdfjs-dist/build/pdf.worker.min.js?url";
 
 GlobalWorkerOptions.workerSrc = workerSrc as unknown as string;
 
