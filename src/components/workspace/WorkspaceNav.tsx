@@ -92,14 +92,15 @@ const WorkspaceNav = ({ onSelectPdf }: WorkspaceNavProps) => {
             </div>
           </DialogContent>
         </Dialog>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="touch-target rounded-xl hover:bg-foreground hover:text-background border border-border/30 focus-ring transition-all"
-          title="Settings"
-        >
-          <Settings className="w-5 h-5" />
-        </Button>
+        <Link to="/teacher" title="Teacher Dashboard">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="touch-target rounded-xl hover:bg-foreground hover:text-background border border-border/30 focus-ring transition-all"
+          >
+            <Settings className="w-5 h-5" />
+          </Button>
+        </Link>
 
         <div className="w-px h-6 bg-border/50 mx-2" />
 
