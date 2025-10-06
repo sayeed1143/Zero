@@ -316,7 +316,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
         if (!trimmed) return;
         onSendMessage(`[Broadcast - ${humanLabel(persona)}] ${trimmed}`, "broadcast");
         setMessage("");
-        requestAnimationFrame(adjustTextareaHeight);
+        scheduleTextareaResize();
         return;
       }
 
@@ -330,7 +330,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
       const prefix = persona === "student" ? "[Student] " : persona === "teacher" ? "[Teacher] " : "[Tutor] ";
       onSendMessage(prefix + body, finalCommand);
       setMessage("");
-      requestAnimationFrame(adjustTextareaHeight);
+      scheduleTextareaResize();
     },
     [adjustTextareaHeight, isProcessing, message, onSendMessage, parseSlashCommand, persona],
   );
@@ -343,17 +343,19 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
 
   const handleComposerChange = (value: string) => {
     setMessage(value);
-    requestAnimationFrame(adjustTextareaHeight);
+    scheduleTextareaResize();
   };
 
   const handleSlashSuggestionClick = (commandId: string) => {
     const entry = slashCommands.find(cmd => cmd.id === commandId);
     const base = entry ? `${entry.shortcut} ` : `/${commandId} `;
     setMessage(base);
-    requestAnimationFrame(() => {
-      adjustTextareaHeight();
+    scheduleTextareaResize();
+    if (typeof window === "undefined") {
       textareaRef.current?.focus();
-    });
+    } else {
+      requestAnimationFrame(() => textareaRef.current?.focus());
+    }
   };
 
   const handleComposerKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -405,7 +407,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     const id = String(Date.now());
     setAssignments(prev => [{ id, title: message.trim() ? message.trim() : `Assignment ${prev.length + 1}`, status: "draft" }, ...prev]);
     setMessage("");
-    requestAnimationFrame(adjustTextareaHeight);
+    scheduleTextareaResize();
   };
 
   const publishAssignment = (id: string) => {
