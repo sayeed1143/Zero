@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Send, Sparkles } from "lucide-react";
+import { Loader2, Send, Sparkles, Volume2, Square, Download, FileText as FileTextIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AIMessage } from "@/types/ai";
+import { toast } from "sonner";
+import { AIService } from "@/services/ai";
+import { exportTextAsPNG, openPrintForText, downloadJSON } from "@/lib/export";
 
 interface ChatInterfaceProps {
   chatHistory: AIMessage[];
@@ -13,6 +16,7 @@ interface ChatInterfaceProps {
   onVisualize: () => void;
   canVisualize: boolean;
   showVisualize: boolean;
+  onSaveToPath?: (content: string) => void;
 }
 
 const ChatInterface = ({
@@ -23,10 +27,12 @@ const ChatInterface = ({
   onVisualize,
   canVisualize,
   showVisualize,
+  onSaveToPath,
 }: ChatInterfaceProps) => {
   const [message, setMessage] = useState("");
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
 
   const submitMessage = useCallback(() => {
     const trimmed = message.trim();
@@ -56,16 +62,79 @@ const ChatInterface = ({
     return chatHistory.length - 1;
   }, [chatHistory.length, showVisualize]);
 
+  const stopSpeaking = useCallback(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    setSpeakingIndex(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, [stopSpeaking]);
+
+  const getPreferredVoice = (voices: SpeechSynthesisVoice[]) => {
+    const candidates = voices.filter(v => /en|US|UK/i.test(v.lang));
+    const softPreferred = candidates.find(v => /female|soft|zira|samantha|google uk english female/i.test(v.name));
+    return softPreferred || candidates[0] || voices[0] || null;
+  };
+
+  const speakText = useCallback((text: string, index: number) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      toast.info("Voice not supported in this browser");
+      return;
+    }
+    const synth = window.speechSynthesis;
+
+    if (speakingIndex !== null) {
+      synth.cancel();
+      if (speakingIndex === index) {
+        setSpeakingIndex(null);
+        return;
+      }
+    }
+
+    const ensureVoices = () => {
+      const voices = synth.getVoices();
+      if (!voices || voices.length === 0) {
+        // Some browsers load voices asynchronously
+        setTimeout(() => ensureVoices(), 200);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voice = getPreferredVoice(voices);
+      if (voice) utterance.voice = voice;
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.9;
+      utterance.onend = () => setSpeakingIndex(null);
+      utterance.onerror = () => setSpeakingIndex(null);
+      setSpeakingIndex(index);
+      synth.speak(utterance);
+    };
+
+    ensureVoices();
+  }, [speakingIndex]);
+
   return (
-    <div className="rounded-[32px] border border-border/60 bg-white/90 backdrop-blur-xl shadow-2xl overflow-hidden">
-      <div className="flex flex-col max-h-[70vh]">
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pt-8 pb-6 space-y-6">
+    <div className="chat-container">
+      <div className="flex flex-col h-full">
+        {isProcessing && (
+          <div className="px-6 pt-4">
+            <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-2 text-sm text-muted-foreground flex items-center gap-2 animate-fade-in">
+              <div className="w-2 h-2 rounded-full bg-foreground/60 mic-pulse" />
+              Mindful mode: breathing before responding…
+            </div>
+          </div>
+        )}
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pt-8 pb-36 space-y-6 scrollbar-thin">
           {chatHistory.map((entry, index) => {
             const isUser = entry.role === "user";
             const showButton = showVisualize && index === visualizationMessageIndex && !entry.visualization && !isUser;
 
             return (
-              <div key={`message-${index}`} className="space-y-3">
+              <div key={`message-${index}`} className="space-y-3 chat-message">
                 <div
                   className={cn("flex", isUser ? "justify-end" : "justify-start")}
                 >
@@ -73,7 +142,7 @@ const ChatInterface = ({
                     className={cn(
                       "max-w-[80%] rounded-3xl px-5 py-4 text-sm leading-6 shadow-sm",
                       isUser
-                        ? "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground"
+                        ? "bg-foreground text-background"
                         : "bg-muted/40 border border-border/60 text-foreground backdrop-blur",
                     )}
                   >
@@ -105,23 +174,91 @@ const ChatInterface = ({
                   </div>
                 </div>
 
-                {showButton && (
-                  <div className="flex justify-start">
+                {!isUser && (
+                  <div className="flex justify-start flex-wrap gap-2">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="gap-2 rounded-full border border-primary/30 bg-primary/5 text-primary shadow-sm hover:bg-primary/10"
-                      onClick={onVisualize}
-                      disabled={!canVisualize}
+                      className="gap-2 rounded-full border border-border/50 bg-white text-foreground shadow-sm hover:bg-muted/50"
+                      onClick={() => speakText(entry.content, index)}
                     >
-                      {isVisualizing ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                      {speakingIndex === index ? (
+                        <Square className="h-4 w-4" />
                       ) : (
-                        <Sparkles className="h-4 w-4" />
+                        <Volume2 className="h-4 w-4" />
                       )}
-                      {isVisualizing ? "Visualizing..." : "Visualize This"}
+                      {speakingIndex === index ? "Stop" : "Speak"}
                     </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="gap-2 rounded-full border border-border/50 bg-white text-foreground shadow-sm hover:bg-muted/50"
+                      onClick={() => onSaveToPath && onSaveToPath(entry.content)}
+                    >
+                      <Download className="h-4 w-4" />
+                      Save to Path
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="gap-2 rounded-full border border-border/50 bg-white text-foreground shadow-sm hover:bg-muted/50"
+                      onClick={() => exportTextAsPNG(entry.content, `chat-${index + 1}.png`)}
+                    >
+                      <Download className="h-4 w-4" />
+                      PNG
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="gap-2 rounded-full border border-border/50 bg-white text-foreground shadow-sm hover:bg-muted/50"
+                      onClick={() => openPrintForText(entry.content, `Chat ${index + 1}`)}
+                    >
+                      <FileTextIcon className="h-4 w-4" />
+                      PDF
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="gap-2 rounded-full border border-border/50 bg-white text-foreground shadow-sm hover:bg-muted/50"
+                      onClick={async () => {
+                        try {
+                          const quiz = await AIService.generateQuiz(entry.content, 5, "medium");
+                          downloadJSON(quiz, `quiz-${index + 1}.json`);
+                        } catch (e: any) {
+                          toast.error(e?.message || "Failed to generate quiz");
+                        }
+                      }}
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      Quiz
+                    </Button>
+
+                    {showButton && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="gap-2 rounded-full border border-primary/30 bg-primary/5 text-primary shadow-sm hover:bg-primary/10"
+                        onClick={onVisualize}
+                        disabled={!canVisualize}
+                      >
+                        {isVisualizing ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="h-4 w-4" />
+                        )}
+                        {isVisualizing ? "Visualizing..." : "Visualize This"}
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
@@ -129,8 +266,8 @@ const ChatInterface = ({
           })}
         </div>
 
-        <div className="border-t border-border/60 bg-white/70 px-6 py-5">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="chat-input">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full bg-white/90 backdrop-blur-xl border border-border/60 rounded-2xl px-4 py-3 shadow-2xl">
             <Textarea
               ref={textareaRef}
               value={message}

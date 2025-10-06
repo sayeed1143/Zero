@@ -11,6 +11,8 @@ interface LearningPathProps {
   nodes: LearningNode[];
   onSelect?: (id: string) => void;
   onClose?: () => void;
+  summary?: string | null;
+  onGenerateSummary?: () => void;
 }
 
 // Simple layout: compute depth (longest path from roots) and place nodes by depth columns
@@ -80,6 +82,7 @@ const LearningPath = ({ nodes, onSelect, onClose }: LearningPathProps) => {
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white dark:bg-card rounded-2xl shadow-2xl overflow-hidden" style={{ width: width + 40 }}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+          <div />
           <div className="flex items-center gap-3">
             <h3 className="text-lg font-semibold">Learning Path</h3>
             <div className="text-sm text-muted-foreground">Concept dependency tree & mastery</div>
@@ -93,11 +96,19 @@ const LearningPath = ({ nodes, onSelect, onClose }: LearningPathProps) => {
               <span className="inline-block w-3 h-3 rounded-full ml-3" style={{ background: colorForMastery(0.2) }} />
               <span>Beginner</span>
             </div>
-            <button className="ml-4 text-sm text-muted-foreground hover:text-foreground" onClick={onClose}>Close</button>
+            {onGenerateSummary && (
+              <button className="px-3 py-1.5 rounded-md border border-border/60 text-sm hover:bg-muted/50" onClick={onGenerateSummary}>
+                Generate Study Path
+              </button>
+            )}
+            <button className="ml-2 text-sm text-muted-foreground hover:text-foreground" onClick={onClose}>Close</button>
           </div>
         </div>
 
         <div className="p-6">
+          {summary && (
+            <div className="mb-4 p-4 rounded-lg bg-muted/40 border border-border/60 text-sm whitespace-pre-wrap">{summary}</div>
+          )}
           <svg width={width} height={height} className="block mx-auto">
             <defs>
               <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
