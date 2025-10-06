@@ -461,7 +461,7 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
                 <div
                   key={node.id}
                   className={`absolute glass-card rounded-2xl p-6 cursor-move glow-hover node-glow touch-target ${
-                    selectedNode === node.id ? 'ring-4 ring-primary ring-offset-2' : ''
+                    selectedNode === node.id ? 'ring-4 ring-primary ring-offset-2' : node.color === 'monochrome_accent' ? 'ring-2 ring-accent ring-offset-2' : ''
                   } ${connectFrom === node.id ? 'ring-4 ring-accent ring-offset-2' : ''}`}
                   style={{
                     left: `${node.x}px`,
