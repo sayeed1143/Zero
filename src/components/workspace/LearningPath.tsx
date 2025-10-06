@@ -149,7 +149,7 @@ const LearningPath = ({ nodes, onSelect, onClose }: LearningPathProps) => {
                   <div className="text-xs text-muted-foreground">{Math.round((n.mastery ?? 0) * 100)}%</div>
                 </div>
                 <div className="w-full h-2 bg-black/10 rounded mt-2 overflow-hidden">
-                  <div style={{ width: `${Math.round((n.mastery ?? 0) * 100)}%` }} className="h-2" style={{ background: colorForMastery(n.mastery ?? 0) }} />
+                  <div className="h-2" style={{ width: `${Math.round((n.mastery ?? 0) * 100)}%`, background: colorForMastery(n.mastery ?? 0) }} />
                 </div>
               </button>
             ))}
