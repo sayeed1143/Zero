@@ -32,33 +32,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    const systemPrompt = `You are Shunya AI operating in Insight Mode as a visual knowledge designer. Produce a teaching-quality visualization.
-Respond ONLY with JSON following this schema:
+    const systemPrompt = `You are the Insight Mode Engine for Shunya AI. Your ONLY job is to convert the user's concept into two distinct JSON objects. Do NOT include ANY prose, conversation, or surrounding text. Use simple, student-friendly language.
+
+Return a single JSON object with two keys exactly: "Flow_Insight" and "Map_Structure". Follow this STRICT JSON SCHEMA exactly (types shown for clarity):
+
 {
-  "diagram": {
-    "title": string,
-    "relation": "sequence" | "cycle" | "network" | "hierarchy",
-    "steps": Array<{ "title": string, "detail"?: string }>
+  "Flow_Insight": {
+    "title": "string",
+    "steps": [
+      { "label": "string", "icon": "string", "color": "string" }
+    ],
+    "explanation": "string"
   },
-  "graph": {
-    "type": "mind_map" | "hierarchy" | "flowchart" | "teaching_layout" | "concept_map",
-    "nodes": Array<{ "id": string, "label": string, "parent": string | null, "relation_type"?: "cause" | "effect" | "example" | "prerequisite" | "step" | "note", "color_theme"?: string }>,
-    "edges": Array<{ "from": string, "to": string, "label"?: string, "relation_type"?: string }>
-  },
-  "explanation": string
+  "Map_Structure": {
+    "title": "string",
+    "nodes": [
+      { "id": "string", "label": "string", "parent": "string | null", "description": "A very brief, student-friendly example." }
+    ]
+  }
 }
-Guidance:
-- Prompt 1 (mind map): main branches, sub-branches, and examples — classroom-ready.
-- Prompt 2 (concept hierarchy): clear levels with short descriptors at each node.
-- Prompt 3 (flowchart): process with labeled arrows showing cause -> effect -> outcome.
-- Prompt 4 (teaching layout): whiteboard-friendly, top-to-bottom clarity, concise points.
-- Prompt 5 (professional concept map): ensure nodes/edges can be rendered cleanly.
-Constraints:
-- Keep diagram.steps to 3–8 main steps capturing the flow.
-- Use precise, human-friendly language.
-- Output plain JSON only; no Markdown symbols or code fences.
-- If input lacks structure, infer a coherent structure before responding.
-`;
+
+Rules:
+- Flow_Insight.steps should contain 3 to 5 items describing the core mechanism (linear flow).
+- Map_Structure.nodes should represent a hierarchical mind map (root node parent=null).
+- Do NOT include any additional keys, prose, or metadata. Do NOT use Markdown or code fences.
+- If the user input lacks structure, infer classroom-ready branches and short examples.
+
+Respond only with the JSON object; nothing else.`;
 
     const messages = [
       { role: 'system' as const, content: systemPrompt },
@@ -131,84 +131,64 @@ Constraints:
       return res.status(500).json({
         error: 'Invalid response',
         message: 'Visualization payload could not be parsed',
+        raw: rawContent,
       });
     }
 
-    const diagram = parsed.diagram || {};
-    const stepsInput = Array.isArray(diagram.steps) ? diagram.steps : [];
-    const steps = stepsInput
-      .map((step: any) => {
-        if (typeof step === 'string') {
-          return { title: step.trim() };
-        }
-        if (step && typeof step === 'object') {
-          const title = typeof step.title === 'string' ? step.title.trim() : '';
-          const detail = typeof step.detail === 'string' ? step.detail.trim() : undefined;
-          return title ? { title, detail } : null;
-        }
-        return null;
+    // Expect strict schema: Flow_Insight and Map_Structure
+    const flow = parsed.Flow_Insight || parsed.Flow || parsed.flow;
+    const map = parsed.Map_Structure || parsed.Map || parsed.map;
+
+    if (!flow || typeof flow !== 'object') {
+      return res.status(500).json({ error: 'Invalid response', message: 'Flow_Insight object missing or malformed' });
+    }
+
+    const flowTitle = typeof flow.title === 'string' ? flow.title.trim() : 'Flow Insight';
+    const flowStepsRaw = Array.isArray(flow.steps) ? flow.steps : [];
+    const flowSteps = flowStepsRaw
+      .map((s: any, i: number) => {
+        if (!s || typeof s !== 'object') return null;
+        const label = typeof s.label === 'string' ? s.label.trim() : (typeof s === 'string' ? s.trim() : 'Step ' + (i + 1));
+        const detail = typeof s.detail === 'string' ? s.detail.trim() : undefined;
+        return label ? { title: label, detail } : null;
       })
-      .filter((step: any) => step && step.title) as Array<{ title: string; detail?: string }>;
+      .filter((s: any) => s && s.title)
+      .slice(0, 8);
 
-    const relationRaw = typeof diagram.relation === 'string' ? diagram.relation.toLowerCase().trim() : undefined;
-    const relation = relationRaw && SUPPORTED_RELATIONS.has(relationRaw) ? relationRaw : undefined;
-    const title = typeof diagram.title === 'string' ? diagram.title.trim() : 'Visualization';
-    const explanation = typeof parsed.explanation === 'string' ? parsed.explanation.trim() : '';
+    const explanation = typeof flow.explanation === 'string' ? flow.explanation.trim() : '';
 
-    // Normalize optional advanced graph schema
-    const graphRaw = parsed.graph || {};
-    const typeRaw = typeof graphRaw.type === 'string' ? graphRaw.type.toLowerCase().trim() : undefined;
-    const graphType = typeRaw && SUPPORTED_GRAPH_TYPES.has(typeRaw) ? typeRaw : undefined;
-
-    const nodesInput = Array.isArray(graphRaw.nodes) ? graphRaw.nodes : [];
-    const nodes = nodesInput
-      .map((n: any, i: number) => {
-        if (!n || typeof n !== 'object') return null;
-        const id = typeof n.id === 'string' && n.id.trim() ? n.id.trim() : String(i + 1);
-        const label = typeof n.label === 'string' ? n.label.trim() : '';
-        if (!label) return null;
-        const parent = typeof n.parent === 'string' ? n.parent.trim() : null;
-        const relation_type = typeof n.relation_type === 'string' ? n.relation_type.trim() : undefined;
-        const color_theme = typeof n.color_theme === 'string' ? n.color_theme.trim() : undefined;
-        return { id, label, parent, ...(relation_type ? { relation_type } : {}), ...(color_theme ? { color_theme } : {}) };
-      })
-      .filter((n: any) => n && n.id && n.label);
-
-    const edgesInput = Array.isArray(graphRaw.edges) ? graphRaw.edges : [];
-    const edges = edgesInput
-      .map((e: any) => {
-        if (!e || typeof e !== 'object') return null;
-        const from = typeof e.from === 'string' ? e.from.trim() : '';
-        const to = typeof e.to === 'string' ? e.to.trim() : '';
-        if (!from || !to) return null;
-        const label = typeof e.label === 'string' ? e.label.trim() : undefined;
-        const relation_type = typeof e.relation_type === 'string' ? e.relation_type.trim() : undefined;
-        return { from, to, ...(label ? { label } : {}), ...(relation_type ? { relation_type } : {}) };
-      })
-      .filter((e: any) => e && e.from && e.to);
-
-    if (!steps.length || !explanation) {
-      return res.status(500).json({
-        error: 'Invalid response',
-        message: 'Visualization missing required fields',
-      });
+    if (flowSteps.length < 1 || !explanation) {
+      return res.status(500).json({ error: 'Invalid response', message: 'Flow_Insight missing steps or explanation' });
     }
 
     const payload: any = {
       diagram: {
-        title,
-        steps: steps.slice(0, 8),
-        ...(relation ? { relation } : {}),
+        title: flowTitle,
+        steps: flowSteps.slice(0, 8),
       },
       explanation,
     };
 
-    if (nodes.length) {
-      payload.graph = {
-        ...(graphType ? { type: graphType } : {}),
-        nodes,
-        edges,
-      };
+    if (map && typeof map === 'object' && Array.isArray(map.nodes) && map.nodes.length) {
+      const nodes = map.nodes
+        .map((n: any, i: number) => {
+          if (!n || typeof n !== 'object') return null;
+          const id = typeof n.id === 'string' && n.id.trim() ? n.id.trim() : String(i + 1);
+          const label = typeof n.label === 'string' ? n.label.trim() : '';
+          if (!label) return null;
+          const parent = n.parent === null ? null : (typeof n.parent === 'string' && n.parent.trim() ? n.parent.trim() : null);
+          const description = typeof n.description === 'string' ? n.description.trim() : undefined;
+          return { id, label, parent, ...(description ? { description } : {}) };
+        })
+        .filter((n: any) => n && n.id && n.label);
+
+      if (nodes.length) {
+        payload.graph = {
+          type: 'mind_map',
+          nodes,
+          edges: [],
+        };
+      }
     }
 
     return res.status(200).json(payload);
