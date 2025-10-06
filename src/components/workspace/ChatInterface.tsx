@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Send, Paperclip, Mic, Sparkles, FileText, Image, BarChart3, Hash, BookOpen, Zap } from "lucide-react";
+import { Send, Paperclip, Mic, Sparkles, FileText, Image, BarChart3, Hash, BookOpen, Zap, Volume2, VolumeX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { AIMessage } from "@/types/ai";
@@ -26,6 +26,12 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
   const [showWorkMode, setShowWorkMode] = useState(true);
   const [assignments, setAssignments] = useState<{ id: string; title: string; status: "draft" | "assigned" | "submitted" | "graded" }[]>([]);
 
+  // Voice capabilities
+  const recognitionRef = useRef<any>(null);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [ttsSupported, setTtsSupported] = useState(false);
+  const [voiceOutput, setVoiceOutput] = useState(false);
+
   // Attachments upload simulation / preview
   const [attachments, setAttachments] = useState<{
     id: string;
@@ -40,6 +46,85 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory, assignments, attachments]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    setSpeechSupported(Boolean(SpeechRecognition));
+    setTtsSupported(typeof window !== "undefined" && typeof window.speechSynthesis !== "undefined");
+
+    return () => {
+      try {
+        if (recognitionRef.current) recognitionRef.current.stop();
+      } catch {}
+      try {
+        if (window && window.speechSynthesis) window.speechSynthesis.cancel();
+      } catch {}
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!voiceOutput || !ttsSupported || chatHistory.length === 0) return;
+    const last = chatHistory[chatHistory.length - 1];
+    if (last.role !== "assistant" || !last.content) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(last.content);
+      utter.rate = 1;
+      utter.pitch = 1;
+      utter.lang = "en-US";
+      window.speechSynthesis.speak(utter);
+    } catch {}
+  }, [chatHistory, voiceOutput, ttsSupported]);
+
+  const startRecognition = () => {
+    if (!speechSupported || isProcessing) return;
+    try {
+      const SpeechRecognition: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+      recognition.lang = "en-US";
+      recognition.continuous = false;
+      recognition.interimResults = true;
+
+      let finalTranscript = "";
+
+      recognition.onresult = (event: any) => {
+        let interim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interim += transcript;
+          }
+        }
+        setMessage(prev => finalTranscript ? (prev ? `${prev} ${finalTranscript}` : finalTranscript) : (prev || interim));
+      };
+
+      recognition.onerror = () => {
+        setIsRecording(false);
+        try { recognition.stop(); } catch {}
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+        recognitionRef.current = null;
+      };
+
+      recognition.start();
+      setIsRecording(true);
+    } catch {
+      setIsRecording(false);
+    }
+  };
+
+  const stopRecognition = () => {
+    try {
+      if (recognitionRef.current) recognitionRef.current.stop();
+    } catch {}
+    setIsRecording(false);
+  };
+
   const quickCommands = [
     { icon: <Sparkles className="w-3 h-3" />, label: "Summarize", command: "explain", prompt: "Summarize this content in simple terms" },
     { icon: <FileText className="w-3 h-3" />, label: "Explain", command: "explain", prompt: "Explain this in detail" },
@@ -50,11 +135,9 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
 
   const handleSend = (command?: string) => {
     if (message.trim() && !isProcessing) {
-      // If persona is teacher and command is broadcast, treat specially
       if (command === "broadcast") {
         onSendMessage(`[Broadcast - ${humanLabel(persona)}] ${message}`, "broadcast");
       } else {
-        // Attach basic persona context prefix so backend can use it for tailoring
         const prefix = persona === "student" ? "[Student] " : persona === "teacher" ? "[Teacher] " : "[Tutor] ";
         const full = prefix + message;
         onSendMessage(full, command);
@@ -80,7 +163,9 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
   };
 
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
+    if (!speechSupported) return;
+    if (isRecording) stopRecognition();
+    else startRecognition();
   };
 
   // Assignments
@@ -108,14 +193,12 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
         const preview = typeof e.target?.result === "string" ? e.target?.result : undefined;
         setAttachments(prev => prev.map(p => p.id === id ? { ...p, preview } : p));
       };
-      // create preview for images and text files
       if (file.type.startsWith("image/") || file.type.startsWith("text/")) {
         reader.readAsDataURL(file);
       }
     }
     setAttachments(prev => [...newItems, ...prev]);
 
-    // simulate upload progress
     newItems.forEach((it, idx) => {
       const interval = setInterval(() => {
         setAttachments(prev => {
@@ -221,7 +304,6 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
                   <details className="mt-3 bg-black/5 p-3 rounded-md">
                     <summary className="cursor-pointer text-sm font-medium">Show work / steps</summary>
                     <div className="mt-2 text-sm whitespace-pre-wrap">
-                      {/* Very simple heuristic: split on lines that start with Step or 1.) 2.) etc */}
                       {extractSteps(msg.content).length > 0 ? (
                         extractSteps(msg.content).map((s, i) => (
                           <div key={i} className="mb-2">{s}</div>
@@ -306,20 +388,31 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
               onKeyPress={handleKeyPress}
               placeholder={`Ask SHUNYA AI anything... (${humanLabel(persona)})`}
               disabled={isProcessing}
-              className="pr-12 h-12 rounded-2xl bg-white border border-black/15 focus-visible:border-black focus-visible:ring-4 focus-visible:ring-accent/20 transition-all text-base font-medium placeholder:text-black/40"
+              className="pr-24 h-12 rounded-2xl bg-white border border-black/15 focus-visible:border-black focus-visible:ring-4 focus-visible:ring-accent/20 transition-all text-base font-medium placeholder:text-black/40"
             />
           </div>
 
           <Button
+            onClick={() => setVoiceOutput((v) => !v)}
+            size="icon"
+            variant="ghost"
+            disabled={!ttsSupported}
+            className={`shrink-0 touch-target rounded-full transition-all focus-ring border ${voiceOutput ? 'bg-black/80 text-white' : 'bg-white text-black'} border-black/10`}
+            title={voiceOutput ? "Voice output on" : "Voice output off"}
+          >
+            {voiceOutput ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+          </Button>
+
+          <Button
             onClick={toggleRecording}
             size="icon"
-            disabled={isProcessing}
+            disabled={isProcessing || !speechSupported}
             className={`shrink-0 touch-target rounded-full transition-all focus-ring border ${
               isRecording
                 ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground border-destructive'
                 : 'bg-white hover:bg-black/5 text-black border-black/10'
             }`}
-            title={isRecording ? "Stop Recording" : "Start Voice Input"}
+            title={speechSupported ? (isRecording ? "Stop Recording" : "Start Voice Input") : "Voice input not supported"}
           >
             <Mic className={`w-5 h-5 ${isRecording ? 'animate-pulse' : ''}`} />
           </Button>
@@ -341,8 +434,9 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
             <span>Tools: Math • Code • LaTeX • Whiteboard</span>
           </div>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
             <span className="text-xs">Persona: <strong>{humanLabel(persona)}</strong></span>
+            <span className="text-xs">Voice: <strong>{voiceOutput ? 'On' : 'Off'}</strong></span>
           </div>
         </div>
       </div>
@@ -351,11 +445,9 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
 };
 
 function extractSteps(content: string) {
-  if (!content) return [];
+  if (!content) return [] as string[];
   const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  // find lines that look like step markers
   const steps = lines.filter(l => /^step\b|^\d+\.|^\d+\)/i.test(l));
-  // if many contiguous lines look like steps, return them; otherwise return any long lines that look explanatory
   if (steps.length > 0) return steps;
   return lines.filter(l => l.length > 40).slice(0, 6);
 }
