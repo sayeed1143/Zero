@@ -10,6 +10,7 @@ interface CanvasNode {
   x: number;
   y: number;
   connections: string[];
+  color?: string;
 }
 
 interface CanvasProps {
