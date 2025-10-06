@@ -281,8 +281,22 @@ const Workspace = () => {
           />
         </aside>
 
-        <div className="flex-1 bg-white">
-          <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+        <div className="flex-1 bg-white flex flex-col">
+          <div className="flex-1 overflow-auto p-6">
+            {/* Workspace top area (notes, toolbar, previews) */}
+            <div className="h-full w-full flex items-start justify-center text-center text-black/60">
+              <div className="max-w-3xl">
+                <h2 className="text-lg font-semibold">Workspace</h2>
+                <p className="text-sm">Use the canvas below to visualize lessons, mind maps and study plans.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="h-2/5 flex items-center justify-center border-t border-[#E0E0E0] p-6">
+            <div className="w-full max-w-4xl h-full">
+              <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
