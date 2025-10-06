@@ -12,7 +12,7 @@ const steps = [
   },
   {
     number: "2",
-    title: "Watch EduVoice build visual explanations",
+    title: "Watch Shunya AI build visual explanations",
     description:
       "Claude 3 Opus and Gemini 1.5 Pro weave mind maps, diagrams, and concept links so you can grasp any topic at a glance.",
     image: step2Image,
@@ -32,7 +32,7 @@ const HowItWorks = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            How EduVoice AI Works
+            How Shunya AI Works
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Three steps from spoken question to personalized mastery plan.
