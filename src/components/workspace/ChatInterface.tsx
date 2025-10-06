@@ -153,7 +153,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
         ))}
         {/* Canvas button */}
         <button
-          onClick={() => onSendMessage('[Open Canvas]', 'open_canvas')}
+          onClick={() => onViewCanvas && onViewCanvas()}
           title="Canvas"
           className="w-12 h-12 flex items-center justify-center rounded-xl bg-white text-black border border-black/10 hover:shadow-md mt-4"
         >
