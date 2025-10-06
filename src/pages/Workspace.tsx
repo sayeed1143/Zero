@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Canvas from "@/components/workspace/Canvas";
 import ChatInterface from "@/components/workspace/ChatInterface";
 import WorkspaceNav from "@/components/workspace/WorkspaceNav";
+import LearningPath, { LearningNode } from "@/components/workspace/LearningPath";
 import { AIService } from "@/services/ai";
 import { toast } from "sonner";
 import type { AIMessage, QuizResponse } from "@/types/ai";
@@ -17,6 +18,8 @@ const Workspace = () => {
   // New states to support 'View on Canvas' flow
   const [lastAddedNodeIds, setLastAddedNodeIds] = useState<string[]>([]);
   const [focusNodeId, setFocusNodeId] = useState<string | null>(null);
+  const [showLearningPath, setShowLearningPath] = useState(false);
+
 
   useEffect(() => {
     if (canvasItems.length > 0) return;
@@ -266,12 +269,38 @@ const Workspace = () => {
     setLastAddedNodeIds([]);
   };
 
+  // derive simple learning nodes from canvas items
+  const learningNodes: LearningNode[] = canvasItems.map((c, idx) => ({
+    id: c.id || `node-${idx}`,
+    label: c.title || c.name || `Node ${idx + 1}`,
+    prereqs: Array.isArray(c.connections) ? c.connections : (c.children || []),
+    mastery: typeof c.mastery === 'number' ? c.mastery : (c.color === 'monochrome_accent' ? 0.85 : Math.max(0.12, Math.min(0.9, 0.2 + (c.connections ? c.connections.length * 0.12 : 0))))
+  }));
+
   return (
     <div className="h-screen flex flex-col bg-background">
       <WorkspaceNav />
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="flex-1 bg-white">
+        <div className="flex-1 bg-white relative">
           <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+
+          {/* Floating control to open Learning Path visualization */}
+          <div className="absolute top-6 right-6 z-20">
+            <button
+              onClick={() => setShowLearningPath(true)}
+              className="bg-foreground text-background px-4 py-2 rounded-full shadow-lg hover:shadow-xl focus-ring"
+            >
+              Learning Path
+            </button>
+          </div>
+
+          {showLearningPath && (
+            <LearningPath
+              nodes={learningNodes}
+              onSelect={(id) => { setFocusNodeId(id); setShowLearningPath(false); }}
+              onClose={() => setShowLearningPath(false)}
+            />
+          )}
         </div>
         <aside className="w-full md:w-1/3 border-l border-[#E0E0E0] bg-[#F4F4F4] flex flex-col">
           <ChatInterface
