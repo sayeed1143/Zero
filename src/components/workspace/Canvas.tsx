@@ -10,6 +10,7 @@ interface CanvasNode {
   x: number;
   y: number;
   connections: string[];
+  color?: string;
 }
 
 interface CanvasProps {
@@ -53,7 +54,8 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
             title: item.title || item.name || `Node ${index + 1}`,
             x: item.x !== undefined ? item.x : 100 + (index % 4) * 200,
             y: item.y !== undefined ? item.y : 100 + Math.floor(index / 4) * 200,
-            connections: normalizeConnections(item.connections || item.children || [])
+            connections: normalizeConnections(item.connections || item.children || []),
+            color: item.color
           };
         });
         
@@ -459,7 +461,7 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
                 <div
                   key={node.id}
                   className={`absolute glass-card rounded-2xl p-6 cursor-move glow-hover node-glow touch-target ${
-                    selectedNode === node.id ? 'ring-4 ring-primary ring-offset-2' : ''
+                    selectedNode === node.id ? 'ring-4 ring-primary ring-offset-2' : node.color === 'monochrome_accent' ? 'ring-2 ring-accent ring-offset-2' : ''
                   } ${connectFrom === node.id ? 'ring-4 ring-accent ring-offset-2' : ''}`}
                   style={{
                     left: `${node.x}px`,
