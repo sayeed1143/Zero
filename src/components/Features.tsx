@@ -91,7 +91,7 @@ const Features = () => {
         </div>
 
         <p className="mt-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
-          Customize which OpenRouter model powers each feature—mix GPT-4 Turbo, Claude 3 Opus, Gemini 1.5 Pro, Mixtral, ElevenLabs, and Whisper to match every learner.
+          Customize which OpenRouter model powers each feature—mix Gemini 2.5 Flash Lite, Grok-4 Fast, Gemini 2.0 Flash 001, ElevenLabs, Whisper, and the Gemini 2.5 Flash Lite preview to match every learner.
         </p>
       </div>
     </section>
