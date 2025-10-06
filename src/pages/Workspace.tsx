@@ -14,6 +14,10 @@ const Workspace = () => {
   const [modelPreferences] = useState(DEFAULT_FEATURE_MODELS);
   const [pendingQuiz, setPendingQuiz] = useState<QuizResponse | null>(null);
 
+  // New states to support 'View on Canvas' flow
+  const [lastAddedNodeIds, setLastAddedNodeIds] = useState<string[]>([]);
+  const [focusNodeId, setFocusNodeId] = useState<string | null>(null);
+
   useEffect(() => {
     if (canvasItems.length > 0) return;
     const baseX = 150;
@@ -26,6 +30,24 @@ const Workspace = () => {
     ];
     setCanvasItems(onboarding);
   }, []);
+
+  const addNodesToCanvas = (nodes: any[]) => {
+    if (!nodes || nodes.length === 0) return;
+    const formatted = nodes.map((node: any, index: number) => ({
+      id: node.id || `node-${Date.now()}-${index}`,
+      type: node.type || 'text',
+      title: node.title || node.content || `Node ${index + 1}`,
+      x: node.x !== undefined ? node.x : 150 + (index % 4) * 200,
+      y: node.y !== undefined ? node.y : 150 + Math.floor(index / 4) * 200,
+      connections: node.connections || node.children || [],
+      color: node.color
+    }));
+
+    setCanvasItems(prev => [...prev, ...formatted]);
+    setLastAddedNodeIds(formatted.map((n: any) => n.id));
+    // focus the first of the newly added nodes
+    if (formatted.length > 0) setFocusNodeId(formatted[0].id);
+  };
 
   const extractArtifact = (text: string) => {
     const artifactMatch = text.match(/\{[\s\S]*?\}\s*$/m);
@@ -98,7 +120,7 @@ const Workspace = () => {
           toast.info('Composing micro mind map...');
           const content = incorrectIdxs.map(i => `Prerequisite concepts needed to answer: ${pendingQuiz.questions[i].question}`).join('\n');
           const nodes = await AIService.generateMindMap(content, modelPreferences.mindmap);
-          const formattedNodes = nodes.map((node: any, index: number) => ({
+          const formattedNodes = nodes.map((node: any, index) => ({
             id: node.id || `node-${Date.now()}-${index}`,
             type: 'text',
             title: node.title || node.content || 'Concept',
@@ -107,7 +129,7 @@ const Workspace = () => {
             connections: node.children || [],
             color: index === 0 ? 'monochrome_accent' : undefined,
           }));
-          setCanvasItems(prevItems => [...prevItems, ...formattedNodes]);
+          addNodesToCanvas(formattedNodes);
           toast.success('Micro mind map added to canvas.');
         }
         setPendingQuiz(null);
@@ -134,13 +156,13 @@ const Workspace = () => {
         const nodes = await AIService.generateMindMap(message, modelPreferences.mindmap);
         const formattedNodes = nodes.map((node, index) => ({
           id: node.id || `node-${Date.now()}-${index}`,
-          type: 'text',
+          type: node.type || 'text',
           title: node.title || node.content || 'Topic',
           x: 150 + (index % 4) * 200,
           y: 150 + Math.floor(index / 4) * 200,
           connections: node.children || []
         }));
-        setCanvasItems(prevItems => [...prevItems, ...formattedNodes]);
+        addNodesToCanvas(formattedNodes);
         toast.success("Mind map created! Check the canvas.");
         const aiMessage: AIMessage = {
           role: 'assistant',
@@ -166,7 +188,7 @@ const Workspace = () => {
         if (artifact && artifact.artifact_type) {
           if (artifact.artifact_type === 'Geometric Mind Map' && artifact.action === 'RENDER') {
             const items = buildItemsFromArtifact(artifact);
-            setCanvasItems(prevItems => [...prevItems, ...items]);
+            addNodesToCanvas(items);
             toast.success('Mind map rendered on canvas.');
           }
           const aiMessage: AIMessage = { role: 'assistant', content: caption || 'To compose this concept in lucidity, the Geometric Mind Map is forming now on your canvas.' };
@@ -216,7 +238,7 @@ const Workspace = () => {
         data: { analysis }
       };
 
-      setCanvasItems(prevItems => [...prevItems, newNode]);
+      addNodesToCanvas([newNode]);
 
       const aiMessage: AIMessage = {
         role: 'assistant',
@@ -233,16 +255,33 @@ const Workspace = () => {
     }
   };
 
+  const handleViewOnCanvas = () => {
+    if (lastAddedNodeIds.length > 0) {
+      setFocusNodeId(lastAddedNodeIds[0]);
+    }
+  };
+
+  const handleFocusCompleted = () => {
+    setFocusNodeId(null);
+    setLastAddedNodeIds([]);
+  };
+
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-background via-secondary/10 to-primary/5">
+    <div className="h-screen flex flex-col bg-background">
       <WorkspaceNav />
-      <div className="flex-1 flex flex-col relative overflow-hidden">
-        <Canvas items={canvasItems} onFileUpload={handleFileUpload} />
-        <ChatInterface
-          onSendMessage={handleSendMessage}
-          chatHistory={chatHistory}
-          isProcessing={isProcessing}
-        />
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="flex-1 bg-white">
+          <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+        </div>
+        <aside className="w-full md:w-1/3 border-l border-[#E0E0E0] bg-[#F4F4F4] flex flex-col">
+          <ChatInterface
+            onSendMessage={handleSendMessage}
+            chatHistory={chatHistory}
+            isProcessing={isProcessing}
+            lastAddedNodeIds={lastAddedNodeIds}
+            onViewCanvas={handleViewOnCanvas}
+          />
+        </aside>
       </div>
     </div>
   );

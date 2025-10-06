@@ -16,9 +16,11 @@ interface CanvasNode {
 interface CanvasProps {
   items: any[];
   onFileUpload?: (file: File) => void;
+  focusNodeId?: string | null;
+  onFocusCompleted?: () => void;
 }
 
-const Canvas = ({ items, onFileUpload }: CanvasProps) => {
+const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasProps) => {
   const [nodes, setNodes] = useState<CanvasNode[]>([]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -67,6 +69,33 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
       ));
     }
   }, [items]);
+
+  useEffect(() => {
+    if (!focusNodeId) return;
+    const node = nodes.find(n => n.id === focusNodeId);
+    if (!node || !canvasRef.current) return;
+
+    // center node in view
+    const rect = canvasRef.current.getBoundingClientRect();
+    const containerWidth = rect.width;
+    const containerHeight = rect.height;
+    const nodeWidth = 150;
+    const nodeHeight = 150;
+
+    const targetPanX = containerWidth / 2 - (node.x + nodeWidth / 2) * zoom;
+    const targetPanY = containerHeight / 2 - (node.y + nodeHeight / 2) * zoom;
+
+    setPan({ x: targetPanX, y: targetPanY });
+    setSelectedNode(node.id);
+
+    // clear selection after a short time, and notify workspace
+    const t = setTimeout(() => {
+      setSelectedNode(null);
+      if (onFocusCompleted) onFocusCompleted();
+    }, 3000);
+
+    return () => clearTimeout(t);
+  }, [focusNodeId]);
 
   const normalizeConnections = (connections: any): string[] => {
     if (!Array.isArray(connections)) return [];
@@ -230,36 +259,36 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
   };
 
   return (
-    <div className="flex-1 relative bg-gradient-to-br from-background via-background to-secondary/20">
-      <div className="absolute top-6 left-6 z-10 glass-panel rounded-2xl p-2 animate-slide-up">
+    <div className="flex-1 relative bg-white">
+      <div className="absolute top-6 left-6 z-10 bg-white/90 backdrop-blur rounded-2xl p-2 border border-black/10 shadow-sm">
         <div className="flex items-center gap-2">
           <Button
             onClick={handleZoomOut}
             size="icon"
             variant="ghost"
-            className="touch-target hover:bg-primary/10 rounded-xl focus-ring"
+            className="touch-target rounded-xl hover:bg-black/5 focus-ring"
             title="Zoom Out"
           >
             <ZoomOut className="w-5 h-5" />
           </Button>
-          <div className="px-3 py-1 text-sm font-medium bg-background/50 rounded-lg min-w-[4rem] text-center">
+          <div className="px-3 py-1 text-sm font-medium bg-white/80 rounded-lg min-w-[4rem] text-center border border-black/10">
             {Math.round(zoom * 100)}%
           </div>
           <Button
             onClick={handleZoomIn}
             size="icon"
             variant="ghost"
-            className="touch-target hover:bg-primary/10 rounded-xl focus-ring"
+            className="touch-target rounded-xl hover:bg-black/5 focus-ring"
             title="Zoom In"
           >
             <ZoomIn className="w-5 h-5" />
           </Button>
-          <div className="w-px h-6 bg-border mx-1" />
+          <div className="w-px h-6 bg-black/10 mx-1" />
           <Button
             onClick={handleResetView}
             size="icon"
             variant="ghost"
-            className="touch-target hover:bg-primary/10 rounded-xl focus-ring"
+            className="touch-target rounded-xl hover:bg-black/5 focus-ring"
             title="Reset View"
           >
             <Maximize2 className="w-5 h-5" />
@@ -267,12 +296,12 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
           <Button
             size="icon"
             variant="ghost"
-            className="touch-target hover:bg-primary/10 rounded-xl focus-ring"
+            className="touch-target rounded-xl hover:bg-black/5 focus-ring"
             title="Pan Mode"
           >
             <Move className="w-5 h-5" />
           </Button>
-          <div className="w-px h-6 bg-border mx-1" />
+          <div className="w-px h-6 bg-black/10 mx-1" />
           <Button
             onClick={toggleConnectMode}
             size="icon"
@@ -285,7 +314,7 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
           <Button
             onClick={handleAddNode}
             size="icon"
-            className="touch-target bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl focus-ring glow-hover"
+            className="touch-target bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl focus-ring"
             title="Add Node"
           >
             <Plus className="w-5 h-5" />
@@ -306,7 +335,7 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
 
       <div 
         ref={canvasRef}
-        className="absolute inset-0 overflow-hidden cursor-move"
+        className="absolute inset-0 overflow-hidden cursor-move bg-dot-grid"
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}
@@ -323,90 +352,20 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
         >
           {nodes.length === 0 ? (
             <div className="absolute inset-0 flex items-center justify-center p-8">
-              <div className="text-center max-w-4xl animate-fade-in">
-                <h1 className="text-5xl font-bold mb-6 gradient-text">
-                  Welcome to SHUNYA AI
-                </h1>
-                <p className="text-xl text-muted-foreground mb-12">
-                  Your monochrome sanctuary for visual intelligence
-                </p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="glass-card rounded-3xl p-8 glow-hover cursor-pointer group">
-                    <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center mb-6 node-glow group-hover:scale-105 transition-transform">
-                      <Upload className="w-16 h-16 text-primary" />
-                    </div>
-                    <div className="space-y-3">
-                      <p className="text-lg font-bold text-foreground">Upload Files</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Drag & drop PDFs, images, videos onto the canvas to get started.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="glass-card rounded-3xl p-8 glow-hover cursor-pointer group">
-                    <div className="aspect-square bg-gradient-to-br from-secondary/30 to-primary/20 rounded-2xl flex flex-col items-center justify-center mb-6 gap-3 group-hover:scale-105 transition-transform">
-                      <div className="flex gap-2 text-xs">
-                        <div className="flex items-center gap-2 glass-panel px-3 py-2 rounded-full">
-                          <Image className="w-4 h-4 text-primary" />
-                          <span className="font-medium">Visualize</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 text-xs">
-                        <div className="flex items-center gap-2 glass-panel px-3 py-2 rounded-full">
-                          <FileText className="w-4 h-4 text-accent" />
-                          <span className="font-medium">Analyze</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 text-xs">
-                        <div className="flex items-center gap-2 glass-panel px-3 py-2 rounded-full">
-                          <BarChart3 className="w-4 h-4 text-secondary-foreground" />
-                          <span className="font-medium">Create</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <p className="text-lg font-bold text-foreground">AI Processing</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Select content and ask anything. Get instant mind maps and explanations.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="glass-card rounded-3xl p-8 glow-hover cursor-pointer group">
-                    <div className="aspect-square bg-gradient-to-br from-accent/20 to-secondary/30 rounded-2xl flex items-center justify-center mb-6 p-6 group-hover:scale-105 transition-transform">
-                      <div className="relative w-full h-full">
-                        <div className="absolute top-4 right-4 w-20 h-24 glass-card rounded-2xl shadow-lg transform rotate-6 node-glow"></div>
-                        <div className="absolute top-6 left-6 w-20 h-24 glass-card rounded-2xl shadow-lg transform -rotate-3 node-glow"></div>
-                        <div className="absolute bottom-4 right-8 w-20 h-24 glass-card rounded-2xl shadow-lg transform rotate-12 node-glow"></div>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <p className="text-lg font-bold text-foreground">Learn Visually</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Collaborate, organize, and master concepts with personalized quizzes.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm">
-                  <div className="flex items-center gap-3 glass-panel px-6 py-3 rounded-full">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-lg">
-                      1
-                    </div>
+              <div className="text-center max-w-4xl">
+                <h1 className="text-5xl font-bold mb-3 text-black">Welcome to SHUNYA AI</h1>
+                <p className="text-lg text-black/70 mb-10">Your monochrome sanctuary for visual intelligence</p>
+                <div className="flex items-center justify-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 px-5 py-3 rounded-full border border-black/20 bg-white">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
                     <span className="font-medium">Drop files onto canvas</span>
                   </div>
-                  <div className="flex items-center gap-3 glass-panel px-6 py-3 rounded-full">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-lg">
-                      2
-                    </div>
+                  <div className="flex items-center gap-3 px-5 py-3 rounded-full border border-black/20 bg-white">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
                     <span className="font-medium">Ask AI anything</span>
                   </div>
-                  <div className="flex items-center gap-3 glass-panel px-6 py-3 rounded-full">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-lg">
-                      3
-                    </div>
+                  <div className="flex items-center gap-3 px-5 py-3 rounded-full border border-black/20 bg-white">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
                     <span className="font-medium">Get amazing results</span>
                   </div>
                 </div>
@@ -416,12 +375,8 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
             <>
               <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
                 <defs>
-                  <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="rgb(147, 51, 234)" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="rgb(6, 182, 212)" stopOpacity="0.6" />
-                  </linearGradient>
                   <filter id="glow">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
                     <feMerge>
                       <feMergeNode in="coloredBlur"/>
                       <feMergeNode in="SourceGraphic"/>
@@ -440,17 +395,17 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
                     
                     const midX = (x1 + x2) / 2;
                     const midY = (y1 + y2) / 2;
-                    const offset = 50;
+                    const offset = 40;
                     
                     return (
                       <path
                         key={`${node.id}-${targetId}`}
                         d={`M ${x1} ${y1} Q ${midX} ${midY - offset} ${x2} ${y2}`}
-                        stroke="url(#connectionGradient)"
-                        strokeWidth="3"
+                        stroke="black"
+                        strokeOpacity={0.25}
+                        strokeWidth="2"
                         fill="none"
                         filter="url(#glow)"
-                        className="animate-pulse"
                       />
                     );
                   })
@@ -460,9 +415,9 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
               {nodes.map(node => (
                 <div
                   key={node.id}
-                  className={`absolute glass-card rounded-2xl p-6 cursor-move glow-hover node-glow touch-target ${
-                    selectedNode === node.id ? 'ring-4 ring-primary ring-offset-2' : node.color === 'monochrome_accent' ? 'ring-2 ring-accent ring-offset-2' : ''
-                  } ${connectFrom === node.id ? 'ring-4 ring-accent ring-offset-2' : ''}`}
+                  className={`absolute rounded-xl p-4 cursor-move bg-white border border-black/70 ${
+                    selectedNode === node.id ? 'ring-2 ring-accent ring-offset-2' : node.color === 'monochrome_accent' ? 'ring-2 ring-accent ring-offset-2' : ''
+                  } ${connectFrom === node.id ? 'ring-2 ring-accent ring-offset-2' : ''}`}
                   style={{
                     left: `${node.x}px`,
                     top: `${node.y}px`,
@@ -475,10 +430,10 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
                   onClick={() => handleNodeClick(node.id)}
                 >
                   <div className="flex flex-col items-center justify-center h-full text-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-3 text-white shadow-lg">
+                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-2">
                       {getNodeIcon(node.type)}
                     </div>
-                    <p className="font-semibold text-sm line-clamp-2">{node.title}</p>
+                    <p className="font-semibold text-sm leading-snug line-clamp-3 text-black">{node.title}</p>
                   </div>
                 </div>
               ))}
