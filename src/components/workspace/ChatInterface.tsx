@@ -127,7 +127,7 @@ const ChatInterface = ({
         </div>
       )}
 
-      <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto px-4 pt-4 pb-2 space-y-4 scrollbar-thin scroll-smooth">
+      <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto px-4 pt-4 pb-0 space-y-4 scrollbar-thin scroll-smooth">
         {chatHistory.map((entry, index) => {
           const isUser = entry.role === "user";
           const showButton = showVisualize && index === visualizationMessageIndex && !entry.visualization && !isUser;
