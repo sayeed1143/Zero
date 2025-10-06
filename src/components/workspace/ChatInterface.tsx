@@ -57,15 +57,15 @@ const ChatInterface = ({
   }, [chatHistory.length, showVisualize]);
 
   return (
-    <div className="rounded-[32px] border border-border/60 bg-white/90 backdrop-blur-xl shadow-2xl overflow-hidden">
-      <div className="flex flex-col max-h-[70vh]">
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pt-8 pb-6 space-y-6">
+    <div className="chat-container overflow-hidden">
+      <div className="flex flex-col h-full">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pt-8 pb-36 space-y-6 scrollbar-thin">
           {chatHistory.map((entry, index) => {
             const isUser = entry.role === "user";
             const showButton = showVisualize && index === visualizationMessageIndex && !entry.visualization && !isUser;
 
             return (
-              <div key={`message-${index}`} className="space-y-3">
+              <div key={`message-${index}`} className="space-y-3 chat-message">
                 <div
                   className={cn("flex", isUser ? "justify-end" : "justify-start")}
                 >
@@ -129,8 +129,8 @@ const ChatInterface = ({
           })}
         </div>
 
-        <div className="border-t border-border/60 bg-white/70 px-6 py-5">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="chat-input">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full bg-white/90 backdrop-blur-xl border border-border/60 rounded-2xl px-4 py-3 shadow-2xl">
             <Textarea
               ref={textareaRef}
               value={message}
