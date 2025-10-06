@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Upload, Image, FileText, BarChart3, ZoomIn, ZoomOut, Maximize2, Move, Plus, Trash2, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
