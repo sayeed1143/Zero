@@ -8,9 +8,11 @@ interface ChatInterfaceProps {
   onSendMessage: (message: string, command?: string) => void;
   chatHistory: AIMessage[];
   isProcessing: boolean;
+  lastAddedNodeIds?: string[];
+  onViewCanvas?: () => void;
 }
 
-const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfaceProps) => {
+const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNodeIds = [], onViewCanvas }: ChatInterfaceProps) => {
   const [message, setMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -86,7 +88,17 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
                     : 'bg-white text-black border border-accent/30'
                 } ${msg.role !== 'user' ? 'border-l-4 border-l-accent' : ''}`}
               >
-                {msg.content}
+                <div>{msg.content}</div>
+
+                {/* Show 'View on Canvas' when assistant message and new nodes were added recently */}
+                {msg.role === 'assistant' && index === chatHistory.length - 1 && lastAddedNodeIds && lastAddedNodeIds.length > 0 && (
+                  <div className="mt-3 flex items-center justify-end">
+                    <Button size="sm" variant="glow" className="px-3 py-1" onClick={() => onViewCanvas && onViewCanvas()}>
+                      View on Canvas
+                    </Button>
+                  </div>
+                )}
+
               </div>
             </div>
           ))}
