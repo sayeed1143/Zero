@@ -1,9 +1,26 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Send, Paperclip, Mic, Sparkles, FileText, Image, BarChart3, Hash, BookOpen, Zap, Volume2, VolumeX, GitBranch, Loader2, X } from "lucide-react";
+import {
+  Send,
+  Paperclip,
+  Mic,
+  Sparkles,
+  FileText,
+  Image,
+  BarChart3,
+  Hash,
+  BookOpen,
+  Zap,
+  Volume2,
+  VolumeX,
+  GitBranch,
+  Loader2,
+  X,
+  ChevronDown,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import type { AIMessage } from "@/types/ai";
 
 interface ChatInterfaceProps {
@@ -15,6 +32,16 @@ interface ChatInterfaceProps {
 }
 
 type Persona = "student" | "teacher" | "tutor";
+
+type AttachmentKind = "image" | "pdf" | "other";
+
+type AttachmentItem = {
+  id: string;
+  file: File;
+  progress: number;
+  preview?: string;
+  kind: AttachmentKind;
+};
 
 const humanLabel = (p: Persona) => (p === "student" ? "Student" : p === "teacher" ? "Teacher" : "Tutor");
 
@@ -35,12 +62,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
   const [voiceOutput, setVoiceOutput] = useState(false);
 
   // Attachments upload simulation / preview
-  const [attachments, setAttachments] = useState<{
-    id: string;
-    file: File;
-    progress: number;
-    preview?: string;
-  }[]>([]);
+  const [attachments, setAttachments] = useState<AttachmentItem[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -51,9 +73,63 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const slashCommands = useMemo(
+    () => [
+      {
+        id: "mindmap",
+        label: "Mindmap",
+        description: "Visualize relationships instantly.",
+        prompt: "Create a mindmap that organizes the core ideas from this topic in a structured way.",
+        shortcut: "/mindmap",
+      },
+      {
+        id: "quiz",
+        label: "Quiz",
+        description: "Generate questions to check understanding.",
+        prompt: "Generate a five-question quiz with answers to evaluate understanding of this topic.",
+        shortcut: "/quiz",
+      },
+    ],
+    [],
+  );
+
+  const quickCommands = useMemo(
+    () => [
+      { icon: <Sparkles className="h-3 w-3" />, label: "Summarize", command: "explain", prompt: "Summarize this content in simple terms." },
+      { icon: <FileText className="h-3 w-3" />, label: "Explain", command: "explain", prompt: "Explain this in detail." },
+      { icon: <BookOpen className="h-3 w-3" />, label: "Flashcards", command: "flashcards", prompt: "Create spaced-repetition flashcards from this content." },
+      {
+        icon: <GitBranch className="h-3 w-3" />,
+        label: "Mindmap",
+        command: "mindmap",
+        prompt: slashCommands.find(cmd => cmd.id === "mindmap")?.prompt ?? "Create a mindmap from this topic.",
+      },
+      {
+        icon: <BarChart3 className="h-3 w-3" />,
+        label: "Quiz",
+        command: "quiz",
+        prompt: slashCommands.find(cmd => cmd.id === "quiz")?.prompt ?? "Generate a short quiz to test my knowledge.",
+      },
+      { icon: <Hash className="h-3 w-3" />, label: "Math", command: "math", prompt: "Solve this math problem step-by-step." },
+    ],
+    [slashCommands],
+  );
+
+  const filteredSlashCommands = useMemo(() => {
+    const trimmed = message.trim().toLowerCase();
+    if (!trimmed.startsWith("/")) return [] as typeof slashCommands;
+    const query = trimmed.slice(1);
+    if (!query) return slashCommands;
+    return slashCommands.filter(cmd => cmd.id.includes(query) || cmd.label.toLowerCase().includes(query));
+  }, [message, slashCommands]);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory, assignments, attachments]);
+    if (filteredSlashCommands.length === 0) {
+      setHighlightedCommandIndex(0);
+    } else {
+      setHighlightedCommandIndex(prev => Math.min(prev, filteredSlashCommands.length - 1));
+    }
+  }, [filteredSlashCommands]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -85,6 +161,70 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     } catch {}
   }, [chatHistory, voiceOutput, ttsSupported]);
 
+  const adjustTextareaHeight = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const minHeight = 48;
+    const maxHeight = 200;
+    const contentHeight = Math.max(el.scrollHeight, minHeight);
+    const nextHeight = Math.min(contentHeight, maxHeight);
+    el.style.height = `${nextHeight}px`;
+    el.style.overflowY = contentHeight > maxHeight ? "auto" : "hidden";
+  }, []);
+
+  useLayoutEffect(() => {
+    adjustTextareaHeight();
+  }, [message, adjustTextareaHeight]);
+
+  const scrollToBottom = useCallback(
+    (behavior: ScrollBehavior = "smooth") => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior, block: "end" });
+      }
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({ top: scrollContainerRef.current.scrollHeight, behavior });
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const threshold = 48;
+      const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight <= threshold;
+      setIsScrolledToBottom(atBottom);
+      setShowScrollToBottom(!atBottom);
+      if (atBottom) {
+        setLastSeenMessageIndex(chatHistory.length ? chatHistory.length - 1 : -1);
+      }
+    };
+
+    handleScroll();
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [chatHistory.length]);
+
+  useEffect(() => {
+    if (chatHistory.length === 0) {
+      setLastSeenMessageIndex(-1);
+      setIsScrolledToBottom(true);
+      setShowScrollToBottom(false);
+      return;
+    }
+
+    if (isScrolledToBottom) {
+      scrollToBottom(chatHistory.length > 5 ? "smooth" : "auto");
+      setLastSeenMessageIndex(chatHistory.length - 1);
+      setShowScrollToBottom(false);
+    } else {
+      setShowScrollToBottom(true);
+    }
+  }, [chatHistory, isScrolledToBottom, scrollToBottom]);
+
   const startRecognition = () => {
     if (!speechSupported || isProcessing) return;
     try {
@@ -107,12 +247,14 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
             interim += transcript;
           }
         }
-        setMessage(prev => finalTranscript ? (prev ? `${prev} ${finalTranscript}` : finalTranscript) : (prev || interim));
+        setMessage(prev => (finalTranscript ? `${prev ? `${prev} ` : ""}${finalTranscript}` : prev || interim));
       };
 
       recognition.onerror = () => {
         setIsRecording(false);
-        try { recognition.stop(); } catch {}
+        try {
+          recognition.stop();
+        } catch {}
       };
 
       recognition.onend = () => {
@@ -134,40 +276,113 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     setIsRecording(false);
   };
 
-  const quickCommands = [
-    { icon: <Sparkles className="w-3 h-3" />, label: "Summarize", command: "explain", prompt: "Summarize this content in simple terms" },
-    { icon: <FileText className="w-3 h-3" />, label: "Explain", command: "explain", prompt: "Explain this in detail" },
-    { icon: <BookOpen className="w-3 h-3" />, label: "Flashcards", command: "flashcards", prompt: "Create spaced-repetition flashcards from this content" },
-    { icon: <BarChart3 className="w-3 h-3" />, label: "Quiz", command: "quiz", prompt: "Generate a short quiz to test my knowledge" },
-    { icon: <Hash className="w-3 h-3" />, label: "Math", command: "math", prompt: "Solve this math problem step-by-step" },
-  ];
-
-  const handleSend = (command?: string) => {
-    if (message.trim() && !isProcessing) {
-      if (command === "broadcast") {
-        onSendMessage(`[Broadcast - ${humanLabel(persona)}] ${message}`, "broadcast");
-      } else {
-        const prefix = persona === "student" ? "[Student] " : persona === "teacher" ? "[Teacher] " : "[Tutor] ";
-        const full = prefix + message;
-        onSendMessage(full, command);
+  const parseSlashCommand = useCallback(
+    (value: string): { command?: string; body: string } => {
+      const trimmed = value.trim();
+      if (!trimmed.startsWith("/")) {
+        return { body: trimmed };
       }
-      setMessage("");
-    }
-  };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+      const [firstToken, ...restTokens] = trimmed.split(/\s+/);
+      const normalized = firstToken.slice(1).toLowerCase();
+      const match = slashCommands.find(cmd => cmd.id === normalized);
+      if (!match) {
+        return { body: trimmed };
+      }
+
+      const remainder = restTokens.join(" ").trim();
+      return {
+        command: match.id,
+        body: remainder || match.prompt,
+      };
+    },
+    [slashCommands],
+  );
+
+  const handleSend = useCallback(
+    (explicitCommand?: string, overrideBody?: string) => {
+      if (isProcessing) return;
+
+      if (explicitCommand === "broadcast") {
+        const trimmed = (overrideBody ?? message).trim();
+        if (!trimmed) return;
+        onSendMessage(`[Broadcast - ${humanLabel(persona)}] ${trimmed}`, "broadcast");
+        setMessage("");
+        requestAnimationFrame(adjustTextareaHeight);
+        return;
+      }
+
+      const rawValue = overrideBody ?? message;
+      const parsed = parseSlashCommand(rawValue);
+      const finalCommand = explicitCommand ?? parsed.command;
+      const body = (overrideBody ?? parsed.body).trim();
+
+      if (!body) return;
+
+      const prefix = persona === "student" ? "[Student] " : persona === "teacher" ? "[Teacher] " : "[Tutor] ";
+      onSendMessage(prefix + body, finalCommand);
+      setMessage("");
+      requestAnimationFrame(adjustTextareaHeight);
+    },
+    [adjustTextareaHeight, isProcessing, message, onSendMessage, parseSlashCommand, persona],
+  );
 
   const handleQuickCommand = (command: string, prompt: string) => {
     if (!isProcessing) {
-      const prefix = persona === "student" ? "[Student] " : persona === "teacher" ? "[Teacher] " : "[Tutor] ";
-      const full = prefix + prompt;
-      setMessage("");
-      onSendMessage(full, command);
+      handleSend(command, prompt);
+    }
+  };
+
+  const handleComposerChange = (value: string) => {
+    setMessage(value);
+    requestAnimationFrame(adjustTextareaHeight);
+  };
+
+  const handleSlashSuggestionClick = (commandId: string) => {
+    const entry = slashCommands.find(cmd => cmd.id === commandId);
+    const base = entry ? `${entry.shortcut} ` : `/${commandId} `;
+    setMessage(base);
+    requestAnimationFrame(() => {
+      adjustTextareaHeight();
+      textareaRef.current?.focus();
+    });
+  };
+
+  const handleComposerKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (filteredSlashCommands.length > 0) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightedCommandIndex(prev => (prev + 1) % filteredSlashCommands.length);
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightedCommandIndex(prev => (prev - 1 + filteredSlashCommands.length) % filteredSlashCommands.length);
+        return;
+      }
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const command = filteredSlashCommands[highlightedCommandIndex];
+        if (command) {
+          handleSlashSuggestionClick(command.id);
+        }
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setMessage("");
+        return;
+      }
+    }
+
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (filteredSlashCommands.length > 0) {
+        const command = filteredSlashCommands[highlightedCommandIndex];
+        handleSend(command?.id);
+      } else {
+        handleSend();
+      }
     }
   };
 
@@ -182,6 +397,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     const id = String(Date.now());
     setAssignments(prev => [{ id, title: message.trim() ? message.trim() : `Assignment ${prev.length + 1}`, status: "draft" }, ...prev]);
     setMessage("");
+    requestAnimationFrame(adjustTextareaHeight);
   };
 
   const publishAssignment = (id: string) => {
@@ -191,24 +407,29 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
   // Attachments handling (client-side preview + simulated upload progress)
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
-    const newItems: typeof attachments = [];
+    const newItems: AttachmentItem[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      const isImage = file.type.startsWith("image/");
+      const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      const kind: AttachmentKind = isImage ? "image" : isPdf ? "pdf" : "other";
       const id = `${Date.now()}-${i}`;
       const reader = new FileReader();
-      const item = { id, file, progress: 0, preview: undefined };
+      const item: AttachmentItem = { id, file, progress: 0, preview: undefined, kind };
       newItems.push(item);
       reader.onload = (e) => {
         const preview = typeof e.target?.result === "string" ? e.target?.result : undefined;
-        setAttachments(prev => prev.map(p => p.id === id ? { ...p, preview } : p));
+        if (preview) {
+          setAttachments(prev => prev.map(p => (p.id === id ? { ...p, preview } : p)));
+        }
       };
-      if (file.type.startsWith("image/") || file.type.startsWith("text/")) {
+      if (isImage) {
         reader.readAsDataURL(file);
       }
     }
     setAttachments(prev => [...newItems, ...prev]);
 
-    newItems.forEach((it, idx) => {
+    newItems.forEach(it => {
       const interval = setInterval(() => {
         setAttachments(prev => {
           const found = prev.find(p => p.id === it.id);
@@ -220,7 +441,11 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
             clearInterval(interval);
             return prev.map(p => (p.id === it.id ? { ...p, progress: 100 } : p));
           }
-          return prev.map(p => (p.id === it.id ? { ...p, progress: Math.min(100, p.progress + 12 + Math.random() * 20) } : p));
+          return prev.map(p =>
+            p.id === it.id
+              ? { ...p, progress: Math.min(100, p.progress + 12 + Math.random() * 20) }
+              : p,
+          );
         });
       }, 300 + Math.random() * 300);
     });
@@ -228,228 +453,378 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
 
   const removeAttachment = (id: string) => setAttachments(prev => prev.filter(p => p.id !== id));
 
-  return (
-    <div className="h-full w-full flex flex-col bg-[#F4F4F4]">
-      {/* Top controls: persona selector, show work, assignment list */}
-      <div className="px-4 pt-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1 bg-white border border-black/10 rounded-full p-1">
-            {(["student", "teacher", "tutor"] as Persona[]).map(p => (
-              <button
-                key={p}
-                onClick={() => setPersona(p)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${persona === p ? 'bg-primary text-primary-foreground' : 'text-black/70 hover:bg-black/5'}`}
-              >
-                {humanLabel(p)}
-              </button>
-            ))}
-          </div>
+  const firstUnreadIndex = !isScrolledToBottom && chatHistory.length - 1 > lastSeenMessageIndex ? Math.max(lastSeenMessageIndex + 1, 0) : -1;
+  const showStreamingCaret = (role: AIMessage["role"], index: number) => role === "assistant" && index === chatHistory.length - 1 && isProcessing;
 
-          <div className="flex items-center gap-2">
+  return (
+    <TooltipProvider delayDuration={120}>
+      <div className="flex h-full w-full flex-col bg-[#F4F4F4]">
+        {/* Top controls: persona selector, show work, assignment list */}
+        <div className="px-4 pt-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1 rounded-full border border-black/10 bg-white p-1">
+              {(["student", "teacher", "tutor"] as Persona[]).map(p => (
+                <button
+                  key={p}
+                  onClick={() => setPersona(p)}
+                  className={cn(
+                    "rounded-full px-3 py-1 text-xs font-semibold transition-all",
+                    persona === p ? "bg-primary text-primary-foreground" : "text-black/70 hover:bg-black/5",
+                  )}
+                >
+                  {humanLabel(p)}
+                </button>
+              ))}
+            </div>
+
             <label className="inline-flex items-center gap-2 text-sm">
               <input type="checkbox" checked={showWorkMode} onChange={() => setShowWorkMode(s => !s)} className="accent-primary" />
               <span className="text-sm">Show work</span>
             </label>
-          </div>
 
-          <div className="flex items-center gap-2 ml-auto">
-            <div className="hidden md:flex items-center gap-2">
-              <Button size="sm" variant="ghost" onClick={() => { if (message.trim()) createAssignment(); }} disabled={!message.trim() || isProcessing}>
-                Create Assignment
-              </Button>
-              {persona === 'teacher' && (
-                <Button size="sm" variant="glow" onClick={() => onSendMessage('[Teacher Broadcast] ' + (message || 'Announcement'), 'broadcast')} disabled={isProcessing}>
-                  Broadcast
+            <div className="ml-auto flex items-center gap-2">
+              <div className="hidden items-center gap-2 md:flex">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    if (message.trim()) createAssignment();
+                  }}
+                  disabled={!message.trim() || isProcessing}
+                >
+                  Create Assignment
                 </Button>
-              )}
-            </div>
-            <div className="md:hidden text-xs text-black/60">{assignments.length} assignments</div>
-          </div>
-        </div>
-
-        {/* Assignment chips */}
-        {assignments.length > 0 && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-            {assignments.map(a => (
-              <div key={a.id} className="bg-white border border-black/10 px-3 py-1 rounded-lg text-sm flex items-center gap-3">
-                <div className="font-medium">{a.title}</div>
-                <div className="text-xs text-black/60">{a.status}</div>
-                {a.status === 'draft' && (
-                  <Button size="xs" variant="ghost" onClick={() => publishAssignment(a.id)}>Publish</Button>
+                {persona === "teacher" && (
+                  <Button
+                    size="sm"
+                    variant="glow"
+                    onClick={() => onSendMessage(`[Teacher Broadcast] ${message || "Announcement"}`, "broadcast")}
+                    disabled={isProcessing}
+                  >
+                    Broadcast
+                  </Button>
                 )}
               </div>
-            ))}
+              <div className="text-xs text-black/60 md:hidden">{assignments.length} assignments</div>
+            </div>
           </div>
-        )}
 
-        {/* Quick commands */}
-        <div className="mt-3 flex items-center gap-2 flex-wrap">
-          {quickCommands.map((cmd, index) => (
-            <button
-              key={index}
-              onClick={() => handleQuickCommand(cmd.command, cmd.prompt)}
-              disabled={isProcessing}
-              className="bg-primary text-primary-foreground border border-black/10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2 transition-all hover:opacity-90 touch-target focus-ring disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {cmd.icon}
-              <span>{cmd.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-3 flex-1 overflow-y-auto px-4">
-        <div className="space-y-3 pb-4">
-          {chatHistory.map((msg, index) => (
-            <div key={`msg-${index}`} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl px-5 py-3 shadow-sm text-sm leading-relaxed whitespace-pre-wrap font-medium ${msg.role === 'user' ? 'bg-[#EDEDED] text-black border border-black/10' : 'bg-white text-black border border-accent/30'} ${msg.role !== 'user' ? 'border-l-4 border-l-accent' : ''}`}>
-                {/* Persona label and role */}
-                <div className="text-xs text-black/60 mb-1">{msg.role === 'user' ? 'You' : 'SHUNYA AI'}</div>
-
-                <div>{msg.content}</div>
-
-                {/* Show Work: if enabled, attempt to reveal step-by-step lines under a collapsible region */}
-                {showWorkMode && msg.role === 'assistant' && (
-                  <details className="mt-3 bg-black/5 p-3 rounded-md">
-                    <summary className="cursor-pointer text-sm font-medium">Show work / steps</summary>
-                    <div className="mt-2 text-sm whitespace-pre-wrap">
-                      {extractSteps(msg.content).length > 0 ? (
-                        extractSteps(msg.content).map((s, i) => (
-                          <div key={i} className="mb-2">{s}</div>
-                        ))
-                      ) : (
-                        <div className="text-black/60">No detailed steps detected. Ask the assistant to "show work" for detailed steps.</div>
-                      )}
-                    </div>
-                  </details>
-                )}
-
-                {/* Show 'View on Canvas' when assistant message and new nodes were added recently */}
-                {msg.role === 'assistant' && index === chatHistory.length - 1 && lastAddedNodeIds && lastAddedNodeIds.length > 0 && (
-                  <div className="mt-3 flex items-center justify-end">
-                    <Button size="sm" variant="glow" className="px-3 py-1" onClick={() => onViewCanvas && onViewCanvas()}>
-                      View on Canvas
+          {/* Assignment chips */}
+          {assignments.length > 0 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+              {assignments.map(a => (
+                <div key={a.id} className="flex items-center gap-3 rounded-lg border border-black/10 bg-white px-3 py-1 text-sm">
+                  <div className="font-medium">{a.title}</div>
+                  <div className="text-xs text-black/60">{a.status}</div>
+                  {a.status === "draft" && (
+                    <Button size="xs" variant="ghost" onClick={() => publishAssignment(a.id)}>
+                      Publish
                     </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {isProcessing && (
-            <div className="flex justify-start">
-              <div className="rounded-2xl px-5 py-3 bg-white border border-accent/30 text-black">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-black animate-bounce"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-black animate-bounce" style={{ animationDelay: "0.15s" }}></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-black animate-bounce" style={{ animationDelay: "0.3s" }}></div>
-                  </div>
-                  <span className="text-sm text-black/80 font-medium">AI is analyzing...</span>
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
           )}
 
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Attachments preview list */}
-      {attachments.length > 0 && (
-        <div className="px-4 pb-2">
-          <div className="flex flex-col gap-2">
-            {attachments.map(a => (
-              <div key={a.id} className="flex items-center gap-3 bg-white p-2 rounded-lg border border-black/10">
-                <div className="flex-1">
-                  <div className="font-medium text-sm">{a.file.name}</div>
-                  <div className="text-xs text-black/60">{Math.round(a.file.size / 1024)} KB</div>
-                  <div className="w-full bg-black/5 h-2 rounded mt-2 overflow-hidden">
-                    <div style={{ width: `${a.progress}%` }} className="h-2 bg-primary" />
-                  </div>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <Button size="xs" variant="ghost" onClick={() => removeAttachment(a.id)}>Remove</Button>
-                </div>
-              </div>
+          {/* Quick commands */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {quickCommands.map((cmd, index) => (
+              <button
+                key={`${cmd.label}-${index}`}
+                onClick={() => handleQuickCommand(cmd.command, cmd.prompt)}
+                disabled={isProcessing}
+                className="flex items-center gap-2 rounded-full border border-black/10 bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-all hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {cmd.icon}
+                <span>{cmd.label}</span>
+              </button>
             ))}
           </div>
         </div>
-      )}
 
-      <div className="border-t border-[#E0E0E0] bg-[#F4F4F4] p-4">
-        <div className="flex items-center gap-2">
-          <button
-            title="Attach File"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isProcessing}
-            className="shrink-0 touch-target rounded-full hover:bg-black/10 border border-black/10 focus-ring transition-all p-2 bg-white"
-          >
-            <Paperclip className="w-5 h-5" />
-          </button>
+        <div ref={scrollContainerRef} className="relative mt-3 flex-1 overflow-y-auto px-4 pb-6">
+          <div className="space-y-3 pb-8">
+            {chatHistory.map((msg, index) => {
+              const showDivider = firstUnreadIndex === index;
+              const isUser = msg.role === "user";
 
-          <input ref={fileInputRef} type="file" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
+              return (
+                <React.Fragment key={`msg-${index}`}>
+                  {showDivider && (
+                    <div className="flex items-center gap-3 py-2 text-xs font-semibold uppercase tracking-wide text-black/50">
+                      <span className="h-px flex-1 bg-black/10" />
+                      New messages
+                      <span className="h-px flex-1 bg-black/10" />
+                    </div>
+                  )}
 
-          <div className="flex-1 relative">
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={`Ask SHUNYA AI anything... (${humanLabel(persona)})`}
-              disabled={isProcessing}
-              className="pr-24 h-12 rounded-2xl bg-white border border-black/15 focus-visible:border-black focus-visible:ring-4 focus-visible:ring-accent/20 transition-all text-base font-medium placeholder:text-black/40"
-            />
+                  <div className={cn("flex", isUser ? "justify-end" : "justify-start")}> 
+                    <div
+                      className={cn(
+                        "max-w-[80%] rounded-2xl border px-5 py-3 text-sm font-medium leading-relaxed shadow-sm transition-shadow",
+                        isUser
+                          ? "border-black/10 bg-[#EDEDED] text-black"
+                          : "border-accent/30 bg-white text-black",
+                        !isUser && "border-l-4 border-l-accent",
+                      )}
+                    >
+                      <div className="mb-1 text-xs text-black/60">{isUser ? "You" : "SHUNYA AI"}</div>
+                      <div className="whitespace-pre-wrap">
+                        {msg.content}
+                        {showStreamingCaret(msg.role, index) && (
+                          <span className="ml-1 inline-block h-4 w-[2px] animate-pulse bg-black/70 align-middle" />
+                        )}
+                      </div>
+
+                      {showWorkMode && msg.role === "assistant" && (
+                        <details className="mt-3 rounded-md bg-black/5 p-3">
+                          <summary className="cursor-pointer text-sm font-medium">Show work / steps</summary>
+                          <div className="mt-2 whitespace-pre-wrap text-sm">
+                            {extractSteps(msg.content).length > 0 ? (
+                              extractSteps(msg.content).map((s, i) => (
+                                <div key={i} className="mb-2">
+                                  {s}
+                                </div>
+                              ))
+                            ) : (
+                              <div className="text-black/60">No detailed steps detected. Ask the assistant to "show work" for detailed steps.</div>
+                            )}
+                          </div>
+                        </details>
+                      )}
+
+                      {msg.role === "assistant" && index === chatHistory.length - 1 && lastAddedNodeIds && lastAddedNodeIds.length > 0 && (
+                        <div className="mt-3 flex items-center justify-end">
+                          <Button size="sm" variant="glow" className="px-3 py-1" onClick={() => onViewCanvas && onViewCanvas()}>
+                            View on Canvas
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+            })}
+
+            {isProcessing && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] rounded-2xl border border-accent/30 bg-white/80 p-4 shadow-sm backdrop-blur-sm">
+                  <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-black/60">
+                    <span className="flex h-2 w-2 animate-ping rounded-full bg-primary" />
+                    SHUNYA AI is typing
+                  </div>
+                  <div className="mb-3 flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-black/60 animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="h-2 w-2 rounded-full bg-black/60 animate-bounce" style={{ animationDelay: "120ms" }} />
+                    <span className="h-2 w-2 rounded-full bg-black/60 animate-bounce" style={{ animationDelay: "240ms" }} />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="h-3 w-5/6 animate-pulse rounded bg-black/10" />
+                    <div className="h-3 w-2/3 animate-pulse rounded bg-black/10" />
+                    <div className="h-3 w-3/4 animate-pulse rounded bg-black/10" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
-          <Button
-            onClick={() => setVoiceOutput((v) => !v)}
-            size="icon"
-            variant="ghost"
-            disabled={!ttsSupported}
-            className={`shrink-0 touch-target rounded-full transition-all focus-ring border ${voiceOutput ? 'bg-black/80 text-white' : 'bg-white text-black'} border-black/10`}
-            title={voiceOutput ? "Voice output on" : "Voice output off"}
-          >
-            {voiceOutput ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-          </Button>
-
-          <Button
-            onClick={toggleRecording}
-            size="icon"
-            disabled={isProcessing || !speechSupported}
-            className={`shrink-0 touch-target rounded-full transition-all focus-ring border ${
-              isRecording
-                ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground border-destructive'
-                : 'bg-white hover:bg-black/5 text-black border-black/10'
-            }`}
-            title={speechSupported ? (isRecording ? "Stop Recording" : "Start Voice Input") : "Voice input not supported"}
-          >
-            <Mic className={`w-5 h-5 ${isRecording ? 'animate-pulse' : ''}`} />
-          </Button>
-
-          <Button
-            onClick={() => handleSend()}
-            disabled={!message.trim() || isProcessing}
-            size="icon"
-            className="shrink-0 touch-target rounded-full bg-primary hover:bg-primary/90 text-primary-foreground border border-black/10 shadow-sm transition-all focus-ring disabled:opacity-40 disabled:cursor-not-allowed"
-            title="Send Message"
-          >
-            <Send className="w-5 h-5" />
-          </Button>
+          {showScrollToBottom && (
+            <div className="pointer-events-none sticky bottom-4 flex justify-center">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="pointer-events-auto flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-4 py-2 text-xs font-semibold shadow-md backdrop-blur"
+                onClick={() => scrollToBottom("smooth")}
+              >
+                <ChevronDown className="h-4 w-4" />
+                Jump to latest
+              </Button>
+            </div>
+          )}
         </div>
 
-        <div className="mt-3 flex items-center gap-3 text-xs text-black/60">
-          <div className="inline-flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            <span>Tools: Math • Code • LaTeX • Whiteboard</span>
+        {/* Attachments preview list */}
+        {attachments.length > 0 && (
+          <div className="px-4 pb-2">
+            <div className="flex flex-wrap gap-2">
+              {attachments.map(a => {
+                const isUploading = a.progress < 100;
+                return (
+                  <div
+                    key={a.id}
+                    className="group flex items-center gap-3 rounded-full border border-black/10 bg-white/90 px-3 py-2 text-xs shadow-sm backdrop-blur"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-black/5">
+                      {a.kind === "image" && a.preview ? (
+                        <img src={a.preview} alt={a.file.name} className="h-full w-full object-cover" />
+                      ) : a.kind === "pdf" ? (
+                        <FileText className="h-4 w-4 text-black/70" />
+                      ) : (
+                        <Paperclip className="h-4 w-4 text-black/70" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate text-xs font-semibold text-black/80">{a.file.name}</div>
+                      <div className="text-[10px] text-black/60">
+                        {isUploading ? `Uploading… ${Math.min(100, Math.round(a.progress))}%` : `${Math.max(1, Math.round(a.file.size / 1024))} KB`}
+                      </div>
+                      {isUploading && (
+                        <div className="mt-1 h-[2px] w-16 overflow-hidden rounded-full bg-black/10">
+                          <div className="h-full bg-primary transition-all" style={{ width: `${Math.min(100, Math.round(a.progress))}%` }} />
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(a.id)}
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-transparent text-black/50 transition hover:border-black/20 hover:bg-black/5 hover:text-black"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div
+          className="sticky bottom-0 border-t border-[#E0E0E0] bg-[#F4F4F4]/95 px-4 pb-4 pt-3 backdrop-blur supports-[backdrop-filter]:bg-[#F4F4F4]/70"
+          aria-busy={isProcessing}
+        >
+          <div className="flex items-end gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isProcessing}
+                  className="touch-target shrink-0 rounded-full border border-black/10 bg-white p-2 transition hover:bg-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Paperclip className="h-5 w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">Attach image or PDF</TooltipContent>
+            </Tooltip>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,application/pdf"
+              className="hidden"
+              onChange={e => {
+                handleFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+
+            <div className="relative flex-1">
+              <Textarea
+                ref={textareaRef}
+                value={message}
+                onChange={e => handleComposerChange(e.target.value)}
+                onKeyDown={handleComposerKeyDown}
+                placeholder={`Ask SHUNYA AI anything… (${humanLabel(persona)})`}
+                disabled={isProcessing}
+                rows={1}
+                className="min-h-[48px] max-h-52 resize-none rounded-2xl border border-black/15 bg-white pr-24 text-base font-medium leading-relaxed placeholder:text-black/40 focus-visible:border-black focus-visible:ring-4 focus-visible:ring-accent/20"
+              />
+
+              {filteredSlashCommands.length > 0 && (
+                <div className="absolute bottom-full left-0 mb-2 w-full max-w-sm rounded-2xl border border-black/10 bg-white p-2 shadow-lg">
+                  {filteredSlashCommands.map((cmd, index) => (
+                    <button
+                      key={cmd.id}
+                      type="button"
+                      onMouseDown={event => {
+                        event.preventDefault();
+                        handleSlashSuggestionClick(cmd.id);
+                      }}
+                      className={cn(
+                        "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors",
+                        index === highlightedCommandIndex ? "bg-primary text-primary-foreground" : "hover:bg-black/5",
+                      )}
+                    >
+                      <span className="flex flex-col">
+                        <span className="font-semibold">{cmd.label}</span>
+                        <span className="text-xs text-black/60">{cmd.description}</span>
+                      </span>
+                      <span className={cn("rounded-full border px-2 py-0.5 text-xs", index === highlightedCommandIndex ? "border-white/60" : "border-black/15 text-black/50")}>{cmd.shortcut}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => setVoiceOutput(v => !v)}
+                  size="icon"
+                  variant="ghost"
+                  disabled={!ttsSupported}
+                  className={cn(
+                    "touch-target shrink-0 rounded-full border border-black/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
+                    voiceOutput ? "bg-black/80 text-white" : "bg-white text-black",
+                  )}
+                >
+                  {voiceOutput ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">Toggle voice responses</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={toggleRecording}
+                  size="icon"
+                  disabled={isProcessing || !speechSupported}
+                  className={cn(
+                    "touch-target shrink-0 rounded-full border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
+                    isRecording
+                      ? "border-destructive bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      : "border-black/10 bg-white text-black hover:bg-black/5",
+                  )}
+                >
+                  <Mic className={cn("h-5 w-5", isRecording && "animate-pulse")}>{""}</Mic>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">{speechSupported ? (isRecording ? "Stop recording" : "Start voice input") : "Voice input unavailable"}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => handleSend()}
+                  disabled={!message.trim() || isProcessing}
+                  size="icon"
+                  className="touch-target shrink-0 rounded-full border border-black/10 bg-primary text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isProcessing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">Send message</TooltipContent>
+            </Tooltip>
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
-            <span className="text-xs">Persona: <strong>{humanLabel(persona)}</strong></span>
-            <span className="text-xs">Voice: <strong>{voiceOutput ? 'On' : 'Off'}</strong></span>
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-black/60">
+            <div className="inline-flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              <span>Tools: Math • Code • LaTeX • Whiteboard</span>
+            </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <span>Persona: <strong>{humanLabel(persona)}</strong></span>
+              <span>Voice: <strong>{voiceOutput ? "On" : "Off"}</strong></span>
+              <span>Enter to send • Shift+Enter for newline • Try /mindmap or /quiz</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
