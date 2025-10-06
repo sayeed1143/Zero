@@ -32,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': REFERER,
-        'X-Title': 'EduVoice AI',
+        'X-Title': 'SHUNYA AI',
       },
       body: JSON.stringify({
         model: selectedModel,
@@ -51,7 +51,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json',
             'HTTP-Referer': REFERER,
-            'X-Title': 'EduVoice AI',
+            'X-Title': 'SHUNYA AI',
           },
           body: JSON.stringify({
             model: selectedModel,

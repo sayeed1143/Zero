@@ -57,7 +57,7 @@ Create a hierarchical structure that represents the key concepts and their relat
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': REFERER,
-        'X-Title': 'EduVoice AI',
+        'X-Title': 'SHUNYA AI',
       },
       body: JSON.stringify({
         model: selectedModel,
@@ -76,7 +76,7 @@ Create a hierarchical structure that represents the key concepts and their relat
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json',
             'HTTP-Referer': REFERER,
-            'X-Title': 'EduVoice AI',
+            'X-Title': 'SHUNYA AI',
           },
           body: JSON.stringify({
             model: selectedModel,
