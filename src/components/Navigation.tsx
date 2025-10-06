@@ -1,5 +1,4 @@
 import BrandMark from "@/components/BrandMark";
-import BrandMark from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
