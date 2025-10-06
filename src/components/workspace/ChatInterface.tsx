@@ -41,6 +41,13 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
     preview?: string;
   }[]>([]);
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+  const [lastSeenMessageIndex, setLastSeenMessageIndex] = useState(() => (chatHistory.length ? chatHistory.length - 1 : -1));
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const [highlightedCommandIndex, setHighlightedCommandIndex] = useState(0);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
