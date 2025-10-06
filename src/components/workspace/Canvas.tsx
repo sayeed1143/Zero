@@ -54,7 +54,8 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
             title: item.title || item.name || `Node ${index + 1}`,
             x: item.x !== undefined ? item.x : 100 + (index % 4) * 200,
             y: item.y !== undefined ? item.y : 100 + Math.floor(index / 4) * 200,
-            connections: normalizeConnections(item.connections || item.children || [])
+            connections: normalizeConnections(item.connections || item.children || []),
+            color: item.color
           };
         });
         
