@@ -161,12 +161,12 @@ const Workspace = () => {
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">Role</span>
             <div className="flex gap-1">
-              <Button size="xs" variant={userRole === 'student' ? 'default' : 'outline'} onClick={() => setUserRole('student')} className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Student</Button>
-              <Button size="xs" variant={userRole === 'college' ? 'default' : 'outline'} onClick={() => setUserRole('college')} className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>College</Button>
-              <Button size="xs" variant={userRole === 'teacher' ? 'default' : 'outline'} onClick={() => setUserRole('teacher')} className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Teacher</Button>
-              <Button size="xs" variant={userRole === 'tutor' ? 'default' : 'outline'} onClick={() => setUserRole('tutor')} className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Tutor</Button>
+              <Button size="sm" variant={userRole === 'student' ? 'default' : 'outline'} onClick={() => setUserRole('student')} className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Student</Button>
+              <Button size="sm" variant={userRole === 'college' ? 'default' : 'outline'} onClick={() => setUserRole('college')} className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>College</Button>
+              <Button size="sm" variant={userRole === 'teacher' ? 'default' : 'outline'} onClick={() => setUserRole('teacher')} className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Teacher</Button>
+              <Button size="sm" variant={userRole === 'tutor' ? 'default' : 'outline'} onClick={() => setUserRole('tutor')} className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Tutor</Button>
             </div>
-            <Button size="xs" variant="outline" onClick={openLearningPath} className="rounded-full ml-2">Path</Button>
+            <Button size="sm" variant="outline" onClick={openLearningPath} className="rounded-full ml-2">Path</Button>
             {savedPathItems.length > 0 && (
               <span className="text-xs text-muted-foreground">{savedPathItems.length}</span>
             )}
