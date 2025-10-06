@@ -49,7 +49,13 @@ const Workspace = () => {
       } catch (error: any) {
         console.error("Chat error:", error);
         toast.error(error?.message || "Failed to reach Shunya AI. Please try again.");
-        setChatHistory(prev => prev.slice(0, -1));
+        setChatHistory(prev => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "I could not reach our insight just now. Let's breathe and try again shortly.",
+          },
+        ]);
       } finally {
         setIsProcessing(false);
       }
