@@ -229,6 +229,36 @@
   .smooth-transition {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  /* Chat layout */
+  .chat-container {
+    width: 80%;
+    max-width: 900px;
+    margin: auto;
+    height: 80vh;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .chat-message {
+    margin-bottom: 12px;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .chat-input {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 900px;
+    display: flex;
+    gap: 8px;
+  }
 }
 
 @layer utilities {
