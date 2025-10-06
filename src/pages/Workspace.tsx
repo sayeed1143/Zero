@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Canvas from "@/components/workspace/Canvas";
 import ChatInterface from "@/components/workspace/ChatInterface";
 import WorkspaceNav from "@/components/workspace/WorkspaceNav";
@@ -14,8 +14,8 @@ const Workspace = () => {
   const [modelPreferences] = useState(DEFAULT_FEATURE_MODELS);
   const [pendingQuiz, setPendingQuiz] = useState<QuizResponse | null>(null);
 
-  if (canvasItems.length === 0) {
-    const now = Date.now();
+  useEffect(() => {
+    if (canvasItems.length > 0) return;
     const baseX = 150;
     const baseY = 120;
     const onboarding = [
@@ -24,10 +24,8 @@ const Workspace = () => {
       { id: 'C', type: 'text', title: 'Start a new subject: Quantum Physics', x: baseX - 240, y: baseY + 180, connections: [] },
       { id: 'D', type: 'text', title: 'Say: “Can you test me?”', x: baseX, y: baseY + 360, connections: [] },
     ];
-    // Avoid re-render loops by setting only once per first render
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    setTimeout(() => setCanvasItems(onboarding), 0);
-  }
+    setCanvasItems(onboarding);
+  }, []);
 
   const extractArtifact = (text: string) => {
     const artifactMatch = text.match(/\{[\s\S]*?\}\s*$/m);
