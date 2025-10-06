@@ -128,7 +128,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing }: ChatInterfa
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask EduVoice AI anything..."
+              placeholder="Ask SHUNYA AI anything..."
               disabled={isProcessing}
               className="pr-12 h-14 rounded-2xl bg-muted/50 border-2 border-border/40 focus-visible:border-foreground focus-visible:ring-4 focus-visible:ring-foreground/10 transition-all text-base font-medium placeholder:text-muted-foreground/60"
             />

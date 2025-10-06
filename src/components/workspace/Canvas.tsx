@@ -323,10 +323,10 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
             <div className="absolute inset-0 flex items-center justify-center p-8">
               <div className="text-center max-w-4xl animate-fade-in">
                 <h1 className="text-5xl font-bold mb-6 gradient-text">
-                  Welcome to EduVoice AI
+                  Welcome to SHUNYA AI
                 </h1>
                 <p className="text-xl text-muted-foreground mb-12">
-                  Your AI-powered visual learning workspace
+                  Your monochrome sanctuary for visual intelligence
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
