@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Send, Paperclip, Mic, Sparkles, FileText, Image, BarChart3, Hash, BookOpen, Zap, Volume2, VolumeX } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Send, Paperclip, Mic, Sparkles, FileText, Image, BarChart3, Hash, BookOpen, Zap, Volume2, VolumeX, GitBranch, Loader2, X } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { AIMessage } from "@/types/ai";
 
 interface ChatInterfaceProps {
