@@ -7,21 +7,21 @@ const steps = [
     number: "1",
     title: "Talk or drop in your study materials",
     description:
-      "Start with your voice, PDFs, images, or YouTube links. Whisper and Gemini handle transcription, translation, and content extraction instantly.",
+      "Start with your voice, PDFs, images, or YouTube links. Whisper v1 and Gemini 2.5 Flash Lite handle transcription, translation, and content extraction instantly.",
     image: step1Image,
   },
   {
     number: "2",
     title: "Watch Shunya AI build visual explanations",
     description:
-      "Claude 3 Opus and Gemini 1.5 Pro weave mind maps, diagrams, and concept links so you can grasp any topic at a glance.",
+      "Grok-4 Fast and Gemini 2.5 Flash Lite weave mind maps, diagrams, and concept links so you can grasp any topic at a glance.",
     image: step2Image,
   },
   {
     number: "3",
     title: "Listen, practice, and export",
     description:
-      "Hear natural voice answers, generate adaptive quizzes with GPT-4 Turbo or Mixtral, and export every insight to your favourite tools.",
+      "Hear natural voice answers, generate adaptive quizzes with Grok-4 Fast or Gemini 2.0 Flash 001, and export every insight to your favourite tools.",
     image: step3Image,
   },
 ];
