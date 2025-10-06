@@ -30,7 +30,7 @@ const Workspace = () => {
       { id: 'A', type: 'text', title: 'Welcome to Shunya: The Geometry of Learning', x: baseX, y: baseY, connections: ['B','C','D'], color: 'monochrome_accent' },
       { id: 'B', type: 'text', title: 'How to use: Ask a topic', x: baseX + 240, y: baseY + 180, connections: [] },
       { id: 'C', type: 'text', title: 'Start a new subject: Quantum Physics', x: baseX - 240, y: baseY + 180, connections: [] },
-      { id: 'D', type: 'text', title: 'Say: “Can you test me?��', x: baseX, y: baseY + 360, connections: [] },
+      { id: 'D', type: 'text', title: 'Say: “Can you test me?”', x: baseX, y: baseY + 360, connections: [] },
     ];
     setCanvasItems(onboarding);
   }, []);
@@ -254,6 +254,41 @@ const Workspace = () => {
     } catch (error: any) {
       console.error('Vision processing error:', error);
       toast.error(error.message || 'Failed to process image');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePdfUpload = async (file: File) => {
+    try {
+      setIsProcessing(true);
+      toast.info("Extracting highlights from PDF...");
+      const highlights = await extractPdfHighlights(file);
+
+      if (!highlights.length) {
+        toast.info("No highlights found in the PDF");
+        return;
+      }
+
+      const nodes = highlights.map((h, i) => ({
+        id: `pdf-hl-${Date.now()}-${i}`,
+        type: 'text',
+        title: h.text.length > 120 ? `${h.text.slice(0, 117)}...` : h.text || `Highlight p${h.page}`,
+        x: 150 + (i % 4) * 220,
+        y: 150 + Math.floor(i / 4) * 180,
+        connections: [],
+        color: i === 0 ? 'monochrome_accent' : undefined,
+      }));
+
+      addNodesToCanvas(nodes);
+
+      const summary = `Extracted ${highlights.length} highlight${highlights.length > 1 ? 's' : ''} from ${file.name}.`;
+      const aiMessage: AIMessage = { role: 'assistant', content: summary };
+      setChatHistory(prev => [...prev, aiMessage]);
+      toast.success("Highlights added to canvas");
+    } catch (err: any) {
+      console.error('PDF highlight extraction error:', err);
+      toast.error(err?.message || 'Failed to analyze PDF');
     } finally {
       setIsProcessing(false);
     }
