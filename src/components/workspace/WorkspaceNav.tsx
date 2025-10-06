@@ -98,7 +98,7 @@ const WorkspaceNav = ({ onSelectPdf }: WorkspaceNavProps) => {
             size="icon"
             className="touch-target rounded-xl hover:bg-foreground hover:text-background border border-border/30 focus-ring transition-all"
           >
-            <Settings className="w-5 h-5" />
+            <GraduationCap className="w-5 h-5" />
           </Button>
         </Link>
 
