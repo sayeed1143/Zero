@@ -172,7 +172,7 @@ const ChatInterface = ({
         })}
       </div>
 
-      <div className="border-t bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="sticky bottom-0 z-20 border-t bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <form onSubmit={handleSubmit} className="mx-auto w-full max-w-5xl px-4 py-3">
           <div className="flex items-end gap-2 rounded-xl border px-3 py-2 bg-card">
             <Textarea
