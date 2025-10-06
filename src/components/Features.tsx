@@ -27,7 +27,7 @@ const features = [
     icon: FileUp,
     title: "Multi-Modal Input",
     description:
-      "Upload PDFs, images, handwritten notes, or YouTube links—EduVoice extracts, explains, and visualizes everything.",
+      "Upload PDFs, images, handwritten notes, or YouTube links—Shunya AI extracts, explains, and visualizes everything.",
     color: "bg-gradient-to-br from-foreground/70 via-muted-foreground to-foreground/60",
   },
   {
