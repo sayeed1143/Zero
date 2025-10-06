@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Workspace from "./pages/Workspace";
 import NotFound from "./pages/NotFound";
+import TeacherDashboard from "./pages/TeacherDashboard";
 
 const queryClient = new QueryClient();
 
