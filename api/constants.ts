@@ -1,15 +1,15 @@
 export const DEFAULT_FEATURE_MODELS = {
-  chat: 'openrouter/gpt-4-turbo',
-  explanations: 'openrouter/gpt-4-turbo',
-  mindmap: 'anthropic/claude-3-opus',
-  quiz: 'openrouter/gpt-4-turbo',
-  vision: 'openai/gpt-4o-mini',
+  chat: 'google/gemini-2.5-flash-lite',
+  explanations: 'x-ai/grok-4-fast',
+  mindmap: 'x-ai/grok-4-fast',
+  quiz: 'x-ai/grok-4-fast',
+  vision: 'google/gemini-2.5-flash-lite',
   voiceResponse: 'elevenlabs/eleven_multilingual_v2',
   speechCapture: 'openai/whisper-1',
 };
 
-export const FALLBACK_TEXT_MODEL = 'openai/gpt-4o-mini';
-export const FALLBACK_VISION_MODEL = 'openai/gpt-4o-mini';
+export const FALLBACK_TEXT_MODEL = 'google/gemini-2.0-flash-lite-001';
+export const FALLBACK_VISION_MODEL = 'google/gemini-2.5-flash-lite';
 
 export const REFERER = (() => {
   const vercelUrl = process.env.VERCEL_URL;
