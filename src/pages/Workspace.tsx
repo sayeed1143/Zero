@@ -151,77 +151,41 @@ const Workspace = () => {
   }, [savedPathItems]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f7f7] via-[#ffffff] to-[#ededed] text-foreground">
-      <header className="px-6 pt-10 pb-6 flex flex-col items-center text-center gap-2">
-        <span className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
-          Shunya AI
-        </span>
-        <h1 className="text-3xl font-semibold text-foreground">The Mindful Learning Space</h1>
-        <p className="text-sm text-muted-foreground max-w-xl">
-          Ask freely, breathe deeply, and let insight unfold at your own rhythm.
-        </p>
-        <div className="mt-4 flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">Role</span>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={userRole === 'student' ? 'default' : 'outline'}
-              onClick={() => setUserRole('student')}
-              className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              School Student
-            </Button>
-            <Button
-              size="sm"
-              variant={userRole === 'college' ? 'default' : 'outline'}
-              onClick={() => setUserRole('college')}
-              className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              College Student
-            </Button>
-            <Button
-              size="sm"
-              variant={userRole === 'teacher' ? 'default' : 'outline'}
-              onClick={() => setUserRole('teacher')}
-              className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              Teacher
-            </Button>
-            <Button
-              size="sm"
-              variant={userRole === 'tutor' ? 'default' : 'outline'}
-              onClick={() => setUserRole('tutor')}
-              className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              Private Tutor
-            </Button>
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <header className="px-4 py-3 border-b">
+        <div className="mx-auto w-full max-w-5xl flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Shunya AI</span>
+            <span className="text-sm text-muted-foreground hidden sm:inline">Mindful Learning Space</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Role</span>
+            <div className="flex gap-1">
+              <Button size="xs" variant={userRole === 'student' ? 'default' : 'outline'} onClick={() => setUserRole('student')} className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Student</Button>
+              <Button size="xs" variant={userRole === 'college' ? 'default' : 'outline'} onClick={() => setUserRole('college')} className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>College</Button>
+              <Button size="xs" variant={userRole === 'teacher' ? 'default' : 'outline'} onClick={() => setUserRole('teacher')} className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Teacher</Button>
+              <Button size="xs" variant={userRole === 'tutor' ? 'default' : 'outline'} onClick={() => setUserRole('tutor')} className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Tutor</Button>
+            </div>
+            <Button size="xs" variant="outline" onClick={openLearningPath} className="rounded-full ml-2">Path</Button>
+            {savedPathItems.length > 0 && (
+              <span className="text-xs text-muted-foreground">{savedPathItems.length}</span>
+            )}
           </div>
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={openLearningPath}
-            className="rounded-full"
-          >
-            Learning Path
-          </Button>
-          {savedPathItems.length > 0 && (
-            <span className="text-xs text-muted-foreground">Saved: {savedPathItems.length}</span>
-          )}
-        </div>
       </header>
-      <main className="flex flex-1 justify-center px-4 pb-24">
-        <ChatInterface
-          chatHistory={chatHistory}
-          isProcessing={isProcessing}
-          isVisualizing={isVisualizing}
-          onSendMessage={handleSendMessage}
-          onVisualize={handleVisualize}
-          canVisualize={canVisualize}
-          showVisualize={shouldShowVisualize}
-          onSaveToPath={addToLearningPath}
-        />
+      <main className="flex-1 min-h-0">
+        <div className="mx-auto w-full max-w-5xl h-full px-4">
+          <ChatInterface
+            chatHistory={chatHistory}
+            isProcessing={isProcessing}
+            isVisualizing={isVisualizing}
+            onSendMessage={handleSendMessage}
+            onVisualize={handleVisualize}
+            canVisualize={canVisualize}
+            showVisualize={shouldShowVisualize}
+            onSaveToPath={addToLearningPath}
+          />
+        </div>
       </main>
 
       {showLearningPath && (
