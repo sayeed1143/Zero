@@ -9,7 +9,7 @@ const plans = [
     period: "forever",
     description: "Perfect for getting started",
     features: [
-      "Voice-first chat responses powered by GPT-4 Turbo",
+      "Voice-first chat responses powered by Gemini 2.5 Flash Lite",
       "Daily visual mind maps and concept canvas (3 per day)",
       "Smart quiz generator with targeted practice",
       "Multilingual answers in 50+ languages",
