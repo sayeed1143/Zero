@@ -6,6 +6,7 @@ import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import LearningPath, { type LearningNode } from "@/components/workspace/LearningPath";
+import { cleanPlainText } from "@/lib/utils";
 
 type UserRole = 'student' | 'college' | 'teacher' | 'tutor';
 
@@ -61,7 +62,7 @@ const Workspace = () => {
         );
         const assistantReply: AIMessage = {
           role: "assistant",
-          content: response.content?.trim() || "I am here, breathing with your question.",
+          content: cleanPlainText(response.content?.trim() || "I am here, breathing with your question."),
         };
         setChatHistory(prev => [...prev, assistantReply]);
       } catch (error: any) {
@@ -91,7 +92,7 @@ const Workspace = () => {
       const visualization = await AIService.visualize(latestAssistantMessage.content, DEFAULT_FEATURE_MODELS.explanations);
       const visualizationMessage: AIMessage = {
         role: "assistant",
-        content: visualization.explanation,
+        content: cleanPlainText(visualization.explanation),
         visualization,
       };
       setChatHistory(prev => [...prev, visualizationMessage]);
@@ -141,7 +142,7 @@ const Workspace = () => {
         { role: "system", content: system },
         { role: "user", content: seed },
       ]);
-      setLearningSummary(res.content?.trim() || "");
+      setLearningSummary(cleanPlainText(res.content?.trim() || ""));
       toast.success("Study path summary generated");
     } catch (e: any) {
       console.error(e);

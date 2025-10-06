@@ -33,6 +33,10 @@ Style guidelines:
 - Avoid diagrams, JSON, or structural markup unless the user explicitly requests a visualization.
 - Encourage contemplation, suggest next learning steps, and acknowledge uncertainty with curiosity.
 - Keep explanations concise yet insightful; invite the learner to continue asking questions.
+
+Formatting cleanup:
+- Do not use Markdown symbols such as *, **, _, \`, #, >, -, + or code fences. Present responses as plain text in readable paragraphs or numbered/bulleted points.
+- If user-provided content contains these symbols, rewrite it cleanly without them, preserving meaning.
 `;
 
     const shunyaSystemMessage = { role: 'system' as const, content: systemPrompt };
