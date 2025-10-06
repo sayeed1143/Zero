@@ -99,18 +99,16 @@ const Workspace = () => {
           Ask freely, breathe deeply, and let insight unfold at your own rhythm.
         </p>
       </header>
-      <main className="flex flex-1 items-end justify-center px-4 pb-12">
-        <div className="w-full max-w-3xl">
-          <ChatInterface
-            chatHistory={chatHistory}
-            isProcessing={isProcessing}
-            isVisualizing={isVisualizing}
-            onSendMessage={handleSendMessage}
-            onVisualize={handleVisualize}
-            canVisualize={canVisualize}
-            showVisualize={shouldShowVisualize}
-          />
-        </div>
+      <main className="flex flex-1 justify-center px-4 pb-24">
+        <ChatInterface
+          chatHistory={chatHistory}
+          isProcessing={isProcessing}
+          isVisualizing={isVisualizing}
+          onSendMessage={handleSendMessage}
+          onVisualize={handleVisualize}
+          canVisualize={canVisualize}
+          showVisualize={shouldShowVisualize}
+        />
       </main>
     </div>
   );
