@@ -100,7 +100,7 @@ const Workspace = () => {
           const nodes = await AIService.generateMindMap(content, modelPreferences.mindmap);
           const formattedNodes = nodes.map((node: any, index: number) => ({
             id: node.id || `node-${Date.now()}-${index}`,
-            type: 'text',
+            type: node.type || 'text',
             title: node.title || node.content || 'Concept',
             x: 150 + (index % 4) * 200,
             y: 150 + Math.floor(index / 4) * 200,
@@ -134,7 +134,7 @@ const Workspace = () => {
         const nodes = await AIService.generateMindMap(message, modelPreferences.mindmap);
         const formattedNodes = nodes.map((node, index) => ({
           id: node.id || `node-${Date.now()}-${index}`,
-          type: 'text',
+          type: node.type || 'text',
           title: node.title || node.content || 'Topic',
           x: 150 + (index % 4) * 200,
           y: 150 + Math.floor(index / 4) * 200,
@@ -234,15 +234,19 @@ const Workspace = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-background via-secondary/10 to-primary/5">
+    <div className="h-screen flex flex-col bg-background">
       <WorkspaceNav />
-      <div className="flex-1 flex flex-col relative overflow-hidden">
-        <Canvas items={canvasItems} onFileUpload={handleFileUpload} />
-        <ChatInterface
-          onSendMessage={handleSendMessage}
-          chatHistory={chatHistory}
-          isProcessing={isProcessing}
-        />
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="flex-1 bg-white">
+          <Canvas items={canvasItems} onFileUpload={handleFileUpload} />
+        </div>
+        <aside className="w-full md:w-1/3 border-l border-[#E0E0E0] bg-[#F4F4F4] flex flex-col">
+          <ChatInterface
+            onSendMessage={handleSendMessage}
+            chatHistory={chatHistory}
+            isProcessing={isProcessing}
+          />
+        </aside>
       </div>
     </div>
   );
