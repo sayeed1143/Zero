@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import LearningPath, { type LearningNode } from "@/components/workspace/LearningPath";
 import { cleanPlainText } from "@/lib/utils";
+import { Volume2, Download, FileText as FileTextIcon, Sparkles, Home } from "lucide-react";
+import { exportTextAsPNG, openPrintForText, downloadJSON } from "@/lib/export";
+import BrandMark from "@/components/BrandMark";
+import { Link } from "react-router-dom";
 
 type UserRole = 'student' | 'college' | 'teacher' | 'tutor';
 
@@ -150,78 +154,135 @@ const Workspace = () => {
     }
   }, [savedPathItems]);
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const speakLatest = useCallback(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      toast.info('Voice not supported in this browser');
+      return;
+    }
+    if (!latestAssistantMessage) {
+      toast.info('No assistant answer to speak');
+      return;
+    }
+    const text = latestAssistantMessage.content;
+    const synth = window.speechSynthesis;
+    if (synth.speaking) {
+      synth.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    const ensureVoices = () => {
+      const voices = synth.getVoices();
+      const candidates = voices.filter(v => /en|US|UK/i.test(v.lang));
+      const softPreferred = candidates.find(v => /female|soft|zira|samantha|google uk english female/i.test(v.name));
+      const voice = softPreferred || candidates[0] || voices[0] || null;
+      const u = new SpeechSynthesisUtterance(text);
+      if (voice) u.voice = voice;
+      u.rate = 0.95;
+      u.pitch = 1.0;
+      u.volume = 0.95;
+      u.onend = () => setIsSpeaking(false);
+      u.onerror = () => setIsSpeaking(false);
+      setIsSpeaking(true);
+      synth.speak(u);
+    };
+    ensureVoices();
+  }, [latestAssistantMessage]);
+
+  const exportLatestPNG = useCallback(() => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to export'); return; }
+    exportTextAsPNG(latestAssistantMessage.content, `chat-latest.png`);
+  }, [latestAssistantMessage]);
+
+  const printLatest = useCallback(() => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to print'); return; }
+    openPrintForText(latestAssistantMessage.content, 'Latest Chat');
+  }, [latestAssistantMessage]);
+
+  const quizLatest = useCallback(async () => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to quiz'); return; }
+    try {
+      const quiz = await AIService.generateQuiz(latestAssistantMessage.content, 5, 'medium');
+      downloadJSON(quiz, `quiz-latest.json`);
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to generate quiz');
+    }
+  }, [latestAssistantMessage]);
+
+  const saveLatest = useCallback(() => {
+    if (!latestAssistantMessage) { toast.info('No assistant answer to save'); return; }
+    addToLearningPath(latestAssistantMessage.content);
+  }, [latestAssistantMessage, addToLearningPath]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f7f7] via-[#ffffff] to-[#ededed] text-foreground">
-      <header className="px-6 pt-10 pb-6 flex flex-col items-center text-center gap-2">
-        <span className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
-          Shunya AI
-        </span>
-        <h1 className="text-3xl font-semibold text-foreground">The Mindful Learning Space</h1>
-        <p className="text-sm text-muted-foreground max-w-xl">
-          Ask freely, breathe deeply, and let insight unfold at your own rhythm.
-        </p>
-        <div className="mt-4 flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">Role</span>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={userRole === 'student' ? 'default' : 'outline'}
-              onClick={() => setUserRole('student')}
-              className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              School Student
-            </Button>
-            <Button
-              size="sm"
-              variant={userRole === 'college' ? 'default' : 'outline'}
-              onClick={() => setUserRole('college')}
-              className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              College Student
-            </Button>
-            <Button
-              size="sm"
-              variant={userRole === 'teacher' ? 'default' : 'outline'}
-              onClick={() => setUserRole('teacher')}
-              className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              Teacher
-            </Button>
-            <Button
-              size="sm"
-              variant={userRole === 'tutor' ? 'default' : 'outline'}
-              onClick={() => setUserRole('tutor')}
-              className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}
-            >
-              Private Tutor
-            </Button>
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <header className="px-4 py-3 border-b">
+        <div className="mx-auto w-full max-w-5xl flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center">
+              <BrandMark size="sm" />
+            </Link>
+            <span className="text-sm text-muted-foreground hidden sm:inline">Mindful Learning Space</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link to="/">
+              <Button size="sm" variant="ghost" className="mr-1">
+                <Home className="h-4 w-4" />
+              </Button>
+            </Link>
+            <span className="text-xs text-muted-foreground">Role</span>
+            <div className="flex gap-1">
+              <Button size="sm" variant={userRole === 'student' ? 'default' : 'outline'} onClick={() => setUserRole('student')} className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Student</Button>
+              <Button size="sm" variant={userRole === 'college' ? 'default' : 'outline'} onClick={() => setUserRole('college')} className={userRole === 'college' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>College</Button>
+              <Button size="sm" variant={userRole === 'teacher' ? 'default' : 'outline'} onClick={() => setUserRole('teacher')} className={userRole === 'teacher' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Teacher</Button>
+              <Button size="sm" variant={userRole === 'tutor' ? 'default' : 'outline'} onClick={() => setUserRole('tutor')} className={userRole === 'tutor' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Tutor</Button>
+            </div>
+            <Button size="sm" variant="outline" onClick={openLearningPath} className="rounded-full ml-2">Path</Button>
+            {savedPathItems.length > 0 && (
+              <span className="text-xs text-muted-foreground">{savedPathItems.length}</span>
+            )}
           </div>
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={openLearningPath}
-            className="rounded-full"
-          >
-            Learning Path
-          </Button>
-          {savedPathItems.length > 0 && (
-            <span className="text-xs text-muted-foreground">Saved: {savedPathItems.length}</span>
-          )}
-        </div>
       </header>
-      <main className="flex flex-1 justify-center px-4 pb-24">
-        <ChatInterface
-          chatHistory={chatHistory}
-          isProcessing={isProcessing}
-          isVisualizing={isVisualizing}
-          onSendMessage={handleSendMessage}
-          onVisualize={handleVisualize}
-          canVisualize={canVisualize}
-          showVisualize={shouldShowVisualize}
-          onSaveToPath={addToLearningPath}
-        />
+      <main className="flex-1 min-h-0">
+        <div className="mx-auto w-full max-w-5xl h-full px-4 flex">
+          <aside className="w-44 pr-4">
+            <div className="flex flex-col gap-2 sticky top-6">
+              <Button size="sm" variant="ghost" className="justify-start" onClick={speakLatest} disabled={!latestAssistantMessage || isSpeaking || isProcessing}>
+                <Volume2 className="mr-2 h-4 w-4" /> Speak
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={saveLatest} disabled={!latestAssistantMessage}>
+                <Download className="mr-2 h-4 w-4" /> Save
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={exportLatestPNG} disabled={!latestAssistantMessage}>
+                <Download className="mr-2 h-4 w-4" /> PNG
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={printLatest} disabled={!latestAssistantMessage}>
+                <FileTextIcon className="mr-2 h-4 w-4" /> Print
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={quizLatest} disabled={!latestAssistantMessage || isProcessing}>
+                <Sparkles className="mr-2 h-4 w-4" /> Quiz
+              </Button>
+              <Button size="sm" variant="ghost" className="justify-start" onClick={handleVisualize} disabled={!canVisualize || isProcessing || isVisualizing}>
+                <Sparkles className="mr-2 h-4 w-4" /> Visualize
+              </Button>
+            </div>
+          </aside>
+
+          <div className="flex-1 h-full">
+            <ChatInterface
+              chatHistory={chatHistory}
+              isProcessing={isProcessing}
+              isVisualizing={isVisualizing}
+              onSendMessage={handleSendMessage}
+              onVisualize={handleVisualize}
+              canVisualize={canVisualize}
+              showVisualize={shouldShowVisualize}
+              onSaveToPath={addToLearningPath}
+            />
+          </div>
+        </div>
       </main>
 
       {showLearningPath && (
