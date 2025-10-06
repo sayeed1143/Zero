@@ -148,47 +148,23 @@ const ChatInterface = ({
                 </div>
               </div>
 
-              {!isUser && (
-                <div className="flex items-center gap-2 pl-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button type="button" variant="ghost" size="sm" className="h-8 px-2 gap-1 rounded-full border border-border/50 bg-background text-foreground">
-                        <MoreHorizontal className="h-4 w-4" />
-                        Tools
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-44">
-                      <DropdownMenuItem onClick={() => speakText(entry.content, index)}>
-                        {speakingIndex === index ? <Square className="mr-2 h-4 w-4" /> : <Volume2 className="mr-2 h-4 w-4" />} {speakingIndex === index ? "Stop" : "Speak"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onSaveToPath && onSaveToPath(entry.content)}>
-                        <Download className="mr-2 h-4 w-4" /> Save to Path
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => exportTextAsPNG(entry.content, `chat-${index + 1}.png`)}>
-                        <Download className="mr-2 h-4 w-4" /> Export PNG
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openPrintForText(entry.content, `Chat ${index + 1}`)}>
-                        <FileTextIcon className="mr-2 h-4 w-4" /> Print PDF
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={async () => {
-                          try {
-                            const quiz = await AIService.generateQuiz(entry.content, 5, "medium");
-                            downloadJSON(quiz, `quiz-${index + 1}.json`);
-                          } catch (e: any) {
-                            toast.error(e?.message || "Failed to generate quiz");
-                          }
-                        }}
-                      >
-                        <Sparkles className="mr-2 h-4 w-4" /> Generate Quiz
-                      </DropdownMenuItem>
-                      {showButton && (
-                        <DropdownMenuItem disabled={!canVisualize} onClick={onVisualize}>
-                          {isVisualizing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />} Visualize This
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+              {!isUser && showButton && (
+                <div className="pl-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 rounded-full border border-primary/30 bg-primary/5 text-primary shadow-sm hover:bg-primary/10"
+                    onClick={onVisualize}
+                    disabled={!canVisualize}
+                  >
+                    {isVisualizing ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-4 w-4" />
+                    )}
+                    {isVisualizing ? "Visualizing..." : "Visualize This"}
+                  </Button>
                 </div>
               )}
             </div>
