@@ -23,29 +23,29 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Product</h4>
             <ul className="space-y-2">
-              <li><a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a></li>
-              <li><a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a></li>
-              <li><a href="#docs" className="text-muted-foreground hover:text-primary transition-colors">Documentation</a></li>
-              <li><a href="#changelog" className="text-muted-foreground hover:text-primary transition-colors">Changelog</a></li>
+              <li><a href="#features" className="text-muted-foreground transition-colors hover:text-foreground">Features</a></li>
+              <li><a href="#pricing" className="text-muted-foreground transition-colors hover:text-foreground">Pricing</a></li>
+              <li><a href="#docs" className="text-muted-foreground transition-colors hover:text-foreground">Documentation</a></li>
+              <li><a href="#changelog" className="text-muted-foreground transition-colors hover:text-foreground">Changelog</a></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold text-foreground mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a></li>
-              <li><a href="#blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</a></li>
-              <li><a href="#careers" className="text-muted-foreground hover:text-primary transition-colors">Careers</a></li>
-              <li><a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</a></li>
+              <li><a href="#about" className="text-muted-foreground transition-colors hover:text-foreground">About</a></li>
+              <li><a href="#blog" className="text-muted-foreground transition-colors hover:text-foreground">Blog</a></li>
+              <li><a href="#careers" className="text-muted-foreground transition-colors hover:text-foreground">Careers</a></li>
+              <li><a href="#contact" className="text-muted-foreground transition-colors hover:text-foreground">Contact</a></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold text-foreground mb-4">Legal</h4>
             <ul className="space-y-2">
-              <li><a href="#privacy" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a></li>
-              <li><a href="#terms" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</a></li>
-              <li><a href="#security" className="text-muted-foreground hover:text-primary transition-colors">Security</a></li>
+              <li><a href="#privacy" className="text-muted-foreground transition-colors hover:text-foreground">Privacy Policy</a></li>
+              <li><a href="#terms" className="text-muted-foreground transition-colors hover:text-foreground">Terms of Service</a></li>
+              <li><a href="#security" className="text-muted-foreground transition-colors hover:text-foreground">Security</a></li>
             </ul>
           </div>
         </div>
