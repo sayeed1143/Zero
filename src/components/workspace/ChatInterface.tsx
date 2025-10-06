@@ -57,7 +57,7 @@ const ChatInterface = ({
   }, [chatHistory.length, showVisualize]);
 
   return (
-    <div className="chat-container overflow-hidden">
+    <div className="chat-container">
       <div className="flex flex-col h-full">
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pt-8 pb-36 space-y-6 scrollbar-thin">
           {chatHistory.map((entry, index) => {
