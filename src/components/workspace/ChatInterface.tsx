@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Send, Sparkles } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,13 @@ const ChatInterface = ({
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const submitMessage = useCallback(() => {
+    const trimmed = message.trim();
+    if (!trimmed || isProcessing) return;
+    onSendMessage(trimmed);
+    setMessage("");
+  }, [isProcessing, message, onSendMessage]);
+
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     scrollContainerRef.current.scrollTo({ top: scrollContainerRef.current.scrollHeight, behavior: "smooth" });
@@ -41,10 +48,7 @@ const ChatInterface = ({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const trimmed = message.trim();
-    if (!trimmed) return;
-    onSendMessage(trimmed);
-    setMessage("");
+    submitMessage();
   };
 
   const visualizationMessageIndex = useMemo(() => {
@@ -131,6 +135,12 @@ const ChatInterface = ({
               ref={textareaRef}
               value={message}
               onChange={event => setMessage(event.target.value)}
+              onKeyDown={event => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  submitMessage();
+                }
+              }}
               placeholder="Share the next curiosity on your path..."
               className="resize-none border-none bg-transparent px-0 text-base leading-6 focus-visible:ring-0"
               rows={1}
