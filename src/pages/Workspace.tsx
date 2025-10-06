@@ -108,6 +108,7 @@ const Workspace = () => {
             onSendMessage={handleSendMessage}
             onVisualize={handleVisualize}
             canVisualize={canVisualize}
+            showVisualize={shouldShowVisualize}
           />
         </div>
       </main>
