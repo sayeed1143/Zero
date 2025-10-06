@@ -5,7 +5,6 @@ import {
   Mic,
   Sparkles,
   FileText,
-  Image,
   BarChart3,
   Hash,
   BookOpen,
