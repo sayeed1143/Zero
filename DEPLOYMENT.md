@@ -37,17 +37,20 @@ Add the following environment variable to your Vercel project:
 ## AI Models Used (via OpenRouter)
 
 ### Chat & Explanations
-- **GPT-4 Turbo** (`openrouter/gpt-4-turbo`)
-- **Claude 3 Opus** (`anthropic/claude-3-opus`)
-- **Gemini 1.5 Pro** (`google/gemini-1.5-pro-latest`)
+- **Gemini 2.5 Flash Lite** (`google/gemini-2.5-flash-lite`)
+- **Gemini 2.0 Flash Lite 001** (`google/gemini-2.0-flash-lite-001`)
+- **Grok-4 Fast** (`x-ai/grok-4-fast`)
+- **Gemini 2.0 Flash 001** (`google/gemini-2.0-flash-001`)
 
 ### Vision / Image / Video
-- **Claude 3 Opus Vision** (`anthropic/claude-3-opus:vision`)
-- **Gemini 1.5 Pro Vision** (`google/gemini-1.5-pro-latest` with vision enabled)
+- **Gemini 2.5 Flash Lite** (`google/gemini-2.5-flash-lite`, multimodal enabled)
 
 ### Quizzes & Logic
-- **GPT-4 Turbo** (`openrouter/gpt-4-turbo`)
-- **Mixtral 8x22B** (`mistral/mixtral-8x22b`)
+- **Grok-4 Fast** (`x-ai/grok-4-fast`)
+- **Gemini 2.0 Flash 001** (`google/gemini-2.0-flash-001`)
+
+### Testing / Preview Builds
+- **Gemini 2.5 Flash Lite Preview 09-2025** (`google/gemini-2.5-flash-lite-preview-09-2025`)
 
 ### Text-to-Speech
 - **ElevenLabs Multilingual v2** (`elevenlabs/eleven_multilingual_v2`, external API key required)
