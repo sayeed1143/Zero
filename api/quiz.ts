@@ -51,7 +51,7 @@ The correctAnswer should be the index (0-3) of the correct option.`;
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': REFERER,
-        'X-Title': 'EduVoice AI',
+        'X-Title': 'SHUNYA AI',
       },
       body: JSON.stringify({
         model: selectedModel,
@@ -70,7 +70,7 @@ The correctAnswer should be the index (0-3) of the correct option.`;
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json',
             'HTTP-Referer': REFERER,
-            'X-Title': 'EduVoice AI',
+            'X-Title': 'SHUNYA AI',
           },
           body: JSON.stringify({
             model: selectedModel,
