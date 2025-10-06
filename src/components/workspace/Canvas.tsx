@@ -16,9 +16,11 @@ interface CanvasNode {
 interface CanvasProps {
   items: any[];
   onFileUpload?: (file: File) => void;
+  focusNodeId?: string | null;
+  onFocusCompleted?: () => void;
 }
 
-const Canvas = ({ items, onFileUpload }: CanvasProps) => {
+const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasProps) => {
   const [nodes, setNodes] = useState<CanvasNode[]>([]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -67,6 +69,33 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
       ));
     }
   }, [items]);
+
+  useEffect(() => {
+    if (!focusNodeId) return;
+    const node = nodes.find(n => n.id === focusNodeId);
+    if (!node || !canvasRef.current) return;
+
+    // center node in view
+    const rect = canvasRef.current.getBoundingClientRect();
+    const containerWidth = rect.width;
+    const containerHeight = rect.height;
+    const nodeWidth = 150;
+    const nodeHeight = 150;
+
+    const targetPanX = containerWidth / 2 - (node.x + nodeWidth / 2) * zoom;
+    const targetPanY = containerHeight / 2 - (node.y + nodeHeight / 2) * zoom;
+
+    setPan({ x: targetPanX, y: targetPanY });
+    setSelectedNode(node.id);
+
+    // clear selection after a short time, and notify workspace
+    const t = setTimeout(() => {
+      setSelectedNode(null);
+      if (onFocusCompleted) onFocusCompleted();
+    }, 3000);
+
+    return () => clearTimeout(t);
+  }, [focusNodeId]);
 
   const normalizeConnections = (connections: any): string[] => {
     if (!Array.isArray(connections)) return [];
@@ -352,7 +381,7 @@ const Canvas = ({ items, onFileUpload }: CanvasProps) => {
                       <feMergeNode in="coloredBlur"/>
                       <feMergeNode in="SourceGraphic"/>
                     </feMerge>
-                  </filter>
+                  </feMerge>
                 </defs>
                 {nodes.map(node => 
                   node.connections.map(targetId => {
