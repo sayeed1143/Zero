@@ -415,25 +415,26 @@ const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasPr
               {nodes.map(node => (
                 <div
                   key={node.id}
-                  className={`absolute rounded-xl p-4 cursor-move bg-white border border-black/70 ${
-                    selectedNode === node.id ? 'ring-2 ring-accent ring-offset-2' : node.color === 'monochrome_accent' ? 'ring-2 ring-accent ring-offset-2' : ''
-                  } ${connectFrom === node.id ? 'ring-2 ring-accent ring-offset-2' : ''}`}
+                  className={`absolute rounded-3xl p-5 cursor-move bg-gradient-to-br from-white to-white/95 border border-black/10 shadow-lg transform transition-all hover:scale-105 ${
+                    selectedNode === node.id ? 'ring-4 ring-accent/40 ring-offset-2' : node.color === 'monochrome_accent' ? 'ring-2 ring-accent ring-offset-2' : ''
+                  } ${connectFrom === node.id ? 'ring-4 ring-accent/30' : ''}`}
                   style={{
                     left: `${node.x}px`,
                     top: `${node.y}px`,
-                    width: '150px',
-                    height: '150px',
+                    width: '180px',
+                    height: '160px',
                   }}
                   onMouseDown={(e) => handleNodeDragStart(e, node.id)}
                   onMouseMove={(e) => handleNodeDrag(e, node.id)}
                   onMouseUp={() => setDraggedNode(null)}
                   onClick={() => handleNodeClick(node.id)}
                 >
-                  <div className="flex flex-col items-center justify-center h-full text-center">
-                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-2">
+                  <div className="flex flex-col items-center justify-center h-full text-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-accent text-primary-foreground flex items-center justify-center mb-1 shadow-inner">
                       {getNodeIcon(node.type)}
                     </div>
-                    <p className="font-semibold text-sm leading-snug line-clamp-3 text-black">{node.title}</p>
+                    <p className="font-semibold text-sm leading-tight line-clamp-3 text-black">{node.title}</p>
+                    <div className="mt-2 text-xs text-black/60">{node.type}</div>
                   </div>
                 </div>
               ))}
