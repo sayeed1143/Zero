@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import LearningPath, { type LearningNode } from "@/components/workspace/LearningPath";
 import { cleanPlainText } from "@/lib/utils";
-import { Volume2, Download, FileText as FileTextIcon, Sparkles } from "lucide-react";
+import { Volume2, Download, FileText as FileTextIcon, Sparkles, Home } from "lucide-react";
 import { exportTextAsPNG, openPrintForText, downloadJSON } from "@/lib/export";
+import BrandMark from "@/components/BrandMark";
+import { Link } from "react-router-dom";
 
 type UserRole = 'student' | 'college' | 'teacher' | 'tutor';
 
