@@ -23,13 +23,9 @@ const ROLE_SYSTEM_PROMPTS: Record<UserRole, string> = {
 
 const BASE_SYSTEM_PROMPT = "Operate in Mind Mode: respond with calm, lucid guidance.";
 
-const INITIAL_ASSISTANT_MESSAGE: AIMessage = {
-  role: "assistant",
-  content: "Stillness invites understanding. How can I support your learning today?",
-};
 
 const Workspace = () => {
-  const [chatHistory, setChatHistory] = useState<AIMessage[]>([INITIAL_ASSISTANT_MESSAGE]);
+  const [chatHistory, setChatHistory] = useState<AIMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isVisualizing, setIsVisualizing] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>('student');
