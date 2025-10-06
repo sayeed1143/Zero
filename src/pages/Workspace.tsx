@@ -7,6 +7,7 @@ import { AIService } from "@/services/ai";
 import { toast } from "sonner";
 import type { AIMessage, QuizResponse } from "@/types/ai";
 import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
+import { extractPdfHighlights } from "@/lib/pdfHighlights";
 
 const Workspace = () => {
   const [canvasItems, setCanvasItems] = useState<any[]>([]);
@@ -29,7 +30,7 @@ const Workspace = () => {
       { id: 'A', type: 'text', title: 'Welcome to Shunya: The Geometry of Learning', x: baseX, y: baseY, connections: ['B','C','D'], color: 'monochrome_accent' },
       { id: 'B', type: 'text', title: 'How to use: Ask a topic', x: baseX + 240, y: baseY + 180, connections: [] },
       { id: 'C', type: 'text', title: 'Start a new subject: Quantum Physics', x: baseX - 240, y: baseY + 180, connections: [] },
-      { id: 'D', type: 'text', title: 'Say: “Can you test me?”', x: baseX, y: baseY + 360, connections: [] },
+      { id: 'D', type: 'text', title: 'Say: “Can you test me?��', x: baseX, y: baseY + 360, connections: [] },
     ];
     setCanvasItems(onboarding);
   }, []);
