@@ -260,6 +260,7 @@ const Canvas = ({ items, onFileUpload, focusNodeId, onFocusCompleted }: CanvasPr
 
   return (
     <div className="flex-1 relative bg-white">
+      <div className="pointer-events-none absolute top-6 right-6 z-0 opacity-10 transform rotate-6 text-2xl font-bold text-black/80 select-none">SHUNYA CANVAS</div>
       <div className="absolute top-6 left-6 z-10 bg-white/90 backdrop-blur rounded-2xl p-2 border border-black/10 shadow-sm">
         <div className="flex items-center gap-2">
           <Button
