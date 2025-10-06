@@ -7,6 +7,7 @@ import { AIService } from "@/services/ai";
 import { toast } from "sonner";
 import type { AIMessage, QuizResponse } from "@/types/ai";
 import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
+import { extractPdfHighlights } from "@/lib/pdfHighlights";
 
 const Workspace = () => {
   const [canvasItems, setCanvasItems] = useState<any[]>([]);
@@ -258,6 +259,41 @@ const Workspace = () => {
     }
   };
 
+  const handlePdfUpload = async (file: File) => {
+    try {
+      setIsProcessing(true);
+      toast.info("Extracting highlights from PDF...");
+      const highlights = await extractPdfHighlights(file);
+
+      if (!highlights.length) {
+        toast.info("No highlights found in the PDF");
+        return;
+      }
+
+      const nodes = highlights.map((h, i) => ({
+        id: `pdf-hl-${Date.now()}-${i}`,
+        type: 'text',
+        title: h.text.length > 120 ? `${h.text.slice(0, 117)}...` : h.text || `Highlight p${h.page}`,
+        x: 150 + (i % 4) * 220,
+        y: 150 + Math.floor(i / 4) * 180,
+        connections: [],
+        color: i === 0 ? 'monochrome_accent' : undefined,
+      }));
+
+      addNodesToCanvas(nodes);
+
+      const summary = `Extracted ${highlights.length} highlight${highlights.length > 1 ? 's' : ''} from ${file.name}.`;
+      const aiMessage: AIMessage = { role: 'assistant', content: summary };
+      setChatHistory(prev => [...prev, aiMessage]);
+      toast.success("Highlights added to canvas");
+    } catch (err: any) {
+      console.error('PDF highlight extraction error:', err);
+      toast.error(err?.message || 'Failed to analyze PDF');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleViewOnCanvas = () => {
     if (lastAddedNodeIds.length > 0) {
       setFocusNodeId(lastAddedNodeIds[0]);
@@ -279,10 +315,10 @@ const Workspace = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background">
-      <WorkspaceNav />
+      <WorkspaceNav onSelectPdf={handlePdfUpload} />
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="flex-1 bg-white relative">
-          <Canvas items={canvasItems} onFileUpload={handleFileUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
+          <Canvas items={canvasItems} onFileUpload={handleFileUpload} onPdfUpload={handlePdfUpload} focusNodeId={focusNodeId} onFocusCompleted={handleFocusCompleted} />
 
           {/* Floating control to open Learning Path visualization */}
           <div className="absolute top-6 right-6 z-20">
