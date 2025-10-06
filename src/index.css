@@ -266,6 +266,14 @@
     }
   }
 
+  /* Very subtle dot grid for canvas */
+  .bg-dot-grid {
+    background-color: #ffffff;
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+  }
+
   .scrollbar-thin::-webkit-scrollbar {
     width: 8px;
     height: 8px;
