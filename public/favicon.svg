@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .fg { fill: #111111; stroke: #111111; }
+      .stroke { fill: none; stroke: #111111; }
+    </style>
+  </defs>
+  <circle cx="32" cy="32" r="23" class="stroke" stroke-width="2.5"/>
+  <circle cx="32" cy="32" r="4" class="fg"/>
+  <circle cx="32" cy="32" r="31" fill="none" stroke="#111111" stroke-opacity="0.2" stroke-width="1"/>
+</svg>

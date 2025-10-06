@@ -1,0 +1,11 @@
+{
+  "name": "SHUNYA AI",
+  "short_name": "SHUNYA",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/safari-pinned-tab.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "theme_color": "#111111",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
