@@ -1,4 +1,3 @@
-import { Home, FileText, Settings, Moon, Sun } from "lucide-react";
 import { FileText, Home, Moon, Settings, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
