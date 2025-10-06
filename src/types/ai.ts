@@ -1,6 +1,7 @@
 export interface AIMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  visualization?: VisualizationResult | null;
 }
 
 export interface ChatRequest {
@@ -19,6 +20,29 @@ export interface ChatResponse {
     totalTokens: number;
   };
 }
+
+export interface VisualizationStep {
+  title: string;
+  detail?: string;
+}
+
+export interface VisualizationDiagram {
+  title: string;
+  steps: VisualizationStep[];
+  relation?: 'sequence' | 'cycle' | 'network' | 'hierarchy';
+}
+
+export interface VisualizationResult {
+  diagram: VisualizationDiagram;
+  explanation: string;
+}
+
+export interface VisualizeRequest {
+  message: string;
+  model?: string;
+}
+
+export interface VisualizeResponse extends VisualizationResult {}
 
 export interface VisionRequest {
   image: string;

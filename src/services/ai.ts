@@ -5,6 +5,7 @@ import type {
   VisionRequest,
   QuizRequest,
   QuizResponse,
+  VisualizeResponse,
 } from "@/types/ai";
 import { DEFAULT_FEATURE_MODELS } from "@/types/ai";
 
@@ -134,6 +135,37 @@ export class AIService {
     } catch (error: any) {
       console.error("Mind map generation error:", error);
       throw new Error(error.message || "Failed to generate mind map");
+    }
+  }
+
+  static async visualize(message: string, model: string = DEFAULT_FEATURE_MODELS.explanations): Promise<VisualizeResponse> {
+    try {
+      const response = await fetch("/api/visualize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message,
+          model,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        try {
+          const parsed = JSON.parse(errorText);
+          throw new Error(parsed.message || parsed.error || "Failed to visualize message");
+        } catch {
+          throw new Error(errorText || "Failed to visualize message");
+        }
+      }
+
+      const data: VisualizeResponse = await response.json();
+      return data;
+    } catch (error: any) {
+      console.error("Visualization error:", error);
+      throw new Error(error.message || "Failed to visualize message");
     }
   }
 
