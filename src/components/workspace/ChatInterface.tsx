@@ -800,7 +800,7 @@ const ChatInterface = ({ onSendMessage, chatHistory, isProcessing, lastAddedNode
                       : "border-black/10 bg-white text-black hover:bg-black/5",
                   )}
                 >
-                  <Mic className={cn("h-5 w-5", isRecording && "animate-pulse")}>{""}</Mic>
+                  <Mic className={cn("h-5 w-5", isRecording && "animate-pulse")} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">{speechSupported ? (isRecording ? "Stop recording" : "Start voice input") : "Voice input unavailable"}</TooltipContent>
