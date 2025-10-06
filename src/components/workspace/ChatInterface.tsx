@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Send, Sparkles } from "lucide-react";
+import { Loader2, Send, Sparkles, Volume2, Square } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AIMessage } from "@/types/ai";
+import { toast } from "sonner";
 
 interface ChatInterfaceProps {
   chatHistory: AIMessage[];
@@ -27,6 +28,7 @@ const ChatInterface = ({
   const [message, setMessage] = useState("");
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
 
   const submitMessage = useCallback(() => {
     const trimmed = message.trim();
@@ -55,6 +57,61 @@ const ChatInterface = ({
     if (!showVisualize || chatHistory.length === 0) return -1;
     return chatHistory.length - 1;
   }, [chatHistory.length, showVisualize]);
+
+  const stopSpeaking = useCallback(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    setSpeakingIndex(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, [stopSpeaking]);
+
+  const getPreferredVoice = (voices: SpeechSynthesisVoice[]) => {
+    const candidates = voices.filter(v => /en|US|UK/i.test(v.lang));
+    const softPreferred = candidates.find(v => /female|soft|zira|samantha|google uk english female/i.test(v.name));
+    return softPreferred || candidates[0] || voices[0] || null;
+  };
+
+  const speakText = useCallback((text: string, index: number) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      toast.info("Voice not supported in this browser");
+      return;
+    }
+    const synth = window.speechSynthesis;
+
+    if (speakingIndex !== null) {
+      synth.cancel();
+      if (speakingIndex === index) {
+        setSpeakingIndex(null);
+        return;
+      }
+    }
+
+    const ensureVoices = () => {
+      const voices = synth.getVoices();
+      if (!voices || voices.length === 0) {
+        // Some browsers load voices asynchronously
+        setTimeout(() => ensureVoices(), 200);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voice = getPreferredVoice(voices);
+      if (voice) utterance.voice = voice;
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.9;
+      utterance.onend = () => setSpeakingIndex(null);
+      utterance.onerror = () => setSpeakingIndex(null);
+      setSpeakingIndex(index);
+      synth.speak(utterance);
+    };
+
+    ensureVoices();
+  }, [speakingIndex]);
 
   return (
     <div className="chat-container">
@@ -105,23 +162,40 @@ const ChatInterface = ({
                   </div>
                 </div>
 
-                {showButton && (
-                  <div className="flex justify-start">
+                {!isUser && (
+                  <div className="flex justify-start gap-2">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="gap-2 rounded-full border border-primary/30 bg-primary/5 text-primary shadow-sm hover:bg-primary/10"
-                      onClick={onVisualize}
-                      disabled={!canVisualize}
+                      className="gap-2 rounded-full border border-border/50 bg-white text-foreground shadow-sm hover:bg-muted/50"
+                      onClick={() => speakText(entry.content, index)}
                     >
-                      {isVisualizing ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                      {speakingIndex === index ? (
+                        <Square className="h-4 w-4" />
                       ) : (
-                        <Sparkles className="h-4 w-4" />
+                        <Volume2 className="h-4 w-4" />
                       )}
-                      {isVisualizing ? "Visualizing..." : "Visualize This"}
+                      {speakingIndex === index ? "Stop" : "Speak"}
                     </Button>
+
+                    {showButton && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="gap-2 rounded-full border border-primary/30 bg-primary/5 text-primary shadow-sm hover:bg-primary/10"
+                        onClick={onVisualize}
+                        disabled={!canVisualize}
+                      >
+                        {isVisualizing ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="h-4 w-4" />
+                        )}
+                        {isVisualizing ? "Visualizing..." : "Visualize This"}
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
