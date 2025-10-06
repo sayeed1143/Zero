@@ -220,32 +220,37 @@ const Canvas = ({ items, onFileUpload, onPdfUpload, focusNodeId, onFocusComplete
     
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      if (onFileUpload && files[0].type.startsWith('image/')) {
-        onFileUpload(files[0]);
-      } else {
-        const rect = canvasRef.current?.getBoundingClientRect();
-        if (rect) {
-          const x = (e.clientX - rect.left - pan.x) / zoom;
-          const y = (e.clientY - rect.top - pan.y) / zoom;
-          
-          const newNodes: CanvasNode[] = files.map((file, index) => {
-            let type: CanvasNode['type'] = 'file';
-            if (file.type.startsWith('image/')) type = 'image';
-            else if (file.type.includes('pdf') || file.type.includes('document')) type = 'text';
-            
-            return {
-              id: `file-${Date.now()}-${index}`,
-              type,
-              title: file.name,
-              x: x + index * 20,
-              y: y + index * 20,
-              connections: []
-            };
-          });
-          
-          setNodes(prev => [...prev, ...newNodes]);
-          toast.success(`${files.length} file(s) added to canvas!`);
-        }
+      const first = files[0];
+      if (onFileUpload && first.type.startsWith('image/')) {
+        onFileUpload(first);
+        return;
+      }
+      if (onPdfUpload && (first.type.includes('pdf') || first.name.toLowerCase().endsWith('.pdf'))) {
+        onPdfUpload(first);
+        return;
+      }
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (rect) {
+        const x = (e.clientX - rect.left - pan.x) / zoom;
+        const y = (e.clientY - rect.top - pan.y) / zoom;
+
+        const newNodes: CanvasNode[] = files.map((file, index) => {
+          let type: CanvasNode['type'] = 'file';
+          if (file.type.startsWith('image/')) type = 'image';
+          else if (file.type.includes('pdf') || file.name.toLowerCase().endsWith('.pdf')) type = 'text';
+
+          return {
+            id: `file-${Date.now()}-${index}`,
+            type,
+            title: file.name,
+            x: x + index * 20,
+            y: y + index * 20,
+            connections: []
+          };
+        });
+
+        setNodes(prev => [...prev, ...newNodes]);
+        toast.success(`${files.length} file(s) added to canvas!`);
       }
     }
   };
