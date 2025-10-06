@@ -5,7 +5,8 @@
       .stroke { fill: none; stroke: #111111; }
     </style>
   </defs>
-  <circle cx="32" cy="32" r="23" class="stroke" stroke-width="2.5"/>
-  <circle cx="32" cy="32" r="4" class="fg"/>
+  <circle cx="32" cy="32" r="30" fill="#ffffff"/>
+  <circle cx="32" cy="32" r="23" class="stroke" stroke-width="3"/>
+  <circle cx="32" cy="32" r="5" class="fg"/>
   <circle cx="32" cy="32" r="31" fill="none" stroke="#111111" stroke-opacity="0.2" stroke-width="1"/>
 </svg>
