@@ -220,10 +220,17 @@ const Workspace = () => {
       <header className="px-4 py-3 border-b">
         <div className="mx-auto w-full max-w-5xl flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Shunya AI</span>
+            <Link to="/" className="flex items-center">
+              <BrandMark size="sm" />
+            </Link>
             <span className="text-sm text-muted-foreground hidden sm:inline">Mindful Learning Space</span>
           </div>
           <div className="flex items-center gap-2">
+            <Link to="/">
+              <Button size="sm" variant="ghost" className="mr-1">
+                <Home className="h-4 w-4" />
+              </Button>
+            </Link>
             <span className="text-xs text-muted-foreground">Role</span>
             <div className="flex gap-1">
               <Button size="sm" variant={userRole === 'student' ? 'default' : 'outline'} onClick={() => setUserRole('student')} className={userRole === 'student' ? 'bg-foreground text-background hover:bg-foreground/90' : ''}>Student</Button>
