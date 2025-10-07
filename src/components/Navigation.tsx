@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "#home", label: "Home" },
@@ -43,7 +42,7 @@ const Navigation = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/chat">
+            <Link to="/kuse-chat">
               <Button className="rounded-full font-semibold">Chat</Button>
             </Link>
             <Button

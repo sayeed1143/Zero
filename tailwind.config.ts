@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        orbitron: ['Orbitron', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -64,6 +65,10 @@ export default {
           DEFAULT: "hsl(var(--user-message))",
           foreground: "hsl(var(--user-message-foreground))",
         },
+        glow: {
+          cyan: "hsl(var(--glow-cyan))",
+          violet: "hsl(var(--glow-violet))",
+        }
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -87,10 +92,15 @@ export default {
             height: "0",
           },
         },
+        "glow": {
+          '0%, 100%': { opacity: '0.7' },
+          '50%': { opacity: '1' },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "glow": "glow 4s ease-in-out infinite",
       },
     },
   },

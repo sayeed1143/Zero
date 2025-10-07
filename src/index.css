@@ -5,102 +5,53 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-
+    --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-
+    --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-
-    --primary: 0 0% 20%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 0%;
-
-    --muted: 0 0% 90%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 0 0% 30%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 0 0% 20%;
-
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 262.1 83.3% 57.8%;
     --radius: 1rem;
 
-    --glass-bg: 0 0% 100%;
-    --glass-border: 0 0% 85%;
-    
-    --glow-primary: 0 0% 20%;
-    --glow-secondary: 0 0% 30%;
-    --glow-accent: 0 0% 40%;
-
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 0%;
-    --sidebar-primary: 0 0% 20%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 95%;
-    --sidebar-accent-foreground: 0 0% 0%;
-    --sidebar-border: 0 0% 85%;
-    --sidebar-ring: 0 0% 20%;
-
-    --user-message: 217.2 91.2% 59.8%;
-    --user-message-foreground: 210 40% 98%;
+    --glow-cyan: 180 100% 50%;
+    --glow-violet: 262 100% 68%;
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 100%;
-
-    --card: 0 0% 15%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 15%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 0 0% 80%;
-    --primary-foreground: 0 0% 10%;
-
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 25%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 0 0% 70%;
-    --accent-foreground: 0 0% 10%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 30%;
-    --input: 0 0% 30%;
-    --ring: 0 0% 80%;
-
-    --glass-bg: 0 0% 15%;
-    --glass-border: 0 0% 30%;
+    --background: 222 84% 4.9%;
+    --foreground: 0 0% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 262.1 83.3% 57.8%;
     
-    --glow-primary: 0 0% 80%;
-    --glow-secondary: 0 0% 70%;
-    --glow-accent: 0 0% 60%;
-
-    --sidebar-background: 0 0% 12%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 80%;
-    --sidebar-primary-foreground: 0 0% 10%;
-    --sidebar-accent: 0 0% 20%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 30%;
-    --sidebar-ring: 0 0% 80%;
-
-    --user-message: 217.2 91.2% 59.8%;
-    --user-message-foreground: 210 40% 98%;
+    --glow-cyan: 180 100% 50%;
+    --glow-violet: 262 100% 68%;
   }
 }
 
@@ -108,231 +59,33 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
   }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    letter-spacing: -0.02em;
+  .react-flow__pane {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2327272a' fill-opacity='0.3' fill-rule='evenodd'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/svg%3E");
+    background-color: #0c0a09;
   }
 }
 
 @layer components {
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+  .glass-pane {
+    @apply bg-black/30 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50;
   }
-
-  .dark .glass-panel {
-    background: rgba(38, 38, 38, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 
-      0 4px 16px 0 rgba(0, 0, 0, 0.06),
-      0 0 20px 0 rgba(0, 0, 0, 0.04);
-  }
-
-  .dark .glass-card {
-    background: rgba(38, 38, 38, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 
-      0 4px 16px 0 rgba(0, 0, 0, 0.3),
-      0 0 20px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .glow-border {
-    position: relative;
-    border: 2px solid transparent;
-    background: linear-gradient(var(--glass-bg), var(--glass-bg)) padding-box,
-                linear-gradient(135deg, 
-                  hsl(var(--glow-primary)), 
-                  hsl(var(--glow-secondary))) border-box;
-  }
-
-  .glow-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .glow-hover:hover {
-    box-shadow: 
-      0 0 20px rgba(0, 0, 0, 0.2),
-      0 0 40px rgba(0, 0, 0, 0.1),
-      0 4px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-
-  .node-glow {
-    filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3))
-            drop-shadow(0 0 16px rgba(0, 0, 0, 0.2));
-  }
-
-  .pulse-animation {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.8;
-      transform: scale(1.05);
-    }
-  }
-
-  .mic-pulse {
-    animation: mic-pulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes mic-pulse {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-    }
-  }
-
-  .gradient-text {
-    background: linear-gradient(135deg, 
-      hsl(var(--glow-primary)), 
-      hsl(var(--glow-secondary)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50 focus-visible:ring-offset-2;
-  }
-
-  .pill-button {
-    @apply rounded-full px-6 py-3 font-medium transition-all duration-300;
-  }
-
-  .pill-button-glow {
-    @apply pill-button glow-border glow-hover;
-  }
-
-  .touch-target {
-    @apply min-h-[44px] min-w-[44px];
-  }
-
-  .smooth-transition {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Chat layout */
-  .chat-container {
-    width: 80%;
-    max-width: 900px;
-    margin: auto;
-    height: 80vh;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    overflow-y: auto;
-    padding: 20px;
-  }
-
-  .chat-message {
-    margin-bottom: 12px;
-    font-size: 1rem;
-    line-height: 1.6;
-  }
-
-  .chat-input {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    max-width: 900px;
-    display: flex;
-    gap: 8px;
+  
+  .glow-text {
+    @apply font-orbitron tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-glow-cyan to-glow-violet;
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.react-flow__edge-path {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
 
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Very subtle dot grid for canvas */
-  .bg-dot-grid {
-    background-color: #ffffff;
-    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-    background-size: 24px 24px;
-    background-position: 0 0;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
-    border-radius: 4px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary));
-    border-radius: 4px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.8);
-  }
-
-  .chat-background {
-    @apply bg-gradient-to-br from-secondary/40 via-background to-secondary/30;
-  }
-  .dark .chat-background {
-    @apply bg-gradient-to-br from-background to-card;
+@keyframes dashdraw {
+  to {
+    stroke-dashoffset: -10;
   }
 }

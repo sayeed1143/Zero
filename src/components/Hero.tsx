@@ -49,7 +49,7 @@ const Hero = () => {
               Ask aloud or share documents, sketches, and videos. Shunya AI traces every signal into lucid mind maps, narrated guidance, and adaptive practice—speaking over 50 languages with serene precision.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/workspace">
+              <Link to="/kuse-chat">
                 <Button size="lg" className="gap-2 rounded-full">
                   Enter the workspace
                   <ArrowRight className="h-5 w-5" />
