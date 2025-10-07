@@ -36,10 +36,42 @@ const CanvasMode = () => {
   const [noteInput, setNoteInput] = useState("");
   const [citationStyle, setCitationStyle] = useState<'APA' | 'MLA' | 'Harvard'>("APA");
   const [draftText, setDraftText] = useState<string>("");
+  const [ttsLanguage, setTtsLanguage] = useState<string>('en');
+  const [isSpeakingDraft, setIsSpeakingDraft] = useState(false);
 
   const [chatHistory, setChatHistory] = useState<AIMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isVisualizing] = useState(false);
+
+  const speakText = async (text: string, lang = 'en') => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      toast.info('Voice not supported in this browser');
+      return;
+    }
+    try {
+      const synth = window.speechSynthesis;
+      if (synth.speaking) synth.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      const voices = synth.getVoices();
+      const candidates = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+      utter.voice = candidates[0] || voices[0] || null;
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+      utter.volume = 0.95;
+      utter.onend = () => setIsSpeakingDraft(false);
+      utter.onerror = () => setIsSpeakingDraft(false);
+      setIsSpeakingDraft(true);
+      synth.speak(utter);
+    } catch (e) {
+      console.error('TTS error', e);
+      toast.error('Failed to play audio');
+    }
+  };
+
+  const speakDraft = useCallback(() => {
+    if (!draftText) { toast.info('No draft to narrate'); return; }
+    speakText(draftText, ttsLanguage);
+  }, [draftText, ttsLanguage]);
 
   const aggregatedContext = useMemo(() => {
     const lines: string[] = [];
