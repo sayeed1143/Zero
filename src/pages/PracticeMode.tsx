@@ -292,7 +292,17 @@ const PracticeMode = () => {
               {questions.length > 0 && (
                 <div>
                   <div className="mb-4">
-                    <div className="text-sm font-medium">Question {Math.min(currentIndex + 1, questions.length)} of {questions.length}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-medium">Question {Math.min(currentIndex + 1, questions.length)} of {questions.length}</div>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" onClick={() => speakQuestion(currentIndex)}>Play</Button>
+                        {isListeningAnswer ? (
+                          <Button size="sm" variant="destructive" onClick={stopAnswerListening}>Stop</Button>
+                        ) : (
+                          <Button size="sm" onClick={startAnswerListening}>Record Answer</Button>
+                        )}
+                      </div>
+                    </div>
                     <div className="mt-2 text-base">{questions[currentIndex]?.question}</div>
                   </div>
 
