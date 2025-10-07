@@ -173,17 +173,17 @@ const KuseChatFlow = () => {
       <header className="absolute top-0 left-0 right-0 z-10 p-6 flex justify-between items-start">
         <div className="flex flex-col items-start">
           <h1 className="glow-text text-3xl">SHUNYA AI</h1>
-          <p className="font-orbitron text-white/60 text-xs tracking-wider">The Beginning of Infinite Intelligence</p>
+          <p className="font-orbitron text-muted-foreground text-xs tracking-wider">The Beginning of Infinite Intelligence</p>
         </div>
         <div className="text-center">
             <div className="flex items-center gap-2 glass-pane p-2 rounded-2xl">
                 {['Student', 'College', 'Teacher', 'Explorer'].map(m => (
-                    <Button key={m} variant={mode === m ? 'secondary' : 'ghost'} className={`rounded-xl h-12 w-28 font-orbitron ${mode === m ? 'bg-white/20 text-white' : 'text-white/60 hover:bg-white/10 hover:text-white'}`}>
+                    <Button key={m} variant={'ghost'} className={`rounded-xl h-12 w-28 font-orbitron ${mode === m ? 'bg-black/10 dark:bg-white/20 text-foreground' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground'}`}>
                         {m}
                     </Button>
                 ))}
             </div>
-            <p className="font-orbitron text-white/50 text-sm mt-3 italic">"Within a quiet mind, the universe speaks."</p>
+            <p className="font-orbitron text-muted-foreground text-sm mt-3 italic">"Within a quiet mind, the universe speaks."</p>
         </div>
         <div className="w-64" />
       </header>
@@ -199,7 +199,7 @@ const KuseChatFlow = () => {
         fitView
         className="bg-transparent"
       >
-        <Background gap={24} color="#27272a" />
+        <Background gap={24} className="dark:text-zinc-800 text-zinc-300" />
       </ReactFlow>
 
       <SideToolbar />

@@ -18,16 +18,16 @@ const MessageNode = ({ data }: NodeProps) => {
           <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-br ${isUser ? 'from-glow-cyan to-blue-500' : 'from-glow-violet to-purple-500'}`}>
             {isUser ? <User className="h-5 w-5 text-white" /> : <Bot className="h-5 w-5 text-white" />}
           </div>
-          <p className="font-orbitron text-sm font-bold text-white">{isUser ? 'You' : 'Shunya AI'}</p>
+          <p className="font-orbitron text-sm font-bold text-foreground">{isUser ? 'You' : 'Shunya AI'}</p>
         </div>
         
         {data.type === 'image' && data.content ? (
           <div className="space-y-2">
             <img src={data.content} alt="User upload" className="rounded-lg w-full h-auto" />
-            <p className="text-white/80 text-sm">{data.label}</p>
+            <p className="text-foreground/80 text-sm">{data.label}</p>
           </div>
         ) : (
-          <p className="text-white/90 text-sm leading-relaxed break-words">{data.label}</p>
+          <p className="text-foreground/90 text-sm leading-relaxed break-words">{data.label}</p>
         )}
       </div>
 

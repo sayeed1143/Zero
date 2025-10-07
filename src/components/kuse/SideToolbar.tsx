@@ -20,7 +20,7 @@ const SideToolbar = () => {
         {tools.map((tool) => (
           <Tooltip key={tool.label}>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-white/10 text-white/80 hover:text-white">
+              <Button variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-foreground/80 hover:text-foreground">
                 <tool.icon className="h-6 w-6" />
               </Button>
             </TooltipTrigger>

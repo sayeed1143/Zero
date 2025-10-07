@@ -32,7 +32,7 @@ const ChatInput = ({ onSendMessage, isProcessing }: ChatInputProps) => {
               }
             }}
             placeholder="Message Shunya AI..."
-            className="flex-1 bg-transparent border-none focus-visible:ring-0 text-white placeholder:text-white/50 resize-none h-12 text-base"
+            className="flex-1 bg-transparent border-none focus-visible:ring-0 text-foreground placeholder:text-foreground/50 resize-none h-12 text-base"
             rows={1}
             disabled={isProcessing}
           />

@@ -1,6 +1,7 @@
 import { Layout, Download, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ThemeToggle } from './ThemeToggle';
 
 interface CanvasControlsProps {
   onLayout: () => void;
@@ -12,9 +13,10 @@ const CanvasControls = ({ onLayout, onExport, onReset }: CanvasControlsProps) =>
   return (
     <div className="absolute top-6 right-6 z-20">
       <div className="glass-pane p-2 rounded-2xl flex items-center gap-2">
+        <ThemeToggle />
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button onClick={onLayout} variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-white/10 text-white/80 hover:text-white">
+            <Button onClick={onLayout} variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-foreground/80 hover:text-foreground">
               <Layout className="h-6 w-6" />
             </Button>
           </TooltipTrigger>
@@ -24,7 +26,7 @@ const CanvasControls = ({ onLayout, onExport, onReset }: CanvasControlsProps) =>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button onClick={onExport} variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-white/10 text-white/80 hover:text-white">
+            <Button onClick={onExport} variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-foreground/80 hover:text-foreground">
               <Download className="h-6 w-6" />
             </Button>
           </TooltipTrigger>
@@ -34,7 +36,7 @@ const CanvasControls = ({ onLayout, onExport, onReset }: CanvasControlsProps) =>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button onClick={onReset} variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-white/10 text-white/80 hover:text-white">
+            <Button onClick={onReset} variant="ghost" size="icon" className="h-12 w-12 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-foreground/80 hover:text-foreground">
               <RotateCcw className="h-6 w-6" />
             </Button>
           </TooltipTrigger>
