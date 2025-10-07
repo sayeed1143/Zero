@@ -14,7 +14,11 @@ export default defineConfig(({ mode }) => ({
       clientPort: 443,
     },
   },
-  plugins: [react(), vercel(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    mode === "development" && vercel(),
+    mode === "development" && componentTagger(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
