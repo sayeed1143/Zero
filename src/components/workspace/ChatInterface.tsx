@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Send, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -118,6 +119,14 @@ const ChatInterface = ({
 
   return (
     <div className="w-full h-full flex flex-col">
+      <div className="px-4 pt-3 flex items-center justify-center gap-2">
+        <Link to="/canvas">
+          <Button size="sm" variant="ghost" className="rounded-full">Canvas Mode</Button>
+        </Link>
+        <Link to="/practice">
+          <Button size="sm" variant="ghost" className="rounded-full">Practice Mode</Button>
+        </Link>
+      </div>
       {isProcessing && (
         <div className="px-4 pt-3">
           <div className="rounded-xl border border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground flex items-center gap-2 animate-fade-in">
