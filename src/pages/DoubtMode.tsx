@@ -84,6 +84,8 @@ const DoubtMode = () => {
       const content = await AIService.processVision(base64, prompt);
       const clean = content?.trim() || 'No solution returned';
       setSolution(clean);
+      // auto-play
+      speakText(clean, language);
       // update heatmap using first line or hashed content
       const key = (clean.split('\n')[0] || 'unknown').slice(0, 120);
       setHeatmap(prev => ({ ...prev, [key]: (prev[key] || 0) + 1 }));
