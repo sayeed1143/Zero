@@ -126,6 +126,9 @@ const ChatInterface = ({
         <Link to="/practice">
           <Button size="sm" variant="ghost" className="rounded-full">Practice Mode</Button>
         </Link>
+        <Link to="/doubt">
+          <Button size="sm" variant="ghost" className="rounded-full">Doubt Mode</Button>
+        </Link>
       </div>
       {isProcessing && (
         <div className="px-4 pt-3">
