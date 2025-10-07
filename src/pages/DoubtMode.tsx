@@ -246,6 +246,7 @@ const DoubtMode = () => {
                 {solution && (
                   <div className="pt-3 flex gap-2">
                     <Button onClick={() => { navigator.clipboard?.writeText(solution); toast.success('Copied'); }}>Copy</Button>
+                    <Button onClick={() => speakText(String(solution), language)}>{isSpeakingSolution ? 'Playing...' : 'Listen'}</Button>
                     <Link to="/canvas"><Button variant="outline">Open in Canvas</Button></Link>
                   </div>
                 )}
