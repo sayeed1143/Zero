@@ -182,8 +182,8 @@ const ChatInterface = ({
       </div>
 
       <div className="sticky bottom-0 z-20 border-t bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60 pointer-events-none">
-        <form onSubmit={handleSubmit} className="w-full px-4 py-3 pointer-events-auto">
-          <div className="flex items-end gap-2 rounded-xl border px-3 py-2 bg-card w-full">
+        <form onSubmit={handleSubmit} className="w-full px-4 py-3 pointer-events-auto flex justify-center">
+          <div className="flex items-end gap-2 rounded-xl border px-3 py-2 bg-card w-full max-w-2xl">
             <Textarea
               ref={textareaRef}
               value={message}
