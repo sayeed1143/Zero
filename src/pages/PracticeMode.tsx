@@ -19,6 +19,106 @@ const PracticeMode = () => {
   const [timeLimit, setTimeLimit] = useState(1200); // seconds for full test default 20min
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [showSolutions, setShowSolutions] = useState(false);
+  const [voiceLanguage, setVoiceLanguage] = useState<string>('en');
+  const [isSpeakingQuestion, setIsSpeakingQuestion] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const [isListeningAnswer, setIsListeningAnswer] = useState(false);
+
+  const speakText = async (text: string, lang = 'en', onEnd?: () => void) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      toast.info('Voice not supported in this browser');
+      return;
+    }
+    try {
+      const synth = window.speechSynthesis;
+      if (synth.speaking) synth.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      const voices = synth.getVoices();
+      const candidates = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+      utter.voice = candidates[0] || voices[0] || null;
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+      utter.volume = 0.95;
+      utter.onend = () => { setIsSpeakingQuestion(false); if (onEnd) onEnd(); };
+      utter.onerror = () => { setIsSpeakingQuestion(false); if (onEnd) onEnd(); };
+      setIsSpeakingQuestion(true);
+      synth.speak(utter);
+    } catch (e) {
+      console.error('TTS error', e);
+      toast.error('Failed to play audio');
+    }
+  };
+
+  const speakQuestion = useCallback((index = currentIndex) => {
+    const q = questions[index];
+    if (!q) return;
+    const text = `${q.question}. Options: ${q.options.map((o, i) => String.fromCharCode(65+i) + '. ' + o).join('. ')}.`;
+    speakText(text, voiceLanguage);
+  }, [questions, currentIndex, voiceLanguage]);
+
+  useEffect(() => {
+    if (running && questions.length > 0) speakQuestion(currentIndex);
+  }, [running, currentIndex, questions, speakQuestion]);
+
+  const parseSpokenChoice = (text: string): number | null => {
+    if (!text) return null;
+    const t = text.toLowerCase();
+    // Try to match A/B/C/D
+    const letter = t.match(/\b([abcd])\b/);
+    if (letter) {
+      const ch = letter[1];
+      return ch.charCodeAt(0) - 97;
+    }
+    const num = t.match(/\b(\d+)\b/);
+    if (num) {
+      const n = parseInt(num[1], 10);
+      if (n >=1 && n <= 26) return n-1; // 1 => index 0
+    }
+    if (/one|first|a\b/.test(t)) return 0;
+    if (/two|second|b\b/.test(t)) return 1;
+    if (/three|third|c\b/.test(t)) return 2;
+    if (/four|fourth|d\b/.test(t)) return 3;
+    return null;
+  };
+
+  const startAnswerListening = useCallback(() => {
+    const w: any = window as any;
+    const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Speech recognition not available in this browser');
+      return;
+    }
+    const r = new SpeechRecognition();
+    r.lang = voiceLanguage;
+    r.interimResults = false;
+    r.onresult = (ev: any) => {
+      const text = Array.from(ev.results).map((res: any) => res[0].transcript).join(' ');
+      const idx = parseSpokenChoice(text);
+      if (idx === null) {
+        toast.info('Could not parse answer. Try saying A, B, C or D');
+      } else {
+        submitAnswer(idx);
+      }
+    };
+    r.onerror = (err: any) => {
+      console.error('Speech error', err);
+      toast.error('Speech recognition error');
+      setIsListeningAnswer(false);
+    };
+    r.onend = () => setIsListeningAnswer(false);
+    recognitionRef.current = r;
+    r.start();
+    setIsListeningAnswer(true);
+  }, [voiceLanguage, submitAnswer]);
+
+  const stopAnswerListening = useCallback(() => {
+    const r = recognitionRef.current;
+    if (r) {
+      try { r.stop(); } catch {};
+      recognitionRef.current = null;
+    }
+    setIsListeningAnswer(false);
+  }, []);
 
   const startTest = useCallback(async () => {
     setRunning(false);
