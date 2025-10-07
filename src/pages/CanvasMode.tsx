@@ -311,7 +311,20 @@ const CanvasMode = () => {
                 {draftText && (
                   <div className="mt-3 rounded-md border p-2 text-sm max-h-64 overflow-auto scrollbar-thin">
                     <pre className="whitespace-pre-wrap leading-6">{draftText}</pre>
-                    <div className="flex gap-2 pt-2">
+                    <div className="flex items-center gap-2 pt-2">
+                      <Select value={ttsLanguage} onValueChange={(v) => setTtsLanguage(v as any)}>
+                        <SelectTrigger className="w-[140px]"><SelectValue placeholder="Voice Lang" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="en">English</SelectItem>
+                          <SelectItem value="hi">Hindi</SelectItem>
+                          <SelectItem value="mr">Marathi</SelectItem>
+                          <SelectItem value="te">Telugu</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button size="sm" onClick={speakDraft} disabled={isSpeakingDraft}>
+                        {isSpeakingDraft ? 'Playing...' : 'Narrate Draft'}
+                      </Button>
+                      <div className="flex-1" />
                       <Button size="sm" variant="outline" onClick={exportDraftPNG}>Export PNG</Button>
                       <Button size="sm" variant="outline" onClick={printDraft}>Print</Button>
                     </div>
