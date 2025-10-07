@@ -24,6 +24,7 @@ const App = () => (
           <Route path="/workspace" element={<Workspace />} />
           <Route path="/canvas" element={<CanvasMode />} />
           <Route path="/practice" element={<PracticeMode />} />
+          <Route path="/doubt" element={<DoubtMode />} />
           <Route path="/teacher" element={<TeacherDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
