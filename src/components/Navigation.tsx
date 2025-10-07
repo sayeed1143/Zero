@@ -1,5 +1,6 @@
 import BrandMark from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
   return (
@@ -31,12 +32,17 @@ const Navigation = () => {
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            className="rounded-full border-2 border-foreground/20 font-semibold transition-all hover:bg-foreground hover:text-background"
-          >
-            Sign In
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link to="/canvas">
+              <Button className="rounded-full font-semibold">Canvas</Button>
+            </Link>
+            <Button
+              variant="outline"
+              className="rounded-full border-2 border-foreground/20 font-semibold transition-all hover:bg-foreground hover:text-background"
+            >
+              Sign In
+            </Button>
+          </div>
         </div>
       </div>
     </nav>

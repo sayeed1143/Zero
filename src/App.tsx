@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Workspace from "./pages/Workspace";
+import CanvasMode from "./pages/CanvasMode";
+import PracticeMode from "./pages/PracticeMode";
+import DoubtMode from "./pages/DoubtMode";
 import NotFound from "./pages/NotFound";
 import TeacherDashboard from "./pages/TeacherDashboard";
 
@@ -19,6 +22,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/workspace" element={<Workspace />} />
+          <Route path="/canvas" element={<CanvasMode />} />
+          <Route path="/practice" element={<PracticeMode />} />
+          <Route path="/doubt" element={<DoubtMode />} />
           <Route path="/teacher" element={<TeacherDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
