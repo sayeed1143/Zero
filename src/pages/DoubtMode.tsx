@@ -147,6 +147,8 @@ const DoubtMode = () => {
       ]);
       const content = res.content || 'No response';
       setSolution(content);
+      // auto-play the answer
+      speakText(content, language);
       const key = (text || '').slice(0, 120);
       setHeatmap(prev => ({ ...prev, [key]: (prev[key] || 0) + 1 }));
       setRecentRequests(prev => [{ type: 'voice', text: key, time: Date.now() }, ...prev].slice(0, 50));
