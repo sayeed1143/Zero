@@ -49,6 +49,9 @@
     --sidebar-accent-foreground: 0 0% 0%;
     --sidebar-border: 0 0% 85%;
     --sidebar-ring: 0 0% 20%;
+
+    --user-message: 217.2 91.2% 59.8%;
+    --user-message-foreground: 210 40% 98%;
   }
 
   .dark {
@@ -95,6 +98,9 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 30%;
     --sidebar-ring: 0 0% 80%;
+
+    --user-message: 217.2 91.2% 59.8%;
+    --user-message-foreground: 210 40% 98%;
   }
 }
 
@@ -321,5 +327,12 @@
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.8);
+  }
+
+  .chat-background {
+    @apply bg-gradient-to-br from-secondary/40 via-background to-secondary/30;
+  }
+  .dark .chat-background {
+    @apply bg-gradient-to-br from-background to-card;
   }
 }

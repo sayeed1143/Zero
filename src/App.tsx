@@ -10,6 +10,7 @@ import PracticeMode from "./pages/PracticeMode";
 import DoubtMode from "./pages/DoubtMode";
 import NotFound from "./pages/NotFound";
 import TeacherDashboard from "./pages/TeacherDashboard";
+import ChatPage from "./pages/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/practice" element={<PracticeMode />} />
           <Route path="/doubt" element={<DoubtMode />} />
           <Route path="/teacher" element={<TeacherDashboard />} />
+          <Route path="/chat" element={<ChatPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
