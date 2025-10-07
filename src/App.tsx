@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Workspace from "./pages/Workspace";
 import CanvasMode from "./pages/CanvasMode";
 import PracticeMode from "./pages/PracticeMode";
+import DoubtMode from "./pages/DoubtMode";
 import NotFound from "./pages/NotFound";
 import TeacherDashboard from "./pages/TeacherDashboard";
 
