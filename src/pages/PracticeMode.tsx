@@ -240,6 +240,15 @@ const PracticeMode = () => {
                     <SelectItem value="hard">Hard</SelectItem>
                   </SelectContent>
                 </Select>
+                <Select value={voiceLanguage} onValueChange={(v) => setVoiceLanguage(v as any)}>
+                  <SelectTrigger className="w-[120px]"><SelectValue placeholder="Voice" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="hi">Hindi</SelectItem>
+                    <SelectItem value="mr">Marathi</SelectItem>
+                    <SelectItem value="te">Telugu</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
