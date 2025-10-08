@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { BarChart3, Download, FileCheck, FileUp, Globe, Mic, Network } from "lucide-react";
+import { Users, BarChart3, Download, FileCheck, FileUp, Globe, Mic, Network } from "lucide-react";
 
 const features = [
   {
@@ -7,49 +7,56 @@ const features = [
     title: "Voice-First AI Tutor",
     description:
       "Simply speak your questions. AI listens, understands, and responds with both voice playback and visual explanations.",
-    color: "bg-gradient-to-br from-foreground via-foreground/90 to-foreground/80",
+    color: "bg-gradient-to-br from-sky-400 to-cyan-500",
   },
   {
     icon: Network,
     title: "Visual Learning Canvas",
     description:
       "Auto-generated mind maps and concept connections reveal relationships between topics in an interactive canvas.",
-    color: "bg-gradient-to-br from-muted-foreground via-foreground/70 to-foreground/60",
+    color: "bg-gradient-to-br from-violet-500 to-purple-600",
   },
   {
     icon: FileCheck,
     title: "Smart Test Generator",
     description:
       "AI creates personalized quizzes from your study materials, identifies weak areas, and generates targeted practice.",
-    color: "bg-gradient-to-br from-foreground/80 via-foreground/70 to-muted-foreground",
+    color: "bg-gradient-to-br from-emerald-400 to-green-500",
   },
   {
     icon: FileUp,
     title: "Multi-Modal Input",
     description:
       "Upload PDFs, images, handwritten notes, or YouTube links—Shunya AI extracts, explains, and visualizes everything.",
-    color: "bg-gradient-to-br from-foreground/70 via-muted-foreground to-foreground/60",
+    color: "bg-gradient-to-br from-rose-400 to-red-500",
   },
   {
     icon: Globe,
     title: "50+ Languages",
     description:
       "Learn in your native language with real-time translation and voice support across 50+ languages.",
-    color: "bg-gradient-to-br from-foreground/90 via-foreground/80 to-foreground/70",
+    color: "bg-gradient-to-br from-blue-500 to-indigo-600",
   },
   {
     icon: BarChart3,
     title: "Progress Tracking",
     description:
       "Monitor your learning journey with detailed analytics, insights, and mastery streaks.",
-    color: "bg-gradient-to-br from-muted-foreground via-foreground/65 to-foreground/75",
+    color: "bg-gradient-to-br from-amber-400 to-orange-500",
   },
   {
     icon: Download,
     title: "Export Anywhere",
     description:
       "Download mind maps, quizzes, and notes as PDF, PNG, or LMS-ready files—export anywhere in seconds.",
-    color: "bg-gradient-to-br from-foreground/85 via-foreground/75 to-muted-foreground",
+    color: "bg-gradient-to-br from-slate-500 to-slate-600",
+  },
+  {
+    icon: Users,
+    title: "Collaborative Spaces",
+    description:
+      "Share your learning canvas with peers or instructors, work together in real-time, and get feedback instantly.",
+    color: "bg-gradient-to-br from-fuchsia-500 to-pink-600",
   },
 ];
 
@@ -69,7 +76,7 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
             <Card 
               key={index} 

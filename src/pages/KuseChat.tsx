@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   useNodesState,
@@ -7,14 +7,12 @@ import ReactFlow, {
   Connection,
   Edge,
   Node,
-  Controls,
   Background,
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import dagre from 'dagre';
 import { toPng } from 'html-to-image';
-import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +23,7 @@ import MessageNode from '@/components/kuse/MessageNode';
 import AnimatedEdge from '@/components/kuse/AnimatedEdge';
 import { AIService } from '@/services/ai';
 import { AIMessage } from '@/types/ai';
+import BrandMark from '@/components/BrandMark';
 
 const initialNodes: Node[] = [
   {
@@ -74,7 +73,7 @@ const KuseChatFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { setViewport, fitView } = useReactFlow();
+  const { fitView } = useReactFlow();
 
   const onConnect = useCallback((params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
@@ -171,10 +170,11 @@ const KuseChatFlow = () => {
   return (
     <div className="h-screen w-screen bg-background font-sans relative overflow-hidden" ref={reactFlowWrapper}>
       <header className="absolute top-0 left-0 right-0 z-10 p-6 flex justify-between items-start">
-        <div className="flex flex-col items-start">
-          <h1 className="glow-text text-3xl">SHUNYA AI</h1>
-          <p className="font-orbitron text-muted-foreground text-xs tracking-wider">The Beginning of Infinite Intelligence</p>
-        </div>
+        <BrandMark 
+          size="md" 
+          titleClassName="!text-3xl glow-text !font-bold"
+          taglineClassName="!font-orbitron !text-xs !tracking-wider"
+        />
         <div className="text-center">
             <div className="flex items-center gap-2 glass-pane p-2 rounded-2xl">
                 {['Student', 'College', 'Teacher', 'Explorer'].map(m => (
